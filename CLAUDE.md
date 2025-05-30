@@ -21,13 +21,17 @@ Run the automated setup script:
 ./dev_setup.sh
 ```
 
-The script (v1.0.0) provides:
+The script (v1.1.0) provides:
 
 - **Idempotent execution**: Safe to run multiple times
 - **Cross-platform support**: macOS, Linux, WSL2, and CI environments
 - **Security hardening**: Input validation, secure downloads, sensitive data redaction
 - **Conflict detection**: Checks for incompatible Node.js version managers (nvm, fnm, etc.)
 - **Automatic recovery**: Lock files, signal handling, and cleanup
+- **Network resilience**: Retry logic with exponential backoff for downloads and commands
+- **Resource validation**: Pre-flight checks for disk space, memory, and permissions
+- **Signal handling**: Graceful shutdown on SIGINT, SIGTERM, SIGHUP with child process cleanup
+- **Enhanced Volta+pnpm support**: Automatic fallback to npm when Volta's experimental pnpm support fails
 
 ### Security Features
 
@@ -89,7 +93,7 @@ This is a pnpm monorepo using Turborepo for orchestration:
 
 ### Key Patterns
 
-1. **Monorepo Setup**: Uses pnpm workspaces defined in `pnpm-workspace.yaml`
+1. **Monorepo Setup**: Uses pnpm workspaces defined in `pnpm-workspace.yaml` (NOT package.json workspaces field)
 2. **Build Pipeline**: Turborepo manages parallel builds and caching (see `turbo.json`)
 3. **TypeScript**: Strict mode enabled with composite projects for monorepo
 4. **Module Resolution**: Using "bundler" resolution for Vite compatibility
@@ -123,7 +127,8 @@ The development environment setup is managed by `dev_setup.sh`. Related document
 
 - **fnm conflicts**: The setup script will detect and block installation if fnm is present
 - **Container persistence**: Volta installations may not persist across container restarts
-- **Network reliability**: Retry logic for network operations is planned for v1.1.0
+- **Volta pnpm support**: Volta's pnpm support is experimental. The setup script works around this by falling back to npm global install when needed
+- **pnpm workspace config**: Use `pnpm-workspace.yaml`, not package.json `workspaces` field
 
 ### Troubleshooting
 

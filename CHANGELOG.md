@@ -1,9 +1,15 @@
 # Changelog
 
-All notable changes to the Portfolio Monorepo Development Setup Script will be documented in this file.
+All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+
+## [Unreleased]
+
+### Fixed
+- Removed redundant `workspaces` field from package.json that was causing pnpm warnings
+- Updated CLAUDE.md to clarify pnpm workspace configuration
 
 ## [1.1.0] - 2025-05-30
 
@@ -26,10 +32,26 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Symlink capability testing
   - Container-aware resource checking (cgroup limits)
 
+- **Enhanced Lock File Management**: 
+  - Automatic stale lock detection based on PID and timestamp
+  - Self-healing when previous runs were interrupted
+  - Better concurrent run prevention
+
 ### Changed
+- **Critical pnpm Setup Improvements**:
+  - Explicitly set Node.js as default before pnpm operations (fixes Volta bug)
+  - Added warnings about Volta's experimental pnpm support
+  - Implemented proper fallback to npm global install when Volta fails
+  - Added execution verification after pnpm installation
+  - Made shell profile updates truly idempotent for VOLTA_FEATURE_PNPM
 - Improved error handling throughout the script
 - Enhanced logging for network operations
 - Better process management for background tasks
+
+### Fixed
+- **Volta + pnpm installation loop**: Script no longer gets stuck when Volta can't properly install pnpm
+- **False completion signals**: Setup now verifies pnpm is actually executable, not just installed
+- **Version validation false negatives**: Improved version detection for pnpm installed via npm
 
 ### Security
 - All network operations now have timeout protection

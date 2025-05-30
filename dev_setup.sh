@@ -261,10 +261,51 @@ acquire_lock() {
   local timeout="${LOCK_TIMEOUT:-300}"
   local waited=0
   
-  # Atomic directory creation
+  # First check if lock exists and is stale
+  if [[ -d "$lock_dir" ]]; then
+    if [[ -f "$lock_dir/pid" ]]; then
+      local pid=$(cat "$lock_dir/pid" 2>/dev/null || echo "")
+      if [[ -n "$pid" ]]; then
+        if ! kill -0 "$pid" 2>/dev/null; then
+          log WARNING "Removing stale lock (PID $pid no longer exists)"
+          rm -rf "$lock_dir"
+        else
+          # Check if lock is too old (older than timeout)
+          if [[ -f "$lock_dir/timestamp" ]]; then
+            local lock_time=$(cat "$lock_dir/timestamp" 2>/dev/null || echo "")
+            if [[ -n "$lock_time" ]]; then
+              local lock_age=$(( $(date +%s) - $(date -d "$lock_time" +%s 2>/dev/null || echo 0) ))
+              if [[ $lock_age -gt $timeout ]]; then
+                log WARNING "Removing stale lock (older than ${timeout}s)"
+                rm -rf "$lock_dir"
+              fi
+            fi
+          fi
+        fi
+      else
+        # No PID file, lock is invalid
+        log WARNING "Removing invalid lock (no PID file)"
+        rm -rf "$lock_dir"
+      fi
+    else
+      # No PID file, lock is invalid
+      log WARNING "Removing invalid lock (no PID file)"
+      rm -rf "$lock_dir"
+    fi
+  fi
+  
+  # Try to acquire lock
   while ! mkdir "$lock_dir" 2>/dev/null; do
     if [[ $waited -ge $timeout ]]; then
-      # Check if lock is stale
+      log ERROR "Failed to acquire lock after ${timeout}s"
+      log INFO "Another instance may be running. If not, remove: $lock_dir"
+      exit 1
+    fi
+    
+    if [[ $((waited % 10)) -eq 0 ]] && [[ $waited -gt 0 ]]; then
+      log INFO "Waiting for lock... (${waited}s elapsed)"
+      
+      # Recheck for stale lock every 10 seconds
       if [[ -f "$lock_dir/pid" ]]; then
         local pid=$(cat "$lock_dir/pid" 2>/dev/null || echo "")
         if [[ -n "$pid" ]] && ! kill -0 "$pid" 2>/dev/null; then
@@ -273,13 +314,6 @@ acquire_lock() {
           continue
         fi
       fi
-      log ERROR "Failed to acquire lock after ${timeout}s"
-      log INFO "Another instance may be running. If not, remove: $lock_dir"
-      exit 1
-    fi
-    
-    if [[ $((waited % 10)) -eq 0 ]]; then
-      log INFO "Waiting for lock... (${waited}s elapsed)"
     fi
     
     sleep 1
@@ -569,8 +603,18 @@ get_node_version() {
 }
 
 get_pnpm_version() {
+  # First try direct pnpm command
   if command_exists pnpm; then
     pnpm -v 2>/dev/null || echo "0.0.0"
+  # Then check if it's installed via npm in Volta
+  elif [[ -n "${VOLTA_HOME:-}" ]] && [[ -x "$VOLTA_HOME/bin/node" ]]; then
+    # Check npm global list
+    local npm_pnpm_version=$("$VOLTA_HOME/bin/npm" list -g pnpm 2>/dev/null | grep -oE 'pnpm@[0-9.]+' | cut -d@ -f2 || echo "")
+    if [[ -n "$npm_pnpm_version" ]]; then
+      echo "$npm_pnpm_version"
+    else
+      echo "0.0.0"
+    fi
   else
     echo "0.0.0"
   fi
@@ -976,6 +1020,9 @@ setup_volta() {
   export VOLTA_HOME="${VOLTA_HOME:-$HOME/.volta}"
   export PATH="$VOLTA_HOME/bin:$PATH"
   
+  # Enable experimental pnpm support
+  export VOLTA_FEATURE_PNPM=1
+  
   local needs_install=false
   
   # Check if Volta binary exists (not just in PATH)
@@ -1051,9 +1098,16 @@ setup_volta() {
           echo "# Volta configuration (added by portfolio setup)"
           echo "export VOLTA_HOME=\"\$HOME/.volta\""
           echo "export PATH=\"\$VOLTA_HOME/bin:\$PATH\""
+          echo "export VOLTA_FEATURE_PNPM=1  # Enable experimental pnpm support"
         } >> "$shell_profile"
       else
         log DEBUG "Volta already configured in $shell_profile"
+        
+        # Ensure VOLTA_FEATURE_PNPM is set even if Volta was already configured
+        if ! grep -q "VOLTA_FEATURE_PNPM" "$shell_profile"; then
+          log DEBUG "Adding VOLTA_FEATURE_PNPM to existing Volta config"
+          echo "export VOLTA_FEATURE_PNPM=1  # Enable experimental pnpm support" >> "$shell_profile"
+        fi
       fi
     fi
   fi
@@ -1082,32 +1136,44 @@ setup_node() {
   
   if [[ "$current_version" == "$REQUIRED_NODE_VERSION" ]]; then
     log SUCCESS "Node.js $REQUIRED_NODE_VERSION is already installed"
-    return 0
-  fi
-  
-  if [[ "$current_version" == "0.0.0" ]]; then
-    log INFO "Node.js is not installed"
   else
-    log INFO "Found Node.js $current_version (required: $REQUIRED_NODE_VERSION)"
+    if [[ "$current_version" == "0.0.0" ]]; then
+      log INFO "Node.js is not installed"
+    else
+      log INFO "Found Node.js $current_version (required: $REQUIRED_NODE_VERSION)"
+    fi
+    
+    if command_exists volta; then
+      log INFO "Installing Node.js $REQUIRED_NODE_VERSION via Volta..."
+      volta install node@$REQUIRED_NODE_VERSION || {
+        log ERROR "Failed to install Node.js"
+        exit 1
+      }
+      volta pin node@$REQUIRED_NODE_VERSION || {
+        log ERROR "Failed to pin Node.js version"
+        exit 1
+      }
+    else
+      log ERROR "Volta is required to install Node.js"
+      exit 1
+    fi
+    
+    # Verify correct version
+    current_version=$(get_node_version)
+    if [[ "$current_version" != "$REQUIRED_NODE_VERSION" ]]; then
+      log ERROR "Failed to install Node.js $REQUIRED_NODE_VERSION (got $current_version)"
+      exit 1
+    fi
+    
+    log SUCCESS "Node.js $REQUIRED_NODE_VERSION is ready"
   fi
   
-  if command_exists volta; then
-    log INFO "Installing Node.js $REQUIRED_NODE_VERSION via Volta..."
-    volta install node@$REQUIRED_NODE_VERSION
-    volta pin node@$REQUIRED_NODE_VERSION
-  else
-    log ERROR "Volta is required to install Node.js"
+  # CRITICAL: Set Node as default to avoid Volta pnpm issues
+  log INFO "Setting Node.js as default (required for pnpm)..."
+  volta install node@$REQUIRED_NODE_VERSION 2>&1 | tee -a "$LOG_FILE" || {
+    log ERROR "Failed to set default Node.js version"
     exit 1
-  fi
-  
-  # Verify correct version
-  current_version=$(get_node_version)
-  if [[ "$current_version" != "$REQUIRED_NODE_VERSION" ]]; then
-    log ERROR "Failed to install Node.js $REQUIRED_NODE_VERSION (got $current_version)"
-    exit 1
-  fi
-  
-  log SUCCESS "Node.js $REQUIRED_NODE_VERSION is ready"
+  }
 }
 
 # ============================================================================
@@ -1117,36 +1183,97 @@ setup_node() {
 setup_pnpm() {
   log INFO "Checking pnpm installation..."
   
+  # CRITICAL WARNING about Volta pnpm limitations
+  log WARNING "Volta's pnpm support is experimental and has known issues"
+  log WARNING "pnpm version cannot be pinned in package.json like node/yarn"
+  
   local current_version=$(get_pnpm_version)
   
   if [[ "$current_version" == "$REQUIRED_PNPM_VERSION" ]]; then
     log SUCCESS "pnpm $REQUIRED_PNPM_VERSION is already installed"
-    return 0
+    
+    # Verify it's actually executable
+    if ! pnpm --version &>/dev/null; then
+      log WARNING "pnpm appears installed but is not executable"
+      current_version="0.0.0"
+    else
+      return 0
+    fi
   fi
   
   if [[ "$current_version" == "0.0.0" ]]; then
-    log INFO "pnpm is not installed"
+    log INFO "pnpm is not installed or not working"
   else
     log INFO "Found pnpm $current_version (required: $REQUIRED_PNPM_VERSION)"
   fi
   
-  if command_exists volta; then
-    log INFO "Installing pnpm $REQUIRED_PNPM_VERSION via Volta..."
-    volta install pnpm@$REQUIRED_PNPM_VERSION
-    volta pin pnpm@$REQUIRED_PNPM_VERSION
+  # Try Volta first (experimental)
+  local volta_success=false
+  if command_exists volta && [[ "${VOLTA_FEATURE_PNPM:-}" == "1" ]]; then
+    log INFO "Attempting pnpm installation via Volta (experimental)..."
+    
+    # Volta requires default node to be set
+    if volta install pnpm@$REQUIRED_PNPM_VERSION 2>&1 | tee -a "$LOG_FILE"; then
+      # Check if shim was created
+      if [[ -e "$VOLTA_HOME/bin/pnpm" ]]; then
+        volta_success=true
+        log SUCCESS "Volta created pnpm shim"
+      else
+        log WARNING "Volta install reported success but no shim found"
+      fi
+    else
+      log WARNING "Volta pnpm install failed (this is a known issue)"
+    fi
+  fi
+  
+  # Fallback to npm global install
+  if [[ "$volta_success" != "true" ]]; then
+    log INFO "Installing pnpm via npm (Volta cannot properly manage pnpm)"
+    
+    if command_exists npm; then
+      if npm install -g pnpm@$REQUIRED_PNPM_VERSION 2>&1 | tee -a "$LOG_FILE"; then
+        log SUCCESS "pnpm installed via npm"
+        
+        # Create a simple wrapper if needed
+        if ! command_exists pnpm && [[ -n "${VOLTA_HOME:-}" ]]; then
+          log DEBUG "Creating pnpm wrapper for PATH consistency"
+          cat > "$VOLTA_HOME/bin/pnpm" << 'EOF'
+#!/usr/bin/env bash
+exec npx pnpm@9.12.0 "$@"
+EOF
+          chmod +x "$VOLTA_HOME/bin/pnpm"
+        fi
+      else
+        log ERROR "Failed to install pnpm via npm"
+        log ERROR "Please install pnpm manually: npm install -g pnpm@$REQUIRED_PNPM_VERSION"
+        exit 1
+      fi
+    else
+      log ERROR "npm is not available to install pnpm"
+      exit 1
+    fi
+  fi
+  
+  # Final verification with actual execution test
+  log DEBUG "Verifying pnpm installation..."
+  
+  # Force PATH refresh
+  hash -r
+  
+  # Check version by actually running it
+  local installed_version
+  if installed_version=$(pnpm --version 2>/dev/null); then
+    if [[ "$installed_version" == "$REQUIRED_PNPM_VERSION" ]]; then
+      log SUCCESS "pnpm $REQUIRED_PNPM_VERSION is ready and executable"
+    else
+      log WARNING "pnpm is executable but version mismatch: $installed_version != $REQUIRED_PNPM_VERSION"
+      log INFO "This may work but could cause issues"
+    fi
   else
-    log ERROR "Volta is required to install pnpm"
+    log ERROR "pnpm is not executable after installation"
+    log ERROR "Please check your PATH and try: npm install -g pnpm@$REQUIRED_PNPM_VERSION"
     exit 1
   fi
-  
-  # Verify correct version
-  current_version=$(get_pnpm_version)
-  if [[ "$current_version" != "$REQUIRED_PNPM_VERSION" ]]; then
-    log ERROR "Failed to install pnpm $REQUIRED_PNPM_VERSION (got $current_version)"
-    exit 1
-  fi
-  
-  log SUCCESS "pnpm $REQUIRED_PNPM_VERSION is ready"
 }
 
 # ============================================================================

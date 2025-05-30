@@ -10,13 +10,13 @@ importers:
     dependencies:
       '@react-three/drei':
         specifier: 9.99.0
-        version: 9.99.0(@react-three/fiber@8.15.19)(@types/react@18.2.79)(@types/three@0.162.0)(react-dom@18.2.0)(react@18.2.0)(three@0.162.0)
+        version: 9.99.0(@react-three/fiber@8.15.19(@types/react@18.2.79)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)(three@0.162.0))(@types/react@18.2.79)(@types/three@0.162.0)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)(three@0.162.0)
       '@react-three/fiber':
         specifier: 8.15.19
-        version: 8.15.19(@types/react@18.2.79)(react-dom@18.2.0)(react@18.2.0)(three@0.162.0)
+        version: 8.15.19(@types/react@18.2.79)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)(three@0.162.0)
       framer-motion:
         specifier: 11.0.24
-        version: 11.0.24(react-dom@18.2.0)(react@18.2.0)
+        version: 11.0.24(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
       gsap:
         specifier: 3.12.5
         version: 3.12.5
@@ -62,7 +62,7 @@ importers:
         version: 0.162.0
       '@vitejs/plugin-react':
         specifier: 4.2.1
-        version: 4.2.1(vite@5.2.8)
+        version: 4.2.1(vite@5.2.8(@types/node@20.11.30)(sass@1.72.0))
       autoprefixer:
         specifier: 10.4.19
         version: 10.4.19(postcss@8.4.38)
@@ -1552,7 +1552,7 @@ packages:
     resolution: {integrity: sha512-WIGk8wiV2ABm/T7M+NC+tAV8fjzNJD1J4z11aZ3mTtx7WAZX/4QdCNhBO0g/TqXISA+/3hTbzrPC4FW1nhoNMQ==}
     peerDependencies:
       '@nuxt/kit': '>=3.0.0'
-      react: '>=17.0.0'
+      react: 18.2.0
       vue: '>=3.0.0'
     peerDependenciesMeta:
       '@nuxt/kit':
@@ -2576,7 +2576,7 @@ snapshots:
       '@babel/helper-string-parser': 7.27.1
       '@babel/helper-validator-identifier': 7.27.1
 
-  '@csstools/cascade-layer-name-parser@1.0.13(@csstools/css-parser-algorithms@2.7.1)(@csstools/css-tokenizer@2.4.1)':
+  '@csstools/cascade-layer-name-parser@1.0.13(@csstools/css-parser-algorithms@2.7.1(@csstools/css-tokenizer@2.4.1))(@csstools/css-tokenizer@2.4.1)':
     dependencies:
       '@csstools/css-parser-algorithms': 2.7.1(@csstools/css-tokenizer@2.4.1)
       '@csstools/css-tokenizer': 2.4.1
@@ -2587,7 +2587,7 @@ snapshots:
 
   '@csstools/css-tokenizer@2.4.1': {}
 
-  '@csstools/media-query-list-parser@2.1.13(@csstools/css-parser-algorithms@2.7.1)(@csstools/css-tokenizer@2.4.1)':
+  '@csstools/media-query-list-parser@2.1.13(@csstools/css-parser-algorithms@2.7.1(@csstools/css-tokenizer@2.4.1))(@csstools/css-tokenizer@2.4.1)':
     dependencies:
       '@csstools/css-parser-algorithms': 2.7.1(@csstools/css-tokenizer@2.4.1)
       '@csstools/css-tokenizer': 2.4.1
@@ -2757,24 +2757,24 @@ snapshots:
       '@react-spring/types': 9.6.1
       react: 18.2.0
 
-  '@react-spring/three@9.6.1(@react-three/fiber@8.15.19)(react@18.2.0)(three@0.162.0)':
+  '@react-spring/three@9.6.1(@react-three/fiber@8.15.19(@types/react@18.2.79)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)(three@0.162.0))(react@18.2.0)(three@0.162.0)':
     dependencies:
       '@react-spring/animated': 9.6.1(react@18.2.0)
       '@react-spring/core': 9.6.1(react@18.2.0)
       '@react-spring/shared': 9.6.1(react@18.2.0)
       '@react-spring/types': 9.6.1
-      '@react-three/fiber': 8.15.19(@types/react@18.2.79)(react-dom@18.2.0)(react@18.2.0)(three@0.162.0)
+      '@react-three/fiber': 8.15.19(@types/react@18.2.79)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)(three@0.162.0)
       react: 18.2.0
       three: 0.162.0
 
   '@react-spring/types@9.6.1': {}
 
-  '@react-three/drei@9.99.0(@react-three/fiber@8.15.19)(@types/react@18.2.79)(@types/three@0.162.0)(react-dom@18.2.0)(react@18.2.0)(three@0.162.0)':
+  '@react-three/drei@9.99.0(@react-three/fiber@8.15.19(@types/react@18.2.79)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)(three@0.162.0))(@types/react@18.2.79)(@types/three@0.162.0)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)(three@0.162.0)':
     dependencies:
       '@babel/runtime': 7.27.3
       '@mediapipe/tasks-vision': 0.10.8
-      '@react-spring/three': 9.6.1(@react-three/fiber@8.15.19)(react@18.2.0)(three@0.162.0)
-      '@react-three/fiber': 8.15.19(@types/react@18.2.79)(react-dom@18.2.0)(react@18.2.0)(three@0.162.0)
+      '@react-spring/three': 9.6.1(@react-three/fiber@8.15.19(@types/react@18.2.79)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)(three@0.162.0))(react@18.2.0)(three@0.162.0)
+      '@react-three/fiber': 8.15.19(@types/react@18.2.79)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)(three@0.162.0)
       '@use-gesture/react': 10.3.1(react@18.2.0)
       camera-controls: 2.10.1(three@0.162.0)
       cross-env: 7.0.3
@@ -2784,7 +2784,6 @@ snapshots:
       meshline: 3.3.1(three@0.162.0)
       react: 18.2.0
       react-composer: 5.0.3(react@18.2.0)
-      react-dom: 18.2.0(react@18.2.0)
       react-merge-refs: 1.1.0
       stats-gl: 2.4.2(@types/three@0.162.0)(three@0.162.0)
       stats.js: 0.17.0
@@ -2797,12 +2796,14 @@ snapshots:
       utility-types: 3.11.0
       uuid: 9.0.1
       zustand: 3.7.2(react@18.2.0)
+    optionalDependencies:
+      react-dom: 18.2.0(react@18.2.0)
     transitivePeerDependencies:
       - '@types/react'
       - '@types/three'
       - immer
 
-  '@react-three/fiber@8.15.19(@types/react@18.2.79)(react-dom@18.2.0)(react@18.2.0)(three@0.162.0)':
+  '@react-three/fiber@8.15.19(@types/react@18.2.79)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)(three@0.162.0)':
     dependencies:
       '@babel/runtime': 7.27.3
       '@types/react-reconciler': 0.26.7
@@ -2811,13 +2812,14 @@ snapshots:
       buffer: 6.0.3
       its-fine: 1.2.5(@types/react@18.2.79)(react@18.2.0)
       react: 18.2.0
-      react-dom: 18.2.0(react@18.2.0)
       react-reconciler: 0.27.0(react@18.2.0)
-      react-use-measure: 2.1.7(react-dom@18.2.0)(react@18.2.0)
+      react-use-measure: 2.1.7(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
       scheduler: 0.21.0
       suspend-react: 0.1.3(react@18.2.0)
       three: 0.162.0
       zustand: 3.7.2(react@18.2.0)
+    optionalDependencies:
+      react-dom: 18.2.0(react@18.2.0)
     transitivePeerDependencies:
       - '@types/react'
 
@@ -2949,7 +2951,7 @@ snapshots:
 
   '@types/webxr@0.5.22': {}
 
-  '@typescript-eslint/eslint-plugin@8.0.0(@typescript-eslint/parser@8.0.0)(eslint@9.0.0)(typescript@5.8.3)':
+  '@typescript-eslint/eslint-plugin@8.0.0(@typescript-eslint/parser@8.0.0(eslint@9.0.0)(typescript@5.8.3))(eslint@9.0.0)(typescript@5.8.3)':
     dependencies:
       '@eslint-community/regexpp': 4.12.1
       '@typescript-eslint/parser': 8.0.0(eslint@9.0.0)(typescript@5.8.3)
@@ -2962,6 +2964,7 @@ snapshots:
       ignore: 5.3.2
       natural-compare: 1.4.0
       ts-api-utils: 1.4.3(typescript@5.8.3)
+    optionalDependencies:
       typescript: 5.8.3
     transitivePeerDependencies:
       - supports-color
@@ -2974,6 +2977,7 @@ snapshots:
       '@typescript-eslint/visitor-keys': 8.0.0
       debug: 4.4.1
       eslint: 9.0.0
+    optionalDependencies:
       typescript: 5.8.3
     transitivePeerDependencies:
       - supports-color
@@ -2989,6 +2993,7 @@ snapshots:
       '@typescript-eslint/utils': 8.0.0(eslint@9.0.0)(typescript@5.8.3)
       debug: 4.4.1
       ts-api-utils: 1.4.3(typescript@5.8.3)
+    optionalDependencies:
       typescript: 5.8.3
     transitivePeerDependencies:
       - eslint
@@ -3006,6 +3011,7 @@ snapshots:
       minimatch: 9.0.5
       semver: 7.7.2
       ts-api-utils: 1.4.3(typescript@5.8.3)
+    optionalDependencies:
       typescript: 5.8.3
     transitivePeerDependencies:
       - supports-color
@@ -3033,7 +3039,7 @@ snapshots:
       '@use-gesture/core': 10.3.1
       react: 18.2.0
 
-  '@vitejs/plugin-react@4.2.1(vite@5.2.8)':
+  '@vitejs/plugin-react@4.2.1(vite@5.2.8(@types/node@20.11.30)(sass@1.72.0))':
     dependencies:
       '@babel/core': 7.27.3
       '@babel/plugin-transform-react-jsx-self': 7.27.1(@babel/core@7.27.3)
@@ -3692,11 +3698,12 @@ snapshots:
 
   fraction.js@4.3.7: {}
 
-  framer-motion@11.0.24(react-dom@18.2.0)(react@18.2.0):
+  framer-motion@11.0.24(react-dom@18.2.0(react@18.2.0))(react@18.2.0):
     dependencies:
+      tslib: 2.8.1
+    optionalDependencies:
       react: 18.2.0
       react-dom: 18.2.0(react@18.2.0)
-      tslib: 2.8.1
 
   fsevents@2.3.2:
     optional: true
@@ -4007,7 +4014,7 @@ snapshots:
       json-buffer: 3.0.1
 
   lenis@1.3.4(react@18.2.0):
-    dependencies:
+    optionalDependencies:
       react: 18.2.0
 
   levn@0.4.1:
@@ -4269,10 +4276,10 @@ snapshots:
 
   postcss-custom-media@10.0.3(postcss@8.4.38):
     dependencies:
-      '@csstools/cascade-layer-name-parser': 1.0.13(@csstools/css-parser-algorithms@2.7.1)(@csstools/css-tokenizer@2.4.1)
+      '@csstools/cascade-layer-name-parser': 1.0.13(@csstools/css-parser-algorithms@2.7.1(@csstools/css-tokenizer@2.4.1))(@csstools/css-tokenizer@2.4.1)
       '@csstools/css-parser-algorithms': 2.7.1(@csstools/css-tokenizer@2.4.1)
       '@csstools/css-tokenizer': 2.4.1
-      '@csstools/media-query-list-parser': 2.1.13(@csstools/css-parser-algorithms@2.7.1)(@csstools/css-tokenizer@2.4.1)
+      '@csstools/media-query-list-parser': 2.1.13(@csstools/css-parser-algorithms@2.7.1(@csstools/css-tokenizer@2.4.1))(@csstools/css-tokenizer@2.4.1)
       postcss: 8.4.38
 
   postcss-modules-extract-imports@3.1.0(postcss@8.4.38):
@@ -4378,9 +4385,10 @@ snapshots:
 
   react-refresh@0.14.2: {}
 
-  react-use-measure@2.1.7(react-dom@18.2.0)(react@18.2.0):
+  react-use-measure@2.1.7(react-dom@18.2.0(react@18.2.0))(react@18.2.0):
     dependencies:
       react: 18.2.0
+    optionalDependencies:
       react-dom: 18.2.0(react@18.2.0)
 
   react@18.2.0:
@@ -4786,9 +4794,10 @@ snapshots:
 
   typescript-eslint@8.0.0(eslint@9.0.0)(typescript@5.8.3):
     dependencies:
-      '@typescript-eslint/eslint-plugin': 8.0.0(@typescript-eslint/parser@8.0.0)(eslint@9.0.0)(typescript@5.8.3)
+      '@typescript-eslint/eslint-plugin': 8.0.0(@typescript-eslint/parser@8.0.0(eslint@9.0.0)(typescript@5.8.3))(eslint@9.0.0)(typescript@5.8.3)
       '@typescript-eslint/parser': 8.0.0(eslint@9.0.0)(typescript@5.8.3)
       '@typescript-eslint/utils': 8.0.0(eslint@9.0.0)(typescript@5.8.3)
+    optionalDependencies:
       typescript: 5.8.3
     transitivePeerDependencies:
       - eslint
@@ -4846,17 +4855,16 @@ snapshots:
 
   vite@5.2.8(@types/node@20.11.30)(sass@1.72.0):
     dependencies:
-      '@types/node': 20.11.30
       esbuild: 0.20.2
       postcss: 8.4.38
       rollup: 4.41.1
-      sass: 1.72.0
     optionalDependencies:
+      '@types/node': 20.11.30
       fsevents: 2.3.3
+      sass: 1.72.0
 
   vitest@1.4.0(@types/node@20.11.30)(sass@1.72.0):
     dependencies:
-      '@types/node': 20.11.30
       '@vitest/expect': 1.4.0
       '@vitest/runner': 1.4.0
       '@vitest/snapshot': 1.4.0
@@ -4877,6 +4885,8 @@ snapshots:
       vite: 5.2.8(@types/node@20.11.30)(sass@1.72.0)
       vite-node: 1.4.0(@types/node@20.11.30)(sass@1.72.0)
       why-is-node-running: 2.3.0
+    optionalDependencies:
+      '@types/node': 20.11.30
     transitivePeerDependencies:
       - less
       - lightningcss
@@ -4957,11 +4967,12 @@ snapshots:
   yocto-queue@1.2.1: {}
 
   zustand@3.7.2(react@18.2.0):
-    dependencies:
+    optionalDependencies:
       react: 18.2.0
 
   zustand@4.5.7(@types/react@18.2.79)(react@18.2.0):
     dependencies:
+      use-sync-external-store: 1.5.0(react@18.2.0)
+    optionalDependencies:
       '@types/react': 18.2.79
       react: 18.2.0
-      use-sync-external-store: 1.5.0(react@18.2.0)
