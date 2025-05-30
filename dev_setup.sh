@@ -3,12 +3,12 @@
 # Portfolio Monorepo Development Environment Setup - IDEMPOTENT VERSION
 # Safe to run multiple times without side effects
 # Implements best practices from Vercel, Microsoft Rush, and Google monorepos
-# Version: 1.0.0
+# Version: 1.1.0
 
 set -euo pipefail
 
 # Script version for tracking
-SCRIPT_VERSION="1.0.0"
+SCRIPT_VERSION="1.1.0"
 
 # ============================================================================
 # Environment Variable Sanitization
@@ -304,6 +304,111 @@ release_lock() {
 trap release_lock EXIT
 
 # ============================================================================
+# Signal Handling and Cleanup
+# ============================================================================
+
+# Track child processes for cleanup
+CHILD_PIDS=()
+
+# Register a child process for tracking
+register_child_process() {
+  local pid="$1"
+  CHILD_PIDS+=("$pid")
+  log DEBUG "Registered child process: $pid"
+}
+
+# Kill all child processes gracefully
+kill_child_processes() {
+  if [[ ${#CHILD_PIDS[@]} -eq 0 ]]; then
+    return
+  fi
+  
+  log INFO "Terminating ${#CHILD_PIDS[@]} child process(es)..."
+  
+  # First try SIGTERM for graceful shutdown
+  for pid in "${CHILD_PIDS[@]}"; do
+    if kill -0 "$pid" 2>/dev/null; then
+      log DEBUG "Sending SIGTERM to process $pid"
+      kill -TERM "$pid" 2>/dev/null || true
+    fi
+  done
+  
+  # Give processes time to terminate
+  local wait_time=0
+  local all_terminated=false
+  while [[ $wait_time -lt 5 ]]; do
+    all_terminated=true
+    for pid in "${CHILD_PIDS[@]}"; do
+      if kill -0 "$pid" 2>/dev/null; then
+        all_terminated=false
+        break
+      fi
+    done
+    
+    if [[ "$all_terminated" == "true" ]]; then
+      break
+    fi
+    
+    sleep 0.5
+    ((wait_time++))
+  done
+  
+  # Force kill any remaining processes
+  if [[ "$all_terminated" == "false" ]]; then
+    for pid in "${CHILD_PIDS[@]}"; do
+      if kill -0 "$pid" 2>/dev/null; then
+        log WARNING "Force killing process $pid"
+        kill -KILL "$pid" 2>/dev/null || true
+      fi
+    done
+  fi
+  
+  CHILD_PIDS=()
+}
+
+# Cleanup function for signal handling
+cleanup_on_signal() {
+  local signal="$1"
+  log WARNING "Received signal: $signal"
+  
+  # Stop any running dev server
+  if [[ -f "$PID_FILE" ]]; then
+    local dev_pid=$(cat "$PID_FILE" 2>/dev/null || echo "")
+    if [[ -n "$dev_pid" ]] && kill -0 "$dev_pid" 2>/dev/null; then
+      log INFO "Stopping dev server (PID: $dev_pid)..."
+      kill_process_safely "$dev_pid"
+      rm -f "$PID_FILE"
+    fi
+  fi
+  
+  # Kill all tracked child processes
+  kill_child_processes
+  
+  # Remove temporary files
+  rm -f .dev-server-wrapper.sh 2>/dev/null || true
+  rm -f stop-dev-server.sh 2>/dev/null || true
+  
+  # Release lock file
+  release_lock
+  
+  # Log final message
+  log INFO "Cleanup completed for signal $signal"
+  
+  # Exit with appropriate code (128 + signal number)
+  case "$signal" in
+    INT)  exit $((128 + 2)) ;;   # SIGINT = 2
+    TERM) exit $((128 + 15)) ;;  # SIGTERM = 15
+    HUP)  exit $((128 + 1)) ;;   # SIGHUP = 1
+    *)    exit 1 ;;
+  esac
+}
+
+# Set up signal handlers
+trap 'cleanup_on_signal INT' INT
+trap 'cleanup_on_signal TERM' TERM
+trap 'cleanup_on_signal HUP' HUP
+
+# ============================================================================
 # Log Management (Rotation and Cleanup)
 # ============================================================================
 
@@ -471,6 +576,113 @@ get_pnpm_version() {
   fi
 }
 
+# Download a file with retry logic and exponential backoff
+download_with_retry() {
+  local url="$1"
+  local output="$2"
+  local max_attempts="${3:-3}"
+  local timeout="${4:-30}"
+  local attempt=1
+  local delay=2
+  
+  log DEBUG "Downloading from $url to $output (max attempts: $max_attempts, timeout: ${timeout}s)"
+  
+  while [[ $attempt -le $max_attempts ]]; do
+    log DEBUG "Download attempt $attempt of $max_attempts"
+    
+    # Try download with appropriate tool
+    local download_success=false
+    
+    if command_exists curl; then
+      if curl --silent --show-error --location \
+              --connect-timeout "$timeout" \
+              --max-time "$((timeout * 2))" \
+              --retry 0 \
+              --output "$output" \
+              "$url" 2>&1 | tee -a "$LOG_FILE"; then
+        download_success=true
+      fi
+    elif command_exists wget; then
+      if wget --quiet --no-verbose \
+              --timeout="$timeout" \
+              --tries=1 \
+              --output-document="$output" \
+              "$url" 2>&1 | tee -a "$LOG_FILE"; then
+        download_success=true
+      fi
+    else
+      log ERROR "Neither curl nor wget is available"
+      return 1
+    fi
+    
+    # Check if download succeeded
+    if [[ "$download_success" == "true" ]] && [[ -s "$output" ]]; then
+      log DEBUG "Download successful"
+      return 0
+    fi
+    
+    # Download failed
+    if [[ $attempt -lt $max_attempts ]]; then
+      log WARNING "Download failed, retrying in ${delay}s..."
+      sleep "$delay"
+      # Exponential backoff: 2s, 4s, 8s
+      delay=$((delay * 2))
+      if [[ $delay -gt 8 ]]; then
+        delay=8
+      fi
+    else
+      log ERROR "Download failed after $max_attempts attempts"
+      rm -f "$output" 2>/dev/null || true
+      return 1
+    fi
+    
+    ((attempt++))
+  done
+  
+  return 1
+}
+
+# Execute a command with retry logic (useful for pnpm install)
+execute_with_retry() {
+  local cmd="$1"
+  local description="$2"
+  local max_attempts="${3:-3}"
+  local attempt=1
+  local delay=2
+  
+  log DEBUG "Executing: $description (max attempts: $max_attempts)"
+  
+  while [[ $attempt -le $max_attempts ]]; do
+    log DEBUG "Execution attempt $attempt of $max_attempts"
+    
+    # Try to execute the command
+    if eval "$cmd"; then
+      log DEBUG "Command executed successfully"
+      return 0
+    fi
+    
+    # Command failed
+    local exit_code=$?
+    
+    if [[ $attempt -lt $max_attempts ]]; then
+      log WARNING "Command failed with exit code $exit_code, retrying in ${delay}s..."
+      sleep "$delay"
+      # Exponential backoff: 2s, 4s, 8s
+      delay=$((delay * 2))
+      if [[ $delay -gt 8 ]]; then
+        delay=8
+      fi
+    else
+      log ERROR "Command failed after $max_attempts attempts"
+      return $exit_code
+    fi
+    
+    ((attempt++))
+  done
+  
+  return 1
+}
+
 # ============================================================================
 # Cleanup Functions
 # ============================================================================
@@ -587,7 +799,164 @@ preflight_checks() {
     log WARNING "Not in a git repository. Some features may not work correctly."
   fi
   
+  # Check system resources
+  check_system_resources
+  
   log SUCCESS "Pre-flight checks passed"
+}
+
+# Check system resources (disk, memory, permissions)
+check_system_resources() {
+  log INFO "Checking system resources..."
+  
+  # Check disk space
+  check_disk_space
+  
+  # Check available memory
+  check_memory
+  
+  # Check file system permissions
+  check_filesystem_permissions
+}
+
+# Check available disk space
+check_disk_space() {
+  local required_space_mb=1024  # 1GB in MB
+  local available_space_mb=0
+  
+  # Get available disk space in MB (cross-platform)
+  if [[ "$PLATFORM" == "macos" ]]; then
+    # macOS uses different df syntax
+    available_space_mb=$(df -m "$PROJECT_ROOT" | awk 'NR==2 {print $4}')
+  else
+    # Linux/WSL
+    available_space_mb=$(df -BM "$PROJECT_ROOT" | awk 'NR==2 {gsub(/M/, "", $4); print $4}')
+  fi
+  
+  # Check if we could get the disk space
+  if [[ -z "$available_space_mb" ]] || ! [[ "$available_space_mb" =~ ^[0-9]+$ ]]; then
+    log WARNING "Could not determine available disk space"
+    return
+  fi
+  
+  # Convert to integer for comparison
+  available_space_mb=$((available_space_mb))
+  
+  if [[ $available_space_mb -lt $required_space_mb ]]; then
+    log ERROR "Insufficient disk space: ${available_space_mb}MB available, ${required_space_mb}MB required"
+    log INFO "Please free up disk space and try again"
+    exit 1
+  else
+    log DEBUG "Disk space check passed: ${available_space_mb}MB available"
+  fi
+}
+
+# Check available memory
+check_memory() {
+  local required_memory_mb=512
+  local available_memory_mb=0
+  
+  # Get available memory (cross-platform)
+  if [[ "$PLATFORM" == "macos" ]]; then
+    # macOS: use vm_stat
+    local page_size=$(vm_stat | grep "page size" | awk '{print $8}')
+    local free_pages=$(vm_stat | grep "Pages free" | awk '{print $3}' | sed 's/\.//')
+    local inactive_pages=$(vm_stat | grep "Pages inactive" | awk '{print $3}' | sed 's/\.//')
+    
+    if [[ -n "$page_size" ]] && [[ -n "$free_pages" ]]; then
+      # Calculate available memory in MB
+      available_memory_mb=$(( (free_pages + inactive_pages) * page_size / 1024 / 1024 ))
+    fi
+  else
+    # Linux/WSL: use /proc/meminfo
+    if [[ -f /proc/meminfo ]]; then
+      # Get MemAvailable if present (kernel 3.14+), otherwise calculate from MemFree + Buffers + Cached
+      local mem_available=$(grep -E "^MemAvailable:" /proc/meminfo | awk '{print $2}')
+      
+      if [[ -n "$mem_available" ]]; then
+        available_memory_mb=$((mem_available / 1024))
+      else
+        # Fallback for older kernels
+        local mem_free=$(grep -E "^MemFree:" /proc/meminfo | awk '{print $2}')
+        local buffers=$(grep -E "^Buffers:" /proc/meminfo | awk '{print $2}')
+        local cached=$(grep -E "^Cached:" /proc/meminfo | awk '{print $2}')
+        
+        if [[ -n "$mem_free" ]]; then
+          available_memory_mb=$(( (mem_free + buffers + cached) / 1024 ))
+        fi
+      fi
+    fi
+  fi
+  
+  # Check if we're in a container with memory limits
+  if [[ "$CONTAINER_ENVIRONMENT" == "true" ]]; then
+    # Check cgroup memory limits
+    local cgroup_limit_file="/sys/fs/cgroup/memory/memory.limit_in_bytes"
+    if [[ -f "$cgroup_limit_file" ]]; then
+      local cgroup_limit=$(cat "$cgroup_limit_file" 2>/dev/null)
+      if [[ -n "$cgroup_limit" ]] && [[ "$cgroup_limit" -lt 9223372036854775807 ]]; then
+        # Convert to MB and use the lower of cgroup limit or system memory
+        local cgroup_limit_mb=$((cgroup_limit / 1024 / 1024))
+        if [[ $cgroup_limit_mb -lt $available_memory_mb ]]; then
+          available_memory_mb=$cgroup_limit_mb
+          log DEBUG "Container memory limit detected: ${cgroup_limit_mb}MB"
+        fi
+      fi
+    fi
+  fi
+  
+  # Check if we could determine memory
+  if [[ $available_memory_mb -eq 0 ]]; then
+    log WARNING "Could not determine available memory"
+    return
+  fi
+  
+  # Check against requirement
+  if [[ $available_memory_mb -lt $required_memory_mb ]]; then
+    log WARNING "Low memory: ${available_memory_mb}MB available, ${required_memory_mb}MB recommended"
+    log INFO "Setup may run slowly or fail. Consider closing other applications."
+    
+    # Don't fail, just warn
+    if [[ "$CI_ENVIRONMENT" == "true" ]]; then
+      log INFO "Continuing despite low memory (CI environment)"
+    fi
+  else
+    log DEBUG "Memory check passed: ${available_memory_mb}MB available"
+  fi
+}
+
+# Check file system permissions
+check_filesystem_permissions() {
+  log DEBUG "Checking file system permissions..."
+  
+  # Test write permission in project root
+  local test_file="$PROJECT_ROOT/.setup-permission-test-$$"
+  if ! touch "$test_file" 2>/dev/null; then
+    log ERROR "No write permission in project directory: $PROJECT_ROOT"
+    exit 1
+  fi
+  rm -f "$test_file"
+  
+  # Test temp directory access
+  local temp_test=$(mktemp 2>/dev/null)
+  if [[ -z "$temp_test" ]]; then
+    log ERROR "Cannot create temporary files. Check TMPDIR permissions."
+    exit 1
+  fi
+  rm -f "$temp_test"
+  
+  # Test symlink capability (important for node_modules)
+  if [[ "$PLATFORM" != "wsl" ]]; then  # WSL may have issues with symlinks
+    local test_symlink="$PROJECT_ROOT/.setup-symlink-test-$$"
+    if ln -s "$test_file" "$test_symlink" 2>/dev/null; then
+      rm -f "$test_symlink"
+      log DEBUG "Symlink support verified"
+    else
+      log WARNING "Cannot create symlinks. Some npm packages may not work correctly."
+    fi
+  fi
+  
+  log DEBUG "File system permission checks passed"
 }
 
 # ============================================================================
@@ -635,16 +1004,10 @@ setup_volta() {
       return 1
     fi
     
-    if command_exists curl; then
-      curl -sSf "$volta_url" -o "$installer_script" || {
-        log ERROR "Failed to download Volta installer"
-        return 1
-      }
-    else
-      wget -qO "$installer_script" "$volta_url" || {
-        log ERROR "Failed to download Volta installer"
-        return 1
-      }
+    # Use download_with_retry for resilient network operations
+    if ! download_with_retry "$volta_url" "$installer_script"; then
+      log ERROR "Failed to download Volta installer after multiple attempts"
+      return 1
     fi
     
     # Verify script is not empty and has expected content
@@ -805,15 +1168,27 @@ install_dependencies() {
   log INFO "Installing project dependencies..."
   
   # Clean install in CI
+  local install_cmd
   if [[ "$IS_CI" == "true" ]]; then
-    pnpm install --frozen-lockfile --prefer-offline
+    install_cmd="pnpm install --frozen-lockfile --prefer-offline"
   else
-    pnpm install
+    install_cmd="pnpm install"
   fi
   
-  if [[ $? -ne 0 ]]; then
-    log ERROR "Failed to install dependencies"
-    exit 1
+  # Use retry logic for network operations
+  if ! execute_with_retry "$install_cmd" "pnpm install"; then
+    log ERROR "Failed to install dependencies after multiple attempts"
+    # Try offline mode as fallback if available
+    if pnpm store status &>/dev/null; then
+      log INFO "Attempting offline installation from cache..."
+      if execute_with_retry "pnpm install --offline" "pnpm install (offline)" 1; then
+        log WARNING "Installed from cache (offline mode) - some packages may be outdated"
+      else
+        exit 1
+      fi
+    else
+      exit 1
+    fi
   fi
   
   log SUCCESS "Dependencies installed successfully"
@@ -868,9 +1243,10 @@ build_packages() {
   # Check if packages directory has any packages
   if [[ -d "packages" ]] && find packages -mindepth 1 -maxdepth 1 -type d | grep -q .; then
     log INFO "Building shared packages..."
-    pnpm turbo run build --filter="./packages/*" || {
+    # Use retry logic for build command which may need to download dependencies
+    if ! execute_with_retry "pnpm turbo run build --filter='./packages/*'" "build shared packages"; then
       log WARNING "Some packages failed to build (this may be expected for empty packages)"
-    }
+    fi
   else
     log INFO "No shared packages to build"
   fi
@@ -893,9 +1269,9 @@ setup_git_hooks() {
     if [[ -d ".husky" ]] && [[ -f ".husky/_/husky.sh" ]]; then
       log DEBUG "Git hooks already installed"
     else
-      pnpm run prepare || {
+      if ! execute_with_retry "pnpm run prepare" "setup git hooks"; then
         log WARNING "Failed to setup git hooks"
-      }
+      fi
     fi
   else
     log DEBUG "No git hooks configuration found"
@@ -1072,6 +1448,9 @@ start_dev_server() {
   nohup ./.dev-server-wrapper.sh > "$server_log" 2>&1 &
   local server_pid=$!
   echo $server_pid > "$PID_FILE"
+  
+  # Register for cleanup on signal
+  register_child_process $server_pid
   
   # Create stop script with current PID
   create_stop_script $server_pid
