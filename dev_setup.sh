@@ -25,40 +25,159 @@ LOG_DIR="$PROJECT_ROOT/.setup-logs"
 LOG_FILE="$LOG_DIR/setup-$(date +%Y%m%d).log"  # Daily rotation
 PID_FILE="$PROJECT_ROOT/.dev-server.pid"
 LOCK_FILE="$PROJECT_ROOT/.setup.lock"
+LOCK_TIMEOUT=300  # 5 minutes
 TIMESTAMP=$(date +%Y%m%d_%H%M%S)
 MAX_LOG_SIZE=10485760  # 10MB
 MAX_LOG_AGE_DAYS=7
 
-# CI detection
-IS_CI="${CI:-false}"
-IS_GITHUB_ACTIONS="${GITHUB_ACTIONS:-false}"
-IS_INTERACTIVE=true
+# Environment detection
+INTERACTIVE=true
+CI_ENVIRONMENT=false
+CI_PLATFORM="local"
+CONTAINER_ENVIRONMENT=false
+
+detect_environment() {
+  # Detect CI environment
+  if [[ "${CI:-false}" == "true" ]] || \
+     [[ -n "${GITHUB_ACTIONS:-}" ]] || \
+     [[ -n "${GITLAB_CI:-}" ]] || \
+     [[ -n "${CIRCLECI:-}" ]] || \
+     [[ -n "${JENKINS_URL:-}" ]] || \
+     [[ -n "${BUILDKITE:-}" ]] || \
+     [[ -n "${DRONE:-}" ]] || \
+     [[ -n "${TRAVIS:-}" ]] || \
+     [[ -n "${CODEBUILD_BUILD_ID:-}" ]] || \
+     [[ -n "${AZURE_PIPELINES:-}" ]]; then
+    INTERACTIVE=false
+    CI_ENVIRONMENT=true
+    
+    # Detect specific CI platform
+    if [[ -n "${GITHUB_ACTIONS:-}" ]]; then
+      CI_PLATFORM="github-actions"
+    elif [[ -n "${GITLAB_CI:-}" ]]; then
+      CI_PLATFORM="gitlab"
+    elif [[ -n "${CIRCLECI:-}" ]]; then
+      CI_PLATFORM="circleci"
+    elif [[ -n "${JENKINS_URL:-}" ]]; then
+      CI_PLATFORM="jenkins"
+    elif [[ -n "${BUILDKITE:-}" ]]; then
+      CI_PLATFORM="buildkite"
+    elif [[ -n "${DRONE:-}" ]]; then
+      CI_PLATFORM="drone"
+    elif [[ -n "${TRAVIS:-}" ]]; then
+      CI_PLATFORM="travis"
+    elif [[ -n "${CODEBUILD_BUILD_ID:-}" ]]; then
+      CI_PLATFORM="aws-codebuild"
+    elif [[ -n "${AZURE_PIPELINES:-}" ]]; then
+      CI_PLATFORM="azure-pipelines"
+    else
+      CI_PLATFORM="generic"
+    fi
+  else
+    INTERACTIVE=true
+    CI_ENVIRONMENT=false
+    CI_PLATFORM="local"
+  fi
+  
+  # Detect container environment
+  if [[ -f /.dockerenv ]] || grep -q 'docker\|lxc\|containerd' /proc/1/cgroup 2>/dev/null; then
+    CONTAINER_ENVIRONMENT=true
+  else
+    CONTAINER_ENVIRONMENT=false
+  fi
+  
+  # Non-interactive if not a terminal
+  if [[ ! -t 1 ]]; then
+    INTERACTIVE=false
+  fi
+}
+
+# Detect environment immediately
+detect_environment
+
+# CI-specific logging functions
+log_ci() {
+  local level="$1"
+  shift
+  local message="$*"
+  
+  case "$CI_PLATFORM" in
+    github-actions)
+      case "$level" in
+        error)  echo "::error::$message" ;;
+        warning) echo "::warning::$message" ;;
+        notice) echo "::notice::$message" ;;
+        group)  echo "::group::$message" ;;
+        endgroup) echo "::endgroup::" ;;
+        *)      echo "$message" ;;
+      esac
+      ;;
+    gitlab)
+      case "$level" in
+        error)  echo -e "\e[31mERROR: $message\e[0m" ;;
+        warning) echo -e "\e[33mWARN: $message\e[0m" ;;
+        *)      echo "$message" ;;
+      esac
+      ;;
+    *)
+      echo "[$level] $message"
+      ;;
+  esac
+}
+
+# Backward compatibility
+IS_CI="$CI_ENVIRONMENT"
+IS_GITHUB_ACTIONS="false"
+if [[ "$CI_PLATFORM" == "github-actions" ]]; then
+  IS_GITHUB_ACTIONS="true"
+fi
+IS_INTERACTIVE="$INTERACTIVE"
 
 # Platform detection
-IS_WINDOWS=false
+PLATFORM=""
+ARCH=""
 IS_WSL=false
-IS_NATIVE_WINDOWS=false
 
-# Detect platform
-if [[ "$OSTYPE" == "msys" ]] || [[ "$OSTYPE" == "cygwin" ]] || [[ "$OS" == "Windows_NT" ]]; then
-  if grep -qEi "(Microsoft|WSL)" /proc/version 2>/dev/null; then
-    IS_WSL=true
-  else
-    IS_NATIVE_WINDOWS=true
-    IS_WINDOWS=true
-  fi
-fi
+detect_platform() {
+  case "$(uname -s)" in
+    Darwin*)    
+      PLATFORM="macos"
+      # Detect Apple Silicon
+      if [[ "$(uname -m)" == "arm64" ]]; then
+        ARCH="arm64"
+      else
+        ARCH="x86_64"
+      fi
+      ;;
+    Linux*)     
+      if [[ -n "${WSL_DISTRO_NAME:-}" ]] || grep -qi microsoft /proc/version 2>/dev/null; then
+        PLATFORM="wsl"
+        IS_WSL=true
+      else
+        PLATFORM="linux"
+      fi
+      ARCH="$(uname -m)"
+      ;;
+    CYGWIN*|MINGW32*|MSYS*|MINGW*) 
+      echo "❌ ERROR: Native Windows detected. This script requires WSL2 or a Unix-like environment."
+      echo "📚 Please install WSL2: https://docs.microsoft.com/en-us/windows/wsl/install"
+      echo ""
+      echo "After installing WSL2, run this script from within your WSL2 terminal."
+      exit 1
+      ;;
+    *)          
+      echo "❌ ERROR: Unknown platform detected: $(uname -s)"
+      echo "Supported platforms: macOS, Linux, WSL2"
+      exit 1
+      ;;
+  esac
+}
 
-# Block native Windows
-if [[ "$IS_NATIVE_WINDOWS" == "true" ]]; then
-  echo "❌ ERROR: Native Windows is not supported. Please use WSL2."
-  echo "📚 Installation guide: https://docs.microsoft.com/en-us/windows/wsl/install"
-  exit 1
-fi
+# Detect platform immediately
+detect_platform
 
-# Colors for output (disabled in CI)
-if [[ "$IS_CI" == "true" ]] || [[ ! -t 1 ]]; then
-  IS_INTERACTIVE=false
+# Colors for output (disabled in CI or non-interactive)
+if [[ "$CI_ENVIRONMENT" == "true" ]] || [[ "$INTERACTIVE" == "false" ]]; then
   RED=""
   GREEN=""
   YELLOW=""
@@ -83,25 +202,47 @@ fi
 # ============================================================================
 
 acquire_lock() {
-  local max_wait=30
-  local wait_time=0
+  local lock_dir="${LOCK_FILE}.lock"
+  local timeout="${LOCK_TIMEOUT:-300}"
+  local waited=0
   
-  while [[ -f "$LOCK_FILE" ]] && [[ $wait_time -lt $max_wait ]]; do
-    echo "⏳ Another setup instance is running. Waiting..."
+  # Atomic directory creation
+  while ! mkdir "$lock_dir" 2>/dev/null; do
+    if [[ $waited -ge $timeout ]]; then
+      # Check if lock is stale
+      if [[ -f "$lock_dir/pid" ]]; then
+        local pid=$(cat "$lock_dir/pid" 2>/dev/null || echo "")
+        if [[ -n "$pid" ]] && ! kill -0 "$pid" 2>/dev/null; then
+          log WARNING "Removing stale lock (PID $pid no longer exists)"
+          rm -rf "$lock_dir"
+          continue
+        fi
+      fi
+      log ERROR "Failed to acquire lock after ${timeout}s"
+      log INFO "Another instance may be running. If not, remove: $lock_dir"
+      exit 1
+    fi
+    
+    if [[ $((waited % 10)) -eq 0 ]]; then
+      log INFO "Waiting for lock... (${waited}s elapsed)"
+    fi
+    
     sleep 1
-    ((wait_time++))
+    ((waited++))
   done
   
-  if [[ -f "$LOCK_FILE" ]]; then
-    echo "❌ ERROR: Setup lock file exists after ${max_wait}s. Remove $LOCK_FILE if no setup is running."
-    exit 1
-  fi
-  
-  echo $$ > "$LOCK_FILE"
+  # Store PID and timestamp for stale lock detection
+  echo $$ > "$lock_dir/pid"
+  echo "$(date -Iseconds)" > "$lock_dir/timestamp"
+  log DEBUG "Lock acquired by PID $$"
 }
 
 release_lock() {
-  rm -f "$LOCK_FILE"
+  local lock_dir="${LOCK_FILE}.lock"
+  if [[ -d "$lock_dir" ]]; then
+    rm -rf "$lock_dir"
+    log DEBUG "Lock released by PID $$"
+  fi
 }
 
 # Ensure lock is released on exit
@@ -236,6 +377,68 @@ preflight_checks() {
     exit 1
   fi
   
+  # Check for conflicting Node.js version managers
+  local conflicting_managers=()
+  local uninstall_commands=()
+  
+  # Check for nvm
+  if [[ -n "${NVM_DIR:-}" ]] || command_exists nvm || [[ -f "$HOME/.nvm/nvm.sh" ]]; then
+    conflicting_managers+=("nvm")
+    uninstall_commands+=("  - nvm: rm -rf ~/.nvm && sed -i '/NVM_DIR/d;/nvm.sh/d' ~/.bashrc ~/.zshrc")
+  fi
+  
+  # Check for fnm (can be installed in multiple locations)
+  local fnm_dirs=(
+    "$HOME/.fnm"
+    "${XDG_DATA_HOME:-$HOME/.local/share}/fnm"
+    "$HOME/Library/Application Support/fnm"  # macOS
+  )
+  local fnm_found=false
+  for dir in "${fnm_dirs[@]}"; do
+    if [[ -d "$dir" ]]; then
+      fnm_found=true
+      break
+    fi
+  done
+  
+  if command_exists fnm || [[ "$fnm_found" == "true" ]] || [[ -n "${FNM_PATH:-}" ]]; then
+    conflicting_managers+=("fnm")
+    # Note: fnm can be installed in different locations depending on version and OS
+    uninstall_commands+=("  - fnm: rm -rf ~/.fnm ~/.local/share/fnm ~/Library/Application\\ Support/fnm && sed -i '/# fnm/,/^fi/d;/FNM_PATH/d;/fnm env/d' ~/.bashrc ~/.zshrc ~/.config/fish/config.fish 2>/dev/null")
+  fi
+  
+  # Check for n
+  if command_exists n; then
+    conflicting_managers+=("n")
+    uninstall_commands+=("  - n: npm uninstall -g n")
+  fi
+  
+  # Check for asdf with nodejs plugin
+  if command_exists asdf && asdf list nodejs &>/dev/null 2>&1; then
+    conflicting_managers+=("asdf (nodejs plugin)")
+    uninstall_commands+=("  - asdf: asdf uninstall nodejs && asdf plugin remove nodejs")
+  fi
+  
+  # Check for nodenv
+  if command_exists nodenv || [[ -d "$HOME/.nodenv" ]]; then
+    conflicting_managers+=("nodenv")
+    uninstall_commands+=("  - nodenv: rm -rf ~/.nodenv && sed -i '/nodenv/d' ~/.bashrc ~/.zshrc")
+  fi
+  
+  # If conflicting managers found, fail with instructions
+  if [[ ${#conflicting_managers[@]} -gt 0 ]]; then
+    log ERROR "Conflicting Node.js version managers detected: ${conflicting_managers[*]}"
+    log ERROR "Volta cannot be installed alongside other Node.js version managers."
+    log INFO ""
+    log INFO "Please uninstall the following before running this setup:"
+    for cmd in "${uninstall_commands[@]}"; do
+      log INFO "$cmd"
+    done
+    log INFO ""
+    log INFO "After uninstalling, restart your shell and run this setup again."
+    exit 1
+  fi
+  
   # Check if we're in a git repository
   if ! git rev-parse --git-dir > /dev/null 2>&1; then
     log WARNING "Not in a git repository. Some features may not work correctly."
@@ -251,31 +454,35 @@ preflight_checks() {
 setup_volta() {
   log INFO "Checking Volta installation..."
   
-  if command_exists volta; then
-    local installed_volta_version=$(volta --version 2>/dev/null | cut -d' ' -f2)
-    log INFO "Volta $installed_volta_version is already installed"
-    
-    # Ensure Volta is in PATH for this session
-    export VOLTA_HOME="${VOLTA_HOME:-$HOME/.volta}"
-    export PATH="$VOLTA_HOME/bin:$PATH"
-    return 0
-  fi
-  
-  log INFO "Installing Volta $VOLTA_VERSION..."
-  
-  # Download and install Volta
-  if command_exists curl; then
-    curl -sSf https://get.volta.sh | bash -s -- --skip-setup 2>&1 | tee -a "$LOG_FILE"
-  else
-    wget -qO- https://get.volta.sh | bash -s -- --skip-setup 2>&1 | tee -a "$LOG_FILE"
-  fi
-  
-  # Set up environment for current session
-  export VOLTA_HOME="$HOME/.volta"
+  # Ensure Volta is in PATH for this session first
+  export VOLTA_HOME="${VOLTA_HOME:-$HOME/.volta}"
   export PATH="$VOLTA_HOME/bin:$PATH"
   
-  # Add to shell profile (idempotent)
-  if [[ "$IS_INTERACTIVE" == "true" ]] && [[ "$IS_CI" != "true" ]]; then
+  local needs_install=false
+  
+  # Check if Volta binary exists (not just in PATH)
+  if [[ -x "$VOLTA_HOME/bin/volta" ]]; then
+    local installed_volta_version=$("$VOLTA_HOME/bin/volta" --version 2>/dev/null | cut -d' ' -f2)
+    log INFO "Volta $installed_volta_version is already installed"
+  else
+    needs_install=true
+  fi
+  
+  # Install Volta if needed
+  if [[ "$needs_install" == "true" ]]; then
+    log INFO "Installing Volta $VOLTA_VERSION..."
+    
+    # Download and install Volta
+    if command_exists curl; then
+      curl -sSf https://get.volta.sh | bash -s -- --skip-setup 2>&1 | tee -a "$LOG_FILE"
+    else
+      wget -qO- https://get.volta.sh | bash -s -- --skip-setup 2>&1 | tee -a "$LOG_FILE"
+    fi
+  fi
+  
+  # Always ensure Volta is in shell profile (idempotent)
+  # This needs to run even if Volta was already installed
+  if [[ "$IS_CI" != "true" ]]; then
     local shell_profile=""
     if [[ -n "${BASH_VERSION:-}" ]]; then
       shell_profile="$HOME/.bashrc"
@@ -305,7 +512,10 @@ setup_volta() {
     return 1
   fi
   
-  log SUCCESS "Volta installed successfully"
+  if [[ "$needs_install" == "true" ]]; then
+    log SUCCESS "Volta installed successfully"
+  fi
+  
   return 0
 }
 
@@ -512,27 +722,75 @@ cleanup_old_processes() {
     local old_pid=$(cat "$PID_FILE" 2>/dev/null || echo "")
     if [[ -n "$old_pid" ]]; then
       if kill -0 "$old_pid" 2>/dev/null; then
-        log INFO "Stopping old dev server (PID: $old_pid)..."
-        kill -TERM "$old_pid" 2>/dev/null || true
-        sleep 2
-        if kill -0 "$old_pid" 2>/dev/null; then
-          kill -KILL "$old_pid" 2>/dev/null || true
-        fi
+        log INFO "Found old dev server (PID: $old_pid)"
+        kill_process_safely "$old_pid"
       fi
       rm -f "$PID_FILE"
     fi
   fi
 }
 
+find_process_by_port() {
+  local port="$1"
+  local pid=""
+  
+  # Try multiple methods in order of preference
+  if command_exists lsof; then
+    pid=$(lsof -ti :$port 2>/dev/null || true)
+  elif command_exists ss; then
+    # ss is more modern than netstat and available on most Linux systems
+    pid=$(ss -tlnp 2>/dev/null | grep ":$port " | grep -oP 'pid=\K\d+' || true)
+  elif command_exists netstat; then
+    if [[ "$PLATFORM" == "macos" ]]; then
+      # macOS netstat has different options
+      pid=$(netstat -vanp tcp 2>/dev/null | grep "\\.$port " | awk '{print $9}')
+    else
+      # Linux netstat (requires root for -p)
+      pid=$(netstat -tlnp 2>/dev/null | grep ":$port " | awk '{print $7}' | cut -d/ -f1)
+    fi
+  fi
+  
+  echo "$pid"
+}
+
 check_port() {
   local port=$1
-  if command_exists lsof; then
-    lsof -i :$port >/dev/null 2>&1
-  elif command_exists netstat; then
-    netstat -an | grep -q ":$port.*LISTEN"
-  else
-    # Fallback: try to connect
-    timeout 1 bash -c "echo >/dev/tcp/localhost/$port" 2>/dev/null
+  local pid=$(find_process_by_port "$port")
+  
+  if [[ -n "$pid" ]]; then
+    return 0  # Port is in use
+  fi
+  
+  # Fallback: try to connect
+  if timeout 1 bash -c "echo >/dev/tcp/localhost/$port" 2>/dev/null; then
+    return 0  # Port is in use
+  fi
+  
+  return 1  # Port is free
+}
+
+kill_process_safely() {
+  local pid="$1"
+  local signal="${2:-TERM}"
+  
+  if [[ -z "$pid" ]] || ! kill -0 "$pid" 2>/dev/null; then
+    return 0  # Process doesn't exist
+  fi
+  
+  log INFO "Terminating process $pid with signal $signal..."
+  kill -$signal "$pid" 2>/dev/null || true
+  
+  # Give process time to terminate gracefully
+  local count=0
+  while kill -0 "$pid" 2>/dev/null && [[ $count -lt 10 ]]; do
+    sleep 0.5
+    ((count++))
+  done
+  
+  # Force kill if still running
+  if kill -0 "$pid" 2>/dev/null; then
+    log WARNING "Process $pid didn't terminate, using SIGKILL"
+    kill -9 "$pid" 2>/dev/null || true
   fi
 }
 
