@@ -471,8 +471,12 @@ setup_logging() {
 redact_sensitive() {
   local message="$1"
   
-  # Redact API keys (various formats)
-  message=$(echo "$message" | sed -E 's/([A-Za-z0-9_-]{20,})/[REDACTED-KEY]/g')
+  # Redact JWT tokens FIRST (format: header.payload.signature, where header typically starts with eyJ)
+  # JWTs are base64url encoded and the header usually starts with eyJ (which is {"alg": in base64)
+  message=$(echo "$message" | sed -E 's/\beyJ[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+\b/[REDACTED-JWT]/g')
+  
+  # Redact SSH keys
+  message=$(echo "$message" | sed -E 's/(-----BEGIN[^-]+-----[^-]+-----END[^-]+-----)/[REDACTED-SSH-KEY]/g')
   
   # Redact tokens
   message=$(echo "$message" | sed -E 's/(token[[:space:]]*[:=][[:space:]]*[^[:space:]]+)/[REDACTED-TOKEN]/gi')
@@ -486,12 +490,11 @@ redact_sensitive() {
   # Redact common secret patterns
   message=$(echo "$message" | sed -E 's/(secret[[:space:]]*[:=][[:space:]]*[^[:space:]]+)/[REDACTED-SECRET]/gi')
   
-  # Redact SSH keys
-  message=$(echo "$message" | sed -E 's/(-----BEGIN[^-]+-----[^-]+-----END[^-]+-----)/[REDACTED-SSH-KEY]/g')
-  
-  # Redact JWT tokens (format: header.payload.signature, where header typically starts with eyJ)
-  # JWTs are base64url encoded and the header usually starts with eyJ (which is {"alg": in base64)
-  message=$(echo "$message" | sed -E 's/\beyJ[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+\b/[REDACTED-JWT]/g')
+  # Redact API keys LAST (various formats)
+  # Skip if already contains REDACTED to prevent double-redaction
+  if [[ ! "$message" =~ \[REDACTED- ]]; then
+    message=$(echo "$message" | sed -E 's/([A-Za-z0-9_-]{20,})/[REDACTED-KEY]/g')
+  fi
   
   echo "$message"
 }
