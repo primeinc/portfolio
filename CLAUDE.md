@@ -21,28 +21,23 @@ Run the automated setup script:
 ./dev_setup.sh
 ```
 
-The script (v1.2.0) provides:
+The script (v2.0.0) provides:
 
 - **Idempotent execution**: Safe to run multiple times
 - **Cross-platform support**: macOS, Linux, WSL2, and CI environments
-- **Security hardening**: Input validation, secure downloads, sensitive data redaction
-- **Conflict detection**: Checks for incompatible Node.js version managers (nvm, fnm, etc.)
-- **Automatic recovery**: Lock files, signal handling, and cleanup
-- **Network resilience**: Retry logic with exponential backoff for downloads and commands
-- **Resource validation**: Pre-flight checks for disk space, memory, and permissions
-- **Signal handling**: Graceful shutdown on SIGINT, SIGTERM, SIGHUP with child process cleanup
-- **Enhanced Volta+pnpm support**: Automatic fallback to npm when Volta's experimental pnpm support fails
+- **Conflict detection**: Warns about incompatible Node.js version managers (nvm, fnm, etc.)
+- **Automatic recovery**: Lock files to prevent concurrent runs
+- **Proper environment setup**: Correctly initializes Volta and pnpm paths
+- **Clear error messages**: Helpful debugging information when things go wrong
+- **Logging**: Detailed logs for troubleshooting with automatic rotation
 
-### Security Features
+### Key Features
 
-The setup script implements several security measures:
-
-- Environment variable sanitization
-- Path and URL validation to prevent injection
-- Sensitive data redaction in logs (API keys, tokens, passwords, JWTs)
-- Secure Volta installation (no curl|bash piping)
-- Checksum verification for downloaded binaries (v1.2.0+)
-- Atomic operations with proper lock management
+- Installs Volta, Node.js 20.17.0, and pnpm 9.12.0
+- Uses official pnpm installer (more reliable than Volta's experimental support)
+- Properly exports paths for current shell session
+- Updates shell profiles for future sessions
+- Verifies installations actually work before proceeding
 
 ### Important Notes
 

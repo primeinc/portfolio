@@ -7,6 +7,27 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.0.0] - 2025-05-30
+
+### Changed
+- **Complete rewrite of dev_setup.sh** focusing on what actually works
+- Removed all security theater (checksums, production mode, etc.)
+- Simplified to core functionality: install Volta, Node, pnpm, dependencies
+- Fixed critical Volta environment initialization issues
+- Uses official pnpm installer instead of unreliable Volta integration
+
+### Removed
+- Checksum verification (no official checksums available)
+- Log redaction (over-engineered, marked for future consideration)
+- Production mode checks
+- Complex CI status check (reverted to simple, working version)
+- Over 1500 lines of unnecessary complexity
+
+### Fixed
+- Volta "Node is not available" errors by properly setting environment
+- pnpm installation reliability by using official installer
+- Script actually works now in fresh environments
+
 ## [1.2.0] - 2025-05-30
 
 ### Added
