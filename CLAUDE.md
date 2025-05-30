@@ -21,7 +21,7 @@ Run the automated setup script:
 ./dev_setup.sh
 ```
 
-The script (v1.1.0) provides:
+The script (v1.2.0) provides:
 
 - **Idempotent execution**: Safe to run multiple times
 - **Cross-platform support**: macOS, Linux, WSL2, and CI environments
@@ -39,8 +39,9 @@ The setup script implements several security measures:
 
 - Environment variable sanitization
 - Path and URL validation to prevent injection
-- Sensitive data redaction in logs (API keys, tokens, passwords)
+- Sensitive data redaction in logs (API keys, tokens, passwords, JWTs)
 - Secure Volta installation (no curl|bash piping)
+- Checksum verification for downloaded binaries (v1.2.0+)
 - Atomic operations with proper lock management
 
 ### Important Notes

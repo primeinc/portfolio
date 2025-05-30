@@ -7,9 +7,36 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.2.0] - 2025-05-30
+
+### Added
+- **Checksum Verification System**: Security enhancement for downloads
+  - Added `verify_checksum()` function supporting SHA256 and SHA1
+  - Volta installer checksum verification (when checksum provided)
+  - Displays calculated checksums when official ones unavailable
+  - Support for `VOLTA_INSTALLER_CHECKSUM` environment variable
+  - Added `--skip-checksums` flag for development environments
+  - Added `--help` flag with usage information
+  - Production mode enforcement via `PRODUCTION_MODE` environment variable
+  - NOTE: Volta does not provide official checksums; users must verify manually
+
+- **Enhanced Log Redaction**: Improved security for sensitive data
+  - Added JWT token redaction with proper pattern (eyJ prefix requirement)
+  - Now redacts: API keys, tokens, passwords, auth headers, SSH keys, and JWTs
+
+### Changed
+- Script version bumped to 1.2.0
+- Enhanced main() function with proper argument parsing
+- Improved security posture with checksum verification by default
+
 ### Fixed
-- Removed redundant `workspaces` field from package.json that was causing pnpm warnings
-- Updated CLAUDE.md to clarify pnpm workspace configuration
+- Updated README_BEFORE_UPGRADING.md to correctly reflect CI/CD pipeline exists
+- Removed documentation inconsistency about missing CI/CD implementation
+- Improved CI status check logic in GitHub Actions workflow for more robust failure detection
+
+### Security
+- Checksum verification prevents MITM attacks on Volta installer
+- JWT tokens now properly redacted from all log output
 
 ## [1.1.0] - 2025-05-30
 

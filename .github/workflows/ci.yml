@@ -277,9 +277,30 @@ jobs:
     steps:
       - name: Check status
         run: |
-          if [[ "${{ contains(needs.*.result, 'failure') }}" == "true" ]]; then
-            echo "CI failed"
+          # More robust status check that handles all non-success statuses
+          failed=false
+          for result in ${{ toJson(needs.*.result) }}; do
+            # Remove quotes from JSON string
+            result="${result//\"/}"
+            # Skip opening and closing brackets
+            if [[ "$result" == "[" ]] || [[ "$result" == "]" ]]; then
+              continue
+            fi
+            # Remove trailing comma if present
+            result="${result%,}"
+            
+            echo "Job result: $result"
+            
+            # Check if the job result is not success or skipped
+            if [[ "$result" != "success" ]] && [[ "$result" != "skipped" ]]; then
+              echo "Found non-success job status: $result"
+              failed=true
+            fi
+          done
+          
+          if [[ "$failed" == "true" ]]; then
+            echo "❌ CI failed - one or more jobs did not succeed"
             exit 1
           else
-            echo "CI passed"
+            echo "✅ CI passed - all jobs succeeded"
           fi

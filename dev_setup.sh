@@ -8,7 +8,7 @@
 set -euo pipefail
 
 # Script version for tracking
-SCRIPT_VERSION="1.1.0"
+SCRIPT_VERSION="1.2.0"
 
 # ============================================================================
 # Environment Variable Sanitization
@@ -489,6 +489,10 @@ redact_sensitive() {
   # Redact SSH keys
   message=$(echo "$message" | sed -E 's/(-----BEGIN[^-]+-----[^-]+-----END[^-]+-----)/[REDACTED-SSH-KEY]/g')
   
+  # Redact JWT tokens (format: header.payload.signature, where header typically starts with eyJ)
+  # JWTs are base64url encoded and the header usually starts with eyJ (which is {"alg": in base64)
+  message=$(echo "$message" | sed -E 's/\beyJ[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+\b/[REDACTED-JWT]/g')
+  
   echo "$message"
 }
 
@@ -684,6 +688,67 @@ download_with_retry() {
   done
   
   return 1
+}
+
+# Verify file checksum (supports SHA256 and SHA1)
+verify_checksum() {
+  local file="$1"
+  local expected_checksum="$2"
+  local checksum_type="${3:-sha256}"
+  
+  if [[ ! -f "$file" ]]; then
+    log ERROR "File not found for checksum verification: $file"
+    return 1
+  fi
+  
+  if [[ -z "$expected_checksum" ]]; then
+    log ERROR "No checksum provided for verification"
+    return 1
+  fi
+  
+  local actual_checksum=""
+  
+  # Calculate checksum based on type and platform
+  case "$checksum_type" in
+    sha256)
+      if command_exists sha256sum; then
+        actual_checksum=$(sha256sum "$file" | awk '{print $1}')
+      elif command_exists shasum; then
+        actual_checksum=$(shasum -a 256 "$file" | awk '{print $1}')
+      else
+        log ERROR "No SHA256 tool available (need sha256sum or shasum)"
+        return 1
+      fi
+      ;;
+    sha1)
+      if command_exists sha1sum; then
+        actual_checksum=$(sha1sum "$file" | awk '{print $1}')
+      elif command_exists shasum; then
+        actual_checksum=$(shasum -a 1 "$file" | awk '{print $1}')
+      else
+        log ERROR "No SHA1 tool available (need sha1sum or shasum)"
+        return 1
+      fi
+      ;;
+    *)
+      log ERROR "Unsupported checksum type: $checksum_type"
+      return 1
+      ;;
+  esac
+  
+  # Normalize checksums (lowercase, trim whitespace)
+  expected_checksum=$(echo "$expected_checksum" | tr '[:upper:]' '[:lower:]' | xargs)
+  actual_checksum=$(echo "$actual_checksum" | tr '[:upper:]' '[:lower:]' | xargs)
+  
+  if [[ "$expected_checksum" != "$actual_checksum" ]]; then
+    log ERROR "Checksum verification failed!"
+    log ERROR "Expected: $expected_checksum"
+    log ERROR "Actual:   $actual_checksum"
+    return 1
+  fi
+  
+  log SUCCESS "Checksum verified successfully"
+  return 0
 }
 
 # Execute a command with retry logic (useful for pnpm install)
@@ -1061,6 +1126,54 @@ setup_volta() {
     if [[ ! -s "$installer_script" ]]; then
       log ERROR "Downloaded Volta installer is empty"
       return 1
+    fi
+    
+    # Checksum verification
+    if [[ "${SKIP_CHECKSUMS:-false}" != "true" ]]; then
+      # NOTE: Volta does not provide official checksums for their installer
+      # We can only verify consistency between downloads or use a locally maintained checksum
+      
+      # Option 1: Use a known-good checksum if provided
+      if [[ -n "${VOLTA_INSTALLER_CHECKSUM:-}" ]]; then
+        log INFO "Verifying Volta installer checksum..."
+        if ! verify_checksum "$installer_script" "$VOLTA_INSTALLER_CHECKSUM" "sha256"; then
+          log ERROR "Volta installer checksum verification failed!"
+          log ERROR "This could indicate a compromised download or network issue."
+          log ERROR "To skip verification (NOT RECOMMENDED), use: ./dev_setup.sh --skip-checksums"
+          return 1
+        fi
+      else
+        # Option 2: Calculate and display checksum for manual verification
+        local calculated_checksum=""
+        if command_exists sha256sum; then
+          calculated_checksum=$(sha256sum "$installer_script" | awk '{print $1}')
+        elif command_exists shasum; then
+          calculated_checksum=$(shasum -a 256 "$installer_script" | awk '{print $1}')
+        fi
+        
+        if [[ -n "$calculated_checksum" ]]; then
+          log WARNING "Volta does not provide official checksums for verification"
+          log INFO "Downloaded installer SHA256: $calculated_checksum"
+          log INFO "Please verify this matches a known-good value or previous downloads"
+          log INFO "To use this checksum in future runs:"
+          log INFO "export VOLTA_INSTALLER_CHECKSUM='$calculated_checksum'"
+          
+          # Save checksum for reference
+          echo "$calculated_checksum" > "$temp_dir/volta-installer.sha256"
+          
+          # In production, require explicit checksum
+          if [[ "${PRODUCTION_MODE:-false}" == "true" ]]; then
+            log ERROR "Production mode requires explicit checksum verification"
+            log ERROR "Set VOLTA_INSTALLER_CHECKSUM environment variable"
+            return 1
+          fi
+        else
+          log WARNING "Unable to calculate checksum (no sha256sum or shasum available)"
+        fi
+      fi
+    else
+      log WARNING "Checksum verification skipped (--skip-checksums flag used)"
+      log WARNING "This is NOT RECOMMENDED for production environments"
     fi
     
     # Basic validation - check for known Volta installer patterns
@@ -1705,6 +1818,39 @@ validate_setup() {
 
 main() {
   local start_time=$(date +%s)
+  local skip_checksums=false
+  
+  # Parse command line arguments
+  while [[ $# -gt 0 ]]; do
+    case "$1" in
+      --skip-checksums)
+        skip_checksums=true
+        log WARNING "Checksum verification will be skipped (--skip-checksums flag used)"
+        shift
+        ;;
+      --help|-h)
+        echo "Usage: $0 [options]"
+        echo ""
+        echo "Options:"
+        echo "  --skip-checksums    Skip checksum verification for downloads"
+        echo "  --help, -h          Show this help message"
+        echo ""
+        echo "Environment variables:"
+        echo "  VOLTA_INSTALLER_CHECKSUM    SHA256 checksum for Volta installer"
+        echo "  DEBUG                       Set to 'true' for verbose output"
+        echo ""
+        exit 0
+        ;;
+      *)
+        log ERROR "Unknown option: $1"
+        echo "Use --help for usage information"
+        exit 1
+        ;;
+    esac
+  done
+  
+  # Export skip_checksums for use in other functions
+  export SKIP_CHECKSUMS="$skip_checksums"
   
   echo ""
   echo -e "${BOLD}🚀 Portfolio Monorepo Development Setup (Idempotent)${NC}"
