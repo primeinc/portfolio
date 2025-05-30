@@ -3,8 +3,40 @@
 # Portfolio Monorepo Development Environment Setup - IDEMPOTENT VERSION
 # Safe to run multiple times without side effects
 # Implements best practices from Vercel, Microsoft Rush, and Google monorepos
+# Version: 1.0.0
 
 set -euo pipefail
+
+# Script version for tracking
+SCRIPT_VERSION="1.0.0"
+
+# ============================================================================
+# Environment Variable Sanitization
+# ============================================================================
+
+# Function to sanitize a variable - removes dangerous characters
+sanitize_var() {
+  local var_name="$1"
+  local var_value="${!var_name:-}"
+  
+  # Remove null bytes, newlines, and other control characters
+  var_value="${var_value//[$'\0-\037']/}"
+  
+  # For paths, only allow safe characters
+  if [[ "$var_name" =~ (PATH|HOME|DIR) ]]; then
+    var_value="${var_value//[^a-zA-Z0-9:\/._-]/}"
+  fi
+  
+  # Re-export the sanitized value
+  export "$var_name"="$var_value"
+}
+
+# Sanitize critical environment variables
+for var in PATH HOME TMPDIR PWD SHELL USER VOLTA_HOME SCRIPT_DIR PROJECT_ROOT; do
+  if [[ -n "${!var:-}" ]]; then
+    sanitize_var "$var"
+  fi
+done
 
 # ============================================================================
 # Configuration
@@ -82,8 +114,31 @@ detect_environment() {
   # Detect container environment
   if [[ -f /.dockerenv ]] || grep -q 'docker\|lxc\|containerd' /proc/1/cgroup 2>/dev/null; then
     CONTAINER_ENVIRONMENT=true
+    
+    # Container-specific adjustments
+    log INFO "Running in container environment"
+    
+    # Disable interactive prompts in containers
+    INTERACTIVE=false
+    
+    # Disable color if not explicitly forced
+    if [[ -z "${FORCE_COLOR:-}" ]]; then
+      export FORCE_COLOR=0
+      RED=""
+      GREEN=""
+      YELLOW=""
+      BLUE=""
+      MAGENTA=""
+      CYAN=""
+      BOLD=""
+      NC=""
+    fi
+    
+    # Set flag to skip browser opening
+    SKIP_BROWSER_OPEN=true
   else
     CONTAINER_ENVIRONMENT=false
+    SKIP_BROWSER_OPEN=false
   fi
   
   # Non-interactive if not a terminal
@@ -253,6 +308,9 @@ trap release_lock EXIT
 # ============================================================================
 
 setup_logging() {
+  # Sanitize log directory path
+  LOG_DIR="${LOG_DIR//[^a-zA-Z0-9\/_.-]/}"
+  
   # Create log directory
   mkdir -p "$LOG_DIR"
   
@@ -270,16 +328,44 @@ setup_logging() {
   echo "===== Setup started at $(date) by PID $$ =====" >> "$LOG_FILE"
 }
 
+# Redact sensitive information from log messages
+redact_sensitive() {
+  local message="$1"
+  
+  # Redact API keys (various formats)
+  message=$(echo "$message" | sed -E 's/([A-Za-z0-9_-]{20,})/[REDACTED-KEY]/g')
+  
+  # Redact tokens
+  message=$(echo "$message" | sed -E 's/(token[[:space:]]*[:=][[:space:]]*[^[:space:]]+)/[REDACTED-TOKEN]/gi')
+  
+  # Redact passwords
+  message=$(echo "$message" | sed -E 's/(password[[:space:]]*[:=][[:space:]]*[^[:space:]]+)/[REDACTED-PASS]/gi')
+  
+  # Redact authorization headers
+  message=$(echo "$message" | sed -E 's/(authorization[[:space:]]*[:=][[:space:]]*[^[:space:]]+)/[REDACTED-AUTH]/gi')
+  
+  # Redact common secret patterns
+  message=$(echo "$message" | sed -E 's/(secret[[:space:]]*[:=][[:space:]]*[^[:space:]]+)/[REDACTED-SECRET]/gi')
+  
+  # Redact SSH keys
+  message=$(echo "$message" | sed -E 's/(-----BEGIN[^-]+-----[^-]+-----END[^-]+-----)/[REDACTED-SSH-KEY]/g')
+  
+  echo "$message"
+}
+
 log() {
   local level=$1
   shift
   local message="$*"
   local timestamp=$(date '+%Y-%m-%d %H:%M:%S')
   
-  # Log to file
-  echo "[$timestamp] [$level] $message" >> "$LOG_FILE"
+  # Redact sensitive information
+  local safe_message=$(redact_sensitive "$message")
   
-  # Log to console with colors
+  # Log to file (with redaction)
+  echo "[$timestamp] [$level] $safe_message" >> "$LOG_FILE"
+  
+  # Log to console with colors (original message for local display)
   case $level in
     ERROR)
       echo -e "${RED}❌ ERROR:${NC} $message" >&2
@@ -310,6 +396,63 @@ log() {
 
 command_exists() {
   command -v "$1" &> /dev/null
+}
+
+# Validate a path - ensure it doesn't contain dangerous patterns
+validate_path() {
+  local path="$1"
+  local path_type="${2:-generic}"  # generic, directory, file
+  
+  # Check for null bytes
+  if [[ "$path" =~ $'\0' ]]; then
+    log ERROR "Invalid path: contains null bytes"
+    return 1
+  fi
+  
+  # Check for path traversal attempts
+  if [[ "$path" =~ \.\. ]]; then
+    log ERROR "Invalid path: potential directory traversal"
+    return 1
+  fi
+  
+  # Ensure path doesn't contain shell metacharacters
+  if [[ "$path" =~ [\;\|\&\<\>\$\(\)\{\}\[\]\*\?] ]]; then
+    log ERROR "Invalid path: contains shell metacharacters"
+    return 1
+  fi
+  
+  # Additional checks for directory paths
+  if [[ "$path_type" == "directory" ]] && [[ -e "$path" ]] && [[ ! -d "$path" ]]; then
+    log ERROR "Invalid path: exists but is not a directory"
+    return 1
+  fi
+  
+  return 0
+}
+
+# Validate a URL - ensure it's a proper HTTPS URL
+validate_url() {
+  local url="$1"
+  
+  # Must start with https://
+  if [[ ! "$url" =~ ^https:// ]]; then
+    log ERROR "Invalid URL: must use HTTPS"
+    return 1
+  fi
+  
+  # Check for valid domain pattern
+  if [[ ! "$url" =~ ^https://[a-zA-Z0-9.-]+\.[a-zA-Z]{2,} ]]; then
+    log ERROR "Invalid URL: malformed domain"
+    return 1
+  fi
+  
+  # Ensure no shell metacharacters in the path/query part
+  if [[ "$url" =~ [\;\|\&\<\>\$\(\)\{\}\[\]\'] ]]; then
+    log ERROR "Invalid URL: contains dangerous characters"
+    return 1
+  fi
+  
+  return 0
 }
 
 get_node_version() {
@@ -454,6 +597,12 @@ preflight_checks() {
 setup_volta() {
   log INFO "Checking Volta installation..."
   
+  # Warn about Volta in containers
+  if [[ "$CONTAINER_ENVIRONMENT" == "true" ]]; then
+    log WARNING "Volta may not persist across container restarts"
+    log INFO "Consider using a Dockerfile with pre-installed dependencies"
+  fi
+  
   # Ensure Volta is in PATH for this session first
   export VOLTA_HOME="${VOLTA_HOME:-$HOME/.volta}"
   export PATH="$VOLTA_HOME/bin:$PATH"
@@ -472,12 +621,52 @@ setup_volta() {
   if [[ "$needs_install" == "true" ]]; then
     log INFO "Installing Volta $VOLTA_VERSION..."
     
-    # Download and install Volta
-    if command_exists curl; then
-      curl -sSf https://get.volta.sh | bash -s -- --skip-setup 2>&1 | tee -a "$LOG_FILE"
-    else
-      wget -qO- https://get.volta.sh | bash -s -- --skip-setup 2>&1 | tee -a "$LOG_FILE"
+    # Create temp directory for secure download
+    local temp_dir=$(mktemp -d)
+    trap "rm -rf '$temp_dir'" EXIT
+    
+    # Download installer script for inspection
+    local installer_script="$temp_dir/volta-install.sh"
+    local volta_url="https://get.volta.sh"
+    
+    # Validate URL before downloading
+    if ! validate_url "$volta_url"; then
+      log ERROR "Invalid Volta installer URL"
+      return 1
     fi
+    
+    if command_exists curl; then
+      curl -sSf "$volta_url" -o "$installer_script" || {
+        log ERROR "Failed to download Volta installer"
+        return 1
+      }
+    else
+      wget -qO "$installer_script" "$volta_url" || {
+        log ERROR "Failed to download Volta installer"
+        return 1
+      }
+    fi
+    
+    # Verify script is not empty and has expected content
+    if [[ ! -s "$installer_script" ]]; then
+      log ERROR "Downloaded Volta installer is empty"
+      return 1
+    fi
+    
+    # Basic validation - check for known Volta installer patterns
+    if ! grep -q "volta" "$installer_script" || ! grep -q "get.volta.sh" "$installer_script"; then
+      log ERROR "Downloaded script doesn't appear to be the Volta installer"
+      return 1
+    fi
+    
+    # Execute the installer script with explicit bash
+    bash "$installer_script" --skip-setup 2>&1 | tee -a "$LOG_FILE" || {
+      log ERROR "Volta installation failed"
+      return 1
+    }
+    
+    # Clean up temp directory (trap will also handle this)
+    rm -rf "$temp_dir"
   fi
   
   # Always ensure Volta is in shell profile (idempotent)
@@ -900,11 +1089,13 @@ start_dev_server() {
       log INFO "Process ID: $server_pid"
       log INFO "To stop: ./stop-dev-server.sh"
       
-      # Try to open browser
-      if [[ "$OSTYPE" == "darwin"* ]]; then
-        open "http://localhost:$dev_port" 2>/dev/null || true
-      elif command_exists xdg-open; then
-        xdg-open "http://localhost:$dev_port" 2>/dev/null || true
+      # Try to open browser (unless in container)
+      if [[ "$SKIP_BROWSER_OPEN" != "true" ]]; then
+        if [[ "$OSTYPE" == "darwin"* ]]; then
+          open "http://localhost:$dev_port" 2>/dev/null || true
+        elif command_exists xdg-open; then
+          xdg-open "http://localhost:$dev_port" 2>/dev/null || true
+        fi
       fi
       
       return 0
@@ -936,6 +1127,26 @@ start_dev_server() {
 # ============================================================================
 # Validation (Idempotent)
 # ============================================================================
+
+create_healthcheck() {
+  log DEBUG "Creating healthcheck file..."
+  
+  cat > .setup-health.json << EOF
+{
+  "setup_version": "$SCRIPT_VERSION",
+  "setup_date": "$(date -Iseconds)",
+  "node_version": "$(get_node_version)",
+  "pnpm_version": "$(get_pnpm_version)",
+  "platform": "$PLATFORM",
+  "arch": "$ARCH",
+  "is_wsl": $IS_WSL,
+  "ci_environment": $CI_ENVIRONMENT,
+  "ci_platform": "$CI_PLATFORM"
+}
+EOF
+  
+  log DEBUG "Healthcheck file created"
+}
 
 validate_setup() {
   log INFO "Validating setup..."
@@ -987,9 +1198,12 @@ validate_setup() {
 # ============================================================================
 
 main() {
+  local start_time=$(date +%s)
+  
   echo ""
   echo -e "${BOLD}🚀 Portfolio Monorepo Development Setup (Idempotent)${NC}"
   echo "===================================================="
+  echo "Version: $SCRIPT_VERSION"
   echo ""
   
   # Acquire lock to prevent concurrent runs
@@ -997,6 +1211,8 @@ main() {
   
   # Set up logging with rotation
   setup_logging
+  
+  log INFO "Running setup script version $SCRIPT_VERSION"
   
   # Clean up old files first
   cleanup_old_files
@@ -1023,6 +1239,9 @@ main() {
     exit 1
   fi
   
+  # Create healthcheck file for monitoring
+  create_healthcheck
+  
   # Start dev server if interactive
   if [[ "$IS_INTERACTIVE" == "true" ]] && [[ "$IS_CI" != "true" ]]; then
     echo ""
@@ -1045,6 +1264,11 @@ main() {
   echo ""
   echo "📝 Logs: $LOG_FILE"
   echo ""
+  
+  # Calculate and display execution time
+  local end_time=$(date +%s)
+  local duration=$((end_time - start_time))
+  log SUCCESS "Setup completed in ${duration}s"
   
   return 0
 }

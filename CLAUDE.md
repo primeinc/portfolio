@@ -8,6 +8,43 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - **Node.js**: 20.17.0 (exact version enforced by Volta)
 - **pnpm**: 9.12.0 (exact version enforced by Volta)
 - **Platform**: macOS, Linux, or WSL2 (native Windows not supported)
+- **Git**: Required for version control and pre-commit hooks
+- **Disk Space**: Minimum 1GB free space recommended
+
+## Development Environment Setup
+
+### Initial Setup
+
+Run the automated setup script:
+
+```bash
+./dev_setup.sh
+```
+
+The script (v1.0.0) provides:
+
+- **Idempotent execution**: Safe to run multiple times
+- **Cross-platform support**: macOS, Linux, WSL2, and CI environments
+- **Security hardening**: Input validation, secure downloads, sensitive data redaction
+- **Conflict detection**: Checks for incompatible Node.js version managers (nvm, fnm, etc.)
+- **Automatic recovery**: Lock files, signal handling, and cleanup
+
+### Security Features
+
+The setup script implements several security measures:
+
+- Environment variable sanitization
+- Path and URL validation to prevent injection
+- Sensitive data redaction in logs (API keys, tokens, passwords)
+- Secure Volta installation (no curl|bash piping)
+- Atomic operations with proper lock management
+
+### Important Notes
+
+- If you have fnm, nvm, or other Node.js version managers installed, you must uninstall them first
+- The script creates logs in `.setup-logs/` with automatic rotation
+- A healthcheck file `.setup-health.json` is created after successful setup
+- In CI/container environments, the script automatically adjusts behavior
 
 ## Commands
 
@@ -73,3 +110,33 @@ This is a pnpm monorepo using Turborepo for orchestration:
 ### Important Note
 
 See `/docs/README_BEFORE_UPGRADING.md` for deviations from original specifications and reasoning behind version choices (e.g., React 18 instead of 19 for compatibility).
+
+## Setup Script Documentation
+
+The development environment setup is managed by `dev_setup.sh`. Related documentation:
+
+- `/docs/setup_security_report_2025-05-30.md` - Security audit and implemented features
+- `/docs/setup_improvements_roadmap.md` - Production readiness roadmap (currently 90% complete)
+- `/docs/setup_final_10_percent_todo.md` - Detailed tasks for reaching 100% production readiness
+
+### Known Issues
+
+- **fnm conflicts**: The setup script will detect and block installation if fnm is present
+- **Container persistence**: Volta installations may not persist across container restarts
+- **Network reliability**: Retry logic for network operations is planned for v1.1.0
+
+### Troubleshooting
+
+If setup fails:
+
+1. Check `.setup-logs/setup-*.log` for detailed error messages
+2. Ensure no conflicting Node.js version managers are installed
+3. Verify you have at least 1GB free disk space
+4. Run with `DEBUG=true ./dev_setup.sh` for verbose output
+
+## Development Best Practices
+
+1. **Always run setup first**: Ensures consistent environment across team members
+2. **Check setup health**: Review `.setup-health.json` to verify environment state
+3. **Use exact versions**: Volta enforces exact Node.js and pnpm versions for reproducibility
+4. **Commit generated files carefully**: Don't commit `.setup-logs/`, `.setup-health.json`, or `.dev-server.pid`
