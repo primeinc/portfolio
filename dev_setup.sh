@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
-# Portfolio Monorepo Development Environment Setup
-# Works for both human developers and CI environments
+# Portfolio Monorepo Development Environment Setup - IDEMPOTENT VERSION
+# Safe to run multiple times without side effects
 # Implements best practices from Vercel, Microsoft Rush, and Google monorepos
 
 set -euo pipefail
@@ -21,14 +21,40 @@ VOLTA_VERSION="1.1.1"
 # Script configuration
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PROJECT_ROOT="$(cd "$SCRIPT_DIR" && pwd)"
-LOG_FILE="$PROJECT_ROOT/.dev-setup.log"
+LOG_DIR="$PROJECT_ROOT/.setup-logs"
+LOG_FILE="$LOG_DIR/setup-$(date +%Y%m%d).log"  # Daily rotation
 PID_FILE="$PROJECT_ROOT/.dev-server.pid"
+LOCK_FILE="$PROJECT_ROOT/.setup.lock"
 TIMESTAMP=$(date +%Y%m%d_%H%M%S)
+MAX_LOG_SIZE=10485760  # 10MB
+MAX_LOG_AGE_DAYS=7
 
 # CI detection
 IS_CI="${CI:-false}"
 IS_GITHUB_ACTIONS="${GITHUB_ACTIONS:-false}"
 IS_INTERACTIVE=true
+
+# Platform detection
+IS_WINDOWS=false
+IS_WSL=false
+IS_NATIVE_WINDOWS=false
+
+# Detect platform
+if [[ "$OSTYPE" == "msys" ]] || [[ "$OSTYPE" == "cygwin" ]] || [[ "$OS" == "Windows_NT" ]]; then
+  if grep -qEi "(Microsoft|WSL)" /proc/version 2>/dev/null; then
+    IS_WSL=true
+  else
+    IS_NATIVE_WINDOWS=true
+    IS_WINDOWS=true
+  fi
+fi
+
+# Block native Windows
+if [[ "$IS_NATIVE_WINDOWS" == "true" ]]; then
+  echo "❌ ERROR: Native Windows is not supported. Please use WSL2."
+  echo "📚 Installation guide: https://docs.microsoft.com/en-us/windows/wsl/install"
+  exit 1
+fi
 
 # Colors for output (disabled in CI)
 if [[ "$IS_CI" == "true" ]] || [[ ! -t 1 ]]; then
@@ -53,8 +79,55 @@ else
 fi
 
 # ============================================================================
-# Utility Functions
+# Lock File Management (Prevent Concurrent Runs)
 # ============================================================================
+
+acquire_lock() {
+  local max_wait=30
+  local wait_time=0
+  
+  while [[ -f "$LOCK_FILE" ]] && [[ $wait_time -lt $max_wait ]]; do
+    echo "⏳ Another setup instance is running. Waiting..."
+    sleep 1
+    ((wait_time++))
+  done
+  
+  if [[ -f "$LOCK_FILE" ]]; then
+    echo "❌ ERROR: Setup lock file exists after ${max_wait}s. Remove $LOCK_FILE if no setup is running."
+    exit 1
+  fi
+  
+  echo $$ > "$LOCK_FILE"
+}
+
+release_lock() {
+  rm -f "$LOCK_FILE"
+}
+
+# Ensure lock is released on exit
+trap release_lock EXIT
+
+# ============================================================================
+# Log Management (Rotation and Cleanup)
+# ============================================================================
+
+setup_logging() {
+  # Create log directory
+  mkdir -p "$LOG_DIR"
+  
+  # Rotate old logs
+  find "$LOG_DIR" -name "setup-*.log" -type f -mtime +$MAX_LOG_AGE_DAYS -delete 2>/dev/null || true
+  
+  # Rotate current log if too large
+  if [[ -f "$LOG_FILE" ]] && [[ $(stat -f%z "$LOG_FILE" 2>/dev/null || stat -c%s "$LOG_FILE" 2>/dev/null || echo 0) -gt $MAX_LOG_SIZE ]]; then
+    mv "$LOG_FILE" "$LOG_FILE.$TIMESTAMP"
+    gzip "$LOG_FILE.$TIMESTAMP" 2>/dev/null || true
+  fi
+  
+  # Start new log session
+  echo "" >> "$LOG_FILE"
+  echo "===== Setup started at $(date) by PID $$ =====" >> "$LOG_FILE"
+}
 
 log() {
   local level=$1
@@ -90,34 +163,14 @@ log() {
   esac
 }
 
-# Check if command exists
+# ============================================================================
+# Utility Functions
+# ============================================================================
+
 command_exists() {
   command -v "$1" &> /dev/null
 }
 
-# Compare semantic versions
-version_compare() {
-  local version1=$1
-  local version2=$2
-  local operator=${3:-">="}
-  
-  # Use Node.js for accurate semver comparison
-  if command_exists node; then
-    node -e "
-      const semver = require('semver');
-      const result = semver.satisfies('$version1', '$operator$version2');
-      process.exit(result ? 0 : 1);
-    " 2>/dev/null || {
-      # Fallback to simple comparison if semver not available
-      [[ "$version1" == "$version2" ]]
-    }
-  else
-    # Basic fallback comparison
-    [[ "$version1" == "$version2" ]]
-  fi
-}
-
-# Get Node.js version
 get_node_version() {
   if command_exists node; then
     node -v | sed 's/v//'
@@ -126,35 +179,37 @@ get_node_version() {
   fi
 }
 
-# Get pnpm version
 get_pnpm_version() {
   if command_exists pnpm; then
-    pnpm -v
+    pnpm -v 2>/dev/null || echo "0.0.0"
   else
     echo "0.0.0"
   fi
 }
 
-# Detect OS
-detect_os() {
-  case "$(uname -s)" in
-    Linux*)
-      if grep -q Microsoft /proc/version 2>/dev/null; then
-        echo "wsl"
-      else
-        echo "linux"
-      fi
-      ;;
-    Darwin*)
-      echo "macos"
-      ;;
-    CYGWIN*|MINGW*|MSYS*)
-      echo "windows"
-      ;;
-    *)
-      echo "unknown"
-      ;;
-  esac
+# ============================================================================
+# Cleanup Functions
+# ============================================================================
+
+cleanup_old_files() {
+  log INFO "Cleaning up old files..."
+  
+  # Clean up old server logs (keep last 10)
+  if [[ -d "logs" ]]; then
+    ls -t logs/dev-server-*.log 2>/dev/null | tail -n +11 | xargs -r rm -f
+  fi
+  
+  # Remove orphaned temporary files
+  rm -f .dev-server-wrapper.sh.old 2>/dev/null || true
+  
+  # Clean up old PID files if process doesn't exist
+  if [[ -f "$PID_FILE" ]]; then
+    local old_pid=$(cat "$PID_FILE" 2>/dev/null || echo "")
+    if [[ -n "$old_pid" ]] && ! kill -0 "$old_pid" 2>/dev/null; then
+      rm -f "$PID_FILE"
+      log DEBUG "Removed stale PID file"
+    fi
+  fi
 }
 
 # ============================================================================
@@ -163,16 +218,6 @@ detect_os() {
 
 preflight_checks() {
   log INFO "Running pre-flight checks..."
-  
-  # Check OS
-  local os=$(detect_os)
-  log INFO "Detected OS: $os"
-  
-  if [[ "$os" == "windows" ]]; then
-    log ERROR "Native Windows is NOT supported. WSL2 is mandatory for Windows development."
-    log ERROR "Please install WSL2: https://docs.microsoft.com/en-us/windows/wsl/install"
-    exit 1
-  fi
   
   # Check for required commands
   local missing_commands=()
@@ -200,67 +245,72 @@ preflight_checks() {
 }
 
 # ============================================================================
-# Volta Setup (MANDATORY)
+# Volta Setup (Idempotent)
 # ============================================================================
 
 setup_volta() {
-  log INFO "Checking Volta installation (MANDATORY for this monorepo)..."
+  log INFO "Checking Volta installation..."
   
   if command_exists volta; then
     local installed_volta_version=$(volta --version 2>/dev/null | cut -d' ' -f2)
     log INFO "Volta $installed_volta_version is already installed"
+    
+    # Ensure Volta is in PATH for this session
+    export VOLTA_HOME="${VOLTA_HOME:-$HOME/.volta}"
+    export PATH="$VOLTA_HOME/bin:$PATH"
+    return 0
+  fi
+  
+  log INFO "Installing Volta $VOLTA_VERSION..."
+  
+  # Download and install Volta
+  if command_exists curl; then
+    curl -sSf https://get.volta.sh | bash -s -- --skip-setup 2>&1 | tee -a "$LOG_FILE"
   else
-    log ERROR "Volta is NOT installed. Volta is MANDATORY for this monorepo."
-    log INFO "Installing Volta $VOLTA_VERSION..."
+    wget -qO- https://get.volta.sh | bash -s -- --skip-setup 2>&1 | tee -a "$LOG_FILE"
+  fi
+  
+  # Set up environment for current session
+  export VOLTA_HOME="$HOME/.volta"
+  export PATH="$VOLTA_HOME/bin:$PATH"
+  
+  # Add to shell profile (idempotent)
+  if [[ "$IS_INTERACTIVE" == "true" ]] && [[ "$IS_CI" != "true" ]]; then
+    local shell_profile=""
+    if [[ -n "${BASH_VERSION:-}" ]]; then
+      shell_profile="$HOME/.bashrc"
+    elif [[ -n "${ZSH_VERSION:-}" ]]; then
+      shell_profile="$HOME/.zshrc"
+    fi
     
-    # Install Volta based on OS
-    local os=$(detect_os)
-    case "$os" in
-      macos|linux|wsl)
-        curl -sSf https://get.volta.sh | bash -s -- --skip-setup
-        export VOLTA_HOME="$HOME/.volta"
-        export PATH="$VOLTA_HOME/bin:$PATH"
-        
-        # Add to shell profile
-        local shell_profile=""
-        if [[ -n "${BASH_VERSION:-}" ]]; then
-          shell_profile="$HOME/.bashrc"
-        elif [[ -n "${ZSH_VERSION:-}" ]]; then
-          shell_profile="$HOME/.zshrc"
-        fi
-        
-        if [[ -n "$shell_profile" ]] && [[ -f "$shell_profile" ]]; then
-          if ! grep -q "VOLTA_HOME" "$shell_profile"; then
-            echo "" >> "$shell_profile"
-            echo "# Volta configuration" >> "$shell_profile"
-            echo "export VOLTA_HOME=\"\$HOME/.volta\"" >> "$shell_profile"
-            echo "export PATH=\"\$VOLTA_HOME/bin:\$PATH\"" >> "$shell_profile"
-            log SUCCESS "Added Volta to $shell_profile"
-          fi
-        fi
-        ;;
-    esac
-    
-    if ! command_exists volta; then
-      log ERROR "Volta installation failed. Cannot proceed without Volta."
-      log ERROR "Please install Volta manually from https://volta.sh and try again."
-      exit 1
+    if [[ -n "$shell_profile" ]] && [[ -f "$shell_profile" ]]; then
+      # Check if Volta is already configured
+      if ! grep -q "VOLTA_HOME" "$shell_profile"; then
+        log INFO "Adding Volta to $shell_profile..."
+        {
+          echo ""
+          echo "# Volta configuration (added by portfolio setup)"
+          echo "export VOLTA_HOME=\"\$HOME/.volta\""
+          echo "export PATH=\"\$VOLTA_HOME/bin:\$PATH\""
+        } >> "$shell_profile"
+      else
+        log DEBUG "Volta already configured in $shell_profile"
+      fi
     fi
   fi
   
-  # Verify Volta configuration in package.json
-  if [[ -f "package.json" ]]; then
-    if ! grep -q '"volta"' package.json; then
-      log ERROR "package.json is missing Volta configuration. This is a corrupted state."
-      exit 1
-    fi
+  # Verify installation
+  if ! command_exists volta; then
+    log ERROR "Volta installation failed"
+    return 1
   fi
   
-  log SUCCESS "Volta is configured and ready"
+  log SUCCESS "Volta installed successfully"
+  return 0
 }
 
 # ============================================================================
-# Node.js Setup
+# Node.js Setup (Idempotent)
 # ============================================================================
 
 setup_node() {
@@ -268,43 +318,38 @@ setup_node() {
   
   local current_version=$(get_node_version)
   
+  if [[ "$current_version" == "$REQUIRED_NODE_VERSION" ]]; then
+    log SUCCESS "Node.js $REQUIRED_NODE_VERSION is already installed"
+    return 0
+  fi
+  
   if [[ "$current_version" == "0.0.0" ]]; then
+    log INFO "Node.js is not installed"
+  else
+    log INFO "Found Node.js $current_version (required: $REQUIRED_NODE_VERSION)"
+  fi
+  
+  if command_exists volta; then
     log INFO "Installing Node.js $REQUIRED_NODE_VERSION via Volta..."
     volta install node@$REQUIRED_NODE_VERSION
-    
-    if ! command_exists node; then
-      log ERROR "Node.js installation failed."
-      exit 1
-    fi
-    
-    current_version=$(get_node_version)
+    volta pin node@$REQUIRED_NODE_VERSION
+  else
+    log ERROR "Volta is required to install Node.js"
+    exit 1
   fi
   
-  log INFO "Found Node.js $current_version"
-  
-  # Strict version check
+  # Verify correct version
+  current_version=$(get_node_version)
   if [[ "$current_version" != "$REQUIRED_NODE_VERSION" ]]; then
-    log ERROR "Node.js version mismatch!"
-    log ERROR "Required: $REQUIRED_NODE_VERSION"
-    log ERROR "Found: $current_version"
-    log INFO "Installing correct version via Volta..."
-    
-    volta install node@$REQUIRED_NODE_VERSION
-    volta use node@$REQUIRED_NODE_VERSION
-    
-    # Verify
-    current_version=$(get_node_version)
-    if [[ "$current_version" != "$REQUIRED_NODE_VERSION" ]]; then
-      log ERROR "Failed to install/switch to Node.js $REQUIRED_NODE_VERSION"
-      exit 1
-    fi
+    log ERROR "Failed to install Node.js $REQUIRED_NODE_VERSION (got $current_version)"
+    exit 1
   fi
   
-  log SUCCESS "Node.js $REQUIRED_NODE_VERSION is active"
+  log SUCCESS "Node.js $REQUIRED_NODE_VERSION is ready"
 }
 
 # ============================================================================
-# pnpm Setup (STRICT VERSION ENFORCEMENT)
+# pnpm Setup (Idempotent)
 # ============================================================================
 
 setup_pnpm() {
@@ -312,59 +357,63 @@ setup_pnpm() {
   
   local current_version=$(get_pnpm_version)
   
+  if [[ "$current_version" == "$REQUIRED_PNPM_VERSION" ]]; then
+    log SUCCESS "pnpm $REQUIRED_PNPM_VERSION is already installed"
+    return 0
+  fi
+  
   if [[ "$current_version" == "0.0.0" ]]; then
+    log INFO "pnpm is not installed"
+  else
+    log INFO "Found pnpm $current_version (required: $REQUIRED_PNPM_VERSION)"
+  fi
+  
+  if command_exists volta; then
     log INFO "Installing pnpm $REQUIRED_PNPM_VERSION via Volta..."
     volta install pnpm@$REQUIRED_PNPM_VERSION
+    volta pin pnpm@$REQUIRED_PNPM_VERSION
   else
-    log INFO "Found pnpm $current_version"
-  fi
-  
-  # STRICT version enforcement
-  if [[ "$current_version" != "$REQUIRED_PNPM_VERSION" ]]; then
-    log ERROR "pnpm version mismatch! This monorepo requires EXACTLY pnpm $REQUIRED_PNPM_VERSION"
-    log ERROR "Found: $current_version"
-    log INFO "Installing required version via Volta..."
-    
-    volta install pnpm@$REQUIRED_PNPM_VERSION
-    volta use pnpm@$REQUIRED_PNPM_VERSION
-    
-    # Verify
-    current_version=$(get_pnpm_version)
-    if [[ "$current_version" != "$REQUIRED_PNPM_VERSION" ]]; then
-      log ERROR "Failed to install/switch to pnpm $REQUIRED_PNPM_VERSION"
-      log ERROR "This is a hard requirement. Cannot proceed."
-      exit 1
-    fi
-  fi
-  
-  # Double-check pnpm is accessible
-  if ! command_exists pnpm; then
-    log ERROR "pnpm installation failed or is not in PATH"
+    log ERROR "Volta is required to install pnpm"
     exit 1
   fi
   
-  log SUCCESS "pnpm $REQUIRED_PNPM_VERSION is active and enforced"
+  # Verify correct version
+  current_version=$(get_pnpm_version)
+  if [[ "$current_version" != "$REQUIRED_PNPM_VERSION" ]]; then
+    log ERROR "Failed to install pnpm $REQUIRED_PNPM_VERSION (got $current_version)"
+    exit 1
+  fi
+  
+  log SUCCESS "pnpm $REQUIRED_PNPM_VERSION is ready"
 }
 
 # ============================================================================
-# Dependencies Installation
+# Dependencies Installation (Idempotent)
 # ============================================================================
 
 install_dependencies() {
+  log INFO "Checking project dependencies..."
+  
+  # Check if node_modules exists and is valid
+  if [[ -d "node_modules" ]] && [[ -f "pnpm-lock.yaml" ]]; then
+    # Verify dependencies are up to date
+    if pnpm install --frozen-lockfile --dry-run 2>&1 | grep -q "Nothing to install"; then
+      log SUCCESS "Dependencies are already up to date"
+      return 0
+    fi
+  fi
+  
   log INFO "Installing project dependencies..."
   
   # Clean install in CI
   if [[ "$IS_CI" == "true" ]]; then
-    log INFO "Running clean install for CI..."
     pnpm install --frozen-lockfile --prefer-offline
   else
-    # Regular install for development
     pnpm install
   fi
   
   if [[ $? -ne 0 ]]; then
     log ERROR "Failed to install dependencies"
-    log INFO "Check the log file for details: $LOG_FILE"
     exit 1
   fi
   
@@ -372,18 +421,20 @@ install_dependencies() {
 }
 
 # ============================================================================
-# Environment Setup
+# Environment Setup (Idempotent)
 # ============================================================================
 
 setup_environment() {
   log INFO "Setting up environment files..."
   
   local env_created=0
+  local env_skipped=0
   
   # Root .env.local
   if [[ -f ".env.example" ]]; then
     if [[ -f ".env.local" ]]; then
       log DEBUG ".env.local already exists, skipping..."
+      ((env_skipped++))
     else
       cp .env.example .env.local
       log SUCCESS "Created .env.local from .env.example"
@@ -396,6 +447,7 @@ setup_environment() {
     if [[ -d "$app_dir" ]] && [[ -f "$app_dir/.env.example" ]]; then
       if [[ -f "$app_dir/.env.local" ]]; then
         log DEBUG "$app_dir.env.local already exists, skipping..."
+        ((env_skipped++))
       else
         cp "$app_dir/.env.example" "$app_dir/.env.local"
         log SUCCESS "Created $app_dir.env.local"
@@ -404,20 +456,19 @@ setup_environment() {
     fi
   done
   
-  if [[ $env_created -eq 0 ]]; then
-    log INFO "No new environment files created"
-  fi
+  log INFO "Environment setup: $env_created created, $env_skipped skipped"
 }
 
 # ============================================================================
-# Build Shared Packages
+# Build Shared Packages (Idempotent)
 # ============================================================================
 
 build_packages() {
-  log INFO "Building shared packages..."
+  log INFO "Checking shared packages..."
   
   # Check if packages directory has any packages
   if [[ -d "packages" ]] && find packages -mindepth 1 -maxdepth 1 -type d | grep -q .; then
+    log INFO "Building shared packages..."
     pnpm turbo run build --filter="./packages/*" || {
       log WARNING "Some packages failed to build (this may be expected for empty packages)"
     }
@@ -427,7 +478,7 @@ build_packages() {
 }
 
 # ============================================================================
-# Git Hooks Setup
+# Git Hooks Setup (Idempotent)
 # ============================================================================
 
 setup_git_hooks() {
@@ -439,22 +490,44 @@ setup_git_hooks() {
   log INFO "Setting up git hooks..."
   
   if [[ -f "package.json" ]] && grep -q '"prepare".*husky' package.json; then
-    pnpm run prepare || {
-      log WARNING "Failed to setup git hooks"
-    }
+    # Check if hooks are already installed
+    if [[ -d ".husky" ]] && [[ -f ".husky/_/husky.sh" ]]; then
+      log DEBUG "Git hooks already installed"
+    else
+      pnpm run prepare || {
+        log WARNING "Failed to setup git hooks"
+      }
+    fi
   else
     log DEBUG "No git hooks configuration found"
   fi
 }
 
 # ============================================================================
-# Development Server Management
+# Development Server Management (Idempotent)
 # ============================================================================
+
+cleanup_old_processes() {
+  if [[ -f "$PID_FILE" ]]; then
+    local old_pid=$(cat "$PID_FILE" 2>/dev/null || echo "")
+    if [[ -n "$old_pid" ]]; then
+      if kill -0 "$old_pid" 2>/dev/null; then
+        log INFO "Stopping old dev server (PID: $old_pid)..."
+        kill -TERM "$old_pid" 2>/dev/null || true
+        sleep 2
+        if kill -0 "$old_pid" 2>/dev/null; then
+          kill -KILL "$old_pid" 2>/dev/null || true
+        fi
+      fi
+      rm -f "$PID_FILE"
+    fi
+  fi
+}
 
 check_port() {
   local port=$1
   if command_exists lsof; then
-    lsof -ti:$port >/dev/null 2>&1
+    lsof -i :$port >/dev/null 2>&1
   elif command_exists netstat; then
     netstat -an | grep -q ":$port.*LISTEN"
   else
@@ -463,18 +536,50 @@ check_port() {
   fi
 }
 
-cleanup_old_processes() {
-  if [[ -f "$PID_FILE" ]]; then
-    local old_pid=$(cat "$PID_FILE")
-    if kill -0 "$old_pid" 2>/dev/null; then
-      log WARNING "Found existing dev server (PID: $old_pid)"
-      log INFO "Stopping old server..."
-      kill -TERM "$old_pid" 2>/dev/null || true
-      sleep 2
-      kill -KILL "$old_pid" 2>/dev/null || true
+create_dev_server_wrapper() {
+  # Create wrapper script (idempotent - always overwrite)
+  cat > .dev-server-wrapper.sh << 'EOF'
+#!/bin/bash
+# Auto-generated wrapper for dev server
+exec pnpm dev "$@"
+EOF
+  chmod +x .dev-server-wrapper.sh
+}
+
+create_stop_script() {
+  local pid=$1
+  
+  # Always overwrite to ensure correct PID
+  cat > stop-dev-server.sh << EOF
+#!/bin/bash
+# Auto-generated stop script for dev server
+PID_FILE="$PID_FILE"
+
+if [[ -f "\$PID_FILE" ]]; then
+  PID=\$(cat "\$PID_FILE")
+  if [[ "\$PID" == "$pid" ]] && kill -0 "\$PID" 2>/dev/null; then
+    echo "Stopping dev server (PID: \$PID)..."
+    kill -TERM "\$PID"
+    sleep 2
+    if kill -0 "\$PID" 2>/dev/null; then
+      echo "Force stopping..."
+      kill -KILL "\$PID"
     fi
-    rm -f "$PID_FILE"
+    rm -f "\$PID_FILE"
+    echo "✅ Dev server stopped"
+  else
+    echo "⚠️  Dev server with PID \$PID is not running"
+    rm -f "\$PID_FILE"
   fi
+else
+  echo "⚠️  No PID file found"
+fi
+
+# Cleanup
+rm -f .dev-server-wrapper.sh
+rm -f stop-dev-server.sh
+EOF
+  chmod +x stop-dev-server.sh
 }
 
 start_dev_server() {
@@ -489,15 +594,10 @@ start_dev_server() {
     return
   fi
   
-  log INFO "Starting development server..."
+  log INFO "Preparing development server..."
   
-  # Check default port (from Vite config or default 5173)
+  # Check default port
   local dev_port=5173
-  if [[ -f "apps/robin-noguier/vite.config.ts" ]]; then
-    # Try to extract port from config (simplified check)
-    local configured_port=$(grep -oP 'port:\s*\K\d+' apps/robin-noguier/vite.config.ts 2>/dev/null || echo "5173")
-    dev_port=${configured_port:-5173}
-  fi
   
   # Clean up old processes
   cleanup_old_processes
@@ -511,22 +611,23 @@ start_dev_server() {
   
   # Create log directory
   mkdir -p logs
+  
+  # Clean up old logs (keep last 10)
+  ls -t logs/dev-server-*.log 2>/dev/null | tail -n +11 | xargs -r rm -f
+  
   local server_log="logs/dev-server-$TIMESTAMP.log"
   
-  # Start server with proper signal handling
-  log INFO "Starting dev server on port $dev_port..."
-  
-  # Create a wrapper script for proper signal handling
-  cat > .dev-server-wrapper.sh << 'EOF'
-#!/bin/bash
-exec pnpm dev "$@"
-EOF
-  chmod +x .dev-server-wrapper.sh
+  # Create wrapper script
+  create_dev_server_wrapper
   
   # Start server in background
+  log INFO "Starting dev server on port $dev_port..."
   nohup ./.dev-server-wrapper.sh > "$server_log" 2>&1 &
   local server_pid=$!
   echo $server_pid > "$PID_FILE"
+  
+  # Create stop script with current PID
+  create_stop_script $server_pid
   
   # Wait for server to start
   log INFO "Waiting for server to start..."
@@ -539,30 +640,7 @@ EOF
       log INFO "Server URL: http://localhost:$dev_port"
       log INFO "Server logs: $server_log"
       log INFO "Process ID: $server_pid"
-      
-      # Create stop script
-      cat > stop-dev-server.sh << EOF
-#!/bin/bash
-if [[ -f "$PID_FILE" ]]; then
-  PID=\$(cat "$PID_FILE")
-  if kill -0 "\$PID" 2>/dev/null; then
-    echo "Stopping dev server (PID: \$PID)..."
-    kill -TERM "\$PID"
-    sleep 2
-    if kill -0 "\$PID" 2>/dev/null; then
-      kill -KILL "\$PID"
-    fi
-    rm -f "$PID_FILE"
-    echo "✅ Dev server stopped"
-  else
-    echo "⚠️  No running dev server found with PID \$PID"
-    rm -f "$PID_FILE"
-  fi
-else
-  echo "⚠️  No PID file found"
-fi
-EOF
-      chmod +x stop-dev-server.sh
+      log INFO "To stop: ./stop-dev-server.sh"
       
       # Try to open browser
       if [[ "$OSTYPE" == "darwin"* ]]; then
@@ -574,6 +652,15 @@ EOF
       return 0
     fi
     
+    # Check if process died
+    if ! kill -0 $server_pid 2>/dev/null; then
+      log ERROR "Dev server process died unexpectedly"
+      log INFO "Check the server log for errors:"
+      tail -20 "$server_log"
+      rm -f "$PID_FILE"
+      return 1
+    fi
+    
     ((attempt++))
     sleep 1
   done
@@ -581,108 +668,102 @@ EOF
   log ERROR "Dev server failed to start within 30 seconds"
   log INFO "Check the server log: $server_log"
   tail -20 "$server_log"
+  
+  # Clean up
+  kill -TERM $server_pid 2>/dev/null || true
+  rm -f "$PID_FILE"
   return 1
 }
 
 # ============================================================================
-# Validation
+# Validation (Idempotent)
 # ============================================================================
 
 validate_setup() {
   log INFO "Validating setup..."
   
   local validation_passed=true
-  
-  # Check Volta
-  if ! command_exists volta; then
-    log ERROR "Volta is not available (MANDATORY)"
-    validation_passed=false
-  fi
+  local validation_errors=()
   
   # Check Node.js version
-  local node_version=$(get_node_version)
-  if [[ "$node_version" != "$REQUIRED_NODE_VERSION" ]]; then
-    log ERROR "Node.js version mismatch: $node_version != $REQUIRED_NODE_VERSION"
+  local current_node=$(get_node_version)
+  if [[ "$current_node" != "$REQUIRED_NODE_VERSION" ]]; then
+    validation_errors+=("Node.js version mismatch: $current_node != $REQUIRED_NODE_VERSION")
     validation_passed=false
   fi
   
   # Check pnpm version
-  local pnpm_version=$(get_pnpm_version)
-  if [[ "$pnpm_version" != "$REQUIRED_PNPM_VERSION" ]]; then
-    log ERROR "pnpm version mismatch: $pnpm_version != $REQUIRED_PNPM_VERSION"
+  local current_pnpm=$(get_pnpm_version)
+  if [[ "$current_pnpm" != "$REQUIRED_PNPM_VERSION" ]]; then
+    validation_errors+=("pnpm version mismatch: $current_pnpm != $REQUIRED_PNPM_VERSION")
     validation_passed=false
   fi
   
   # Check node_modules
   if [[ ! -d "node_modules" ]]; then
-    log ERROR "node_modules directory not found"
+    validation_errors+=("node_modules directory not found")
     validation_passed=false
   fi
   
-  # Check TypeScript
-  if ! pnpm exec tsc --version &>/dev/null; then
-    log WARNING "TypeScript not available"
+  # Check package.json volta config
+  if [[ -f "package.json" ]] && ! grep -q '"volta"' package.json; then
+    validation_errors+=("Volta configuration missing from package.json")
+    validation_passed=false
   fi
   
-  # Validate turbo.json
-  if [[ -f "turbo.json" ]]; then
-    node -e "JSON.parse(require('fs').readFileSync('turbo.json', 'utf8'))" 2>/dev/null || {
-      log ERROR "turbo.json is invalid"
-      validation_passed=false
-    }
-  fi
-  
+  # Report results
   if [[ "$validation_passed" == "true" ]]; then
-    log SUCCESS "Setup validation passed"
+    log SUCCESS "All validations passed"
     return 0
   else
-    log ERROR "Setup validation failed"
+    log ERROR "Validation failed:"
+    for error in "${validation_errors[@]}"; do
+      log ERROR "  - $error"
+    done
     return 1
   fi
 }
 
 # ============================================================================
-# Cleanup
-# ============================================================================
-
-cleanup() {
-  # Remove temporary files
-  rm -f .dev-server-wrapper.sh
-  
-  # Compact logs if too large
-  if [[ -f "$LOG_FILE" ]] && [[ $(stat -f%z "$LOG_FILE" 2>/dev/null || stat -c%s "$LOG_FILE" 2>/dev/null || echo 0) -gt 1048576 ]]; then
-    mv "$LOG_FILE" "$LOG_FILE.$TIMESTAMP"
-    touch "$LOG_FILE"
-  fi
-}
-
-# ============================================================================
-# Main
+# Main (Idempotent Entry Point)
 # ============================================================================
 
 main() {
   echo ""
-  echo -e "${BOLD}🚀 Portfolio Monorepo Development Setup${NC}"
-  echo -e "${BOLD}MANDATORY: Volta + Node 20.17.0 + pnpm 9.12.0${NC}"
-  echo "========================================"
+  echo -e "${BOLD}🚀 Portfolio Monorepo Development Setup (Idempotent)${NC}"
+  echo "===================================================="
   echo ""
   
-  # Start logging
-  mkdir -p "$(dirname "$LOG_FILE")"
-  echo "===== Setup started at $(date) =====" >> "$LOG_FILE"
+  # Acquire lock to prevent concurrent runs
+  acquire_lock
   
-  # Register cleanup
-  trap cleanup EXIT
+  # Set up logging with rotation
+  setup_logging
+  
+  # Clean up old files first
+  cleanup_old_files
   
   # Run setup steps
   preflight_checks
-  setup_volta
+  
+  # Volta is mandatory
+  setup_volta || {
+    log ERROR "Volta setup failed - this is required"
+    exit 1
+  }
+  
   setup_node
   setup_pnpm
   install_dependencies
   setup_environment
   build_packages
   setup_git_hooks
+  
+  # Validate everything is correct
+  if ! validate_setup; then
+    log ERROR "Setup validation failed. Please check the errors above."
+    exit 1
+  fi
   
   # Start dev server if interactive
   if [[ "$IS_INTERACTIVE" == "true" ]] && [[ "$IS_CI" != "true" ]]; then
@@ -696,9 +777,6 @@ main() {
     fi
   fi
   
-  # Final validation
-  validate_setup
-  
   echo ""
   echo -e "${BOLD}${GREEN}✨ Setup complete!${NC}"
   echo ""
@@ -707,13 +785,7 @@ main() {
   echo "  • Run 'pnpm test' to run tests"
   echo "  • Run 'pnpm build' to build for production"
   echo ""
-  echo "⚠️  REMEMBER: This monorepo enforces:"
-  echo "  • Volta for version management (MANDATORY)"
-  echo "  • Node.js 20.17.0 (EXACT version)"
-  echo "  • pnpm 9.12.0 (EXACT version)"
-  echo "  • WSL2 for Windows developers (native Windows blocked)"
-  echo ""
-  echo "📝 Logs saved to: $LOG_FILE"
+  echo "📝 Logs: $LOG_FILE"
   echo ""
   
   return 0
