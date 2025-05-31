@@ -1,0 +1,18 @@
+.summaryContainer {
+  display: flex;
+  flex-direction: column;
+}
+
+.summaryTitle {
+  font-size: 1.25rem;
+  margin: 0 0 0.5rem;
+}
+
+.summaryDescription {
+  margin-bottom: 0.5rem;
+}
+
+.readMoreButton {
+  align-self: start;
+  padding: 0.5rem 1rem;
+}

@@ -1,0 +1,11 @@
+.multiColumn {
+  column-count: 2;
+  column-gap: 2rem;
+  padding: 1rem;
+}
+
+@media (max-width: 600px) {
+  .multiColumn {
+    column-count: 1;
+  }
+}

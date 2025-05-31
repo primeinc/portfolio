@@ -18,6 +18,7 @@
   "scripts": {
     "dev": "turbo run dev",
     "dev:robin": "turbo run dev --filter=robin-noguier",
+    "dev:vilinskyy": "turbo run dev --filter=vilinskyy",
     "build": "turbo run build",
     "test": "turbo run test",
     "test:e2e": "turbo run test:e2e",

@@ -1,0 +1,10 @@
+.expandableSection {
+  border: 1px solid #ddd;
+  padding: 1rem;
+  margin-bottom: 1rem;
+  border-radius: 4px;
+}
+
+.detailContainer {
+  overflow: hidden;
+}

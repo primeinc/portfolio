@@ -1,0 +1,15 @@
+.detailContent {
+  padding-top: 1rem;
+  border-top: 1px solid #eee;
+}
+
+.detailImages {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 1rem;
+}
+
+.detailImage {
+  max-width: 100px;
+  height: auto;
+}

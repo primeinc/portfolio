@@ -1,0 +1,12 @@
+.list {
+  display: flex;
+  gap: 1rem;
+  list-style: none;
+  padding: 0;
+  justify-content: center;
+}
+
+.list a {
+  text-decoration: none;
+  color: #007bff;
+}

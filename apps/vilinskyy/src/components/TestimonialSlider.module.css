@@ -1,0 +1,16 @@
+.slider {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin: 2rem 0;
+}
+
+.slide {
+  font-size: 1.2rem;
+  margin-bottom: 1rem;
+  min-height: 2rem;
+}
+
+button {
+  padding: 0.5rem 1rem;
+}
