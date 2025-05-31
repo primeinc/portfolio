@@ -6,7 +6,8 @@ const projectsData = [
     id: 'decipad',
     summary: {
       title: 'Decipad',
-      shortDescription: 'Led company design and communications to explore numbers in narrative.',
+      shortDescription:
+        'Led company design and communications to explore numbers in narrative.',
       category: 'Data storytelling app',
     },
     detail: {
@@ -22,14 +23,15 @@ const projectsData = [
       images: [],
       role: 'Head of Design',
       duration: '2020-2022',
-      link: 'https://decipad.com'
-    }
+      link: 'https://decipad.com',
+    },
   },
   {
     id: 'grammarly',
     summary: {
       title: 'Grammarly',
-      shortDescription: 'Designed core features for the AI-powered writing assistant used by 30M+ people daily.',
+      shortDescription:
+        'Designed core features for the AI-powered writing assistant used by 30M+ people daily.',
       category: 'Writing assistant',
     },
     detail: {
@@ -45,14 +47,15 @@ const projectsData = [
       images: [],
       role: 'Senior Product Designer',
       duration: '2018-2019',
-      link: 'https://grammarly.com'
-    }
+      link: 'https://grammarly.com',
+    },
   },
   {
     id: 'spark',
     summary: {
       title: 'Spark',
-      shortDescription: 'Reimagined email for teams with a focus on collaboration and productivity.',
+      shortDescription:
+        'Reimagined email for teams with a focus on collaboration and productivity.',
       category: 'Email client',
     },
     detail: {
@@ -68,14 +71,15 @@ const projectsData = [
       images: [],
       role: 'Lead Product Designer',
       duration: '2017-2018',
-      link: 'https://sparkmailapp.com'
-    }
+      link: 'https://sparkmailapp.com',
+    },
   },
   {
     id: 'unicorn',
     summary: {
       title: 'Unicorn Platform',
-      shortDescription: 'Built and sold a website builder for startups that reached $10K MRR.',
+      shortDescription:
+        'Built and sold a website builder for startups that reached $10K MRR.',
       category: 'Website builder',
     },
     detail: {
@@ -92,14 +96,15 @@ const projectsData = [
       images: [],
       role: 'Founder & Designer',
       duration: '2018-2020',
-      link: 'https://unicornplatform.com'
-    }
+      link: 'https://unicornplatform.com',
+    },
   },
   {
     id: 'porsche-911',
     summary: {
       title: 'Buy a Porsche 911',
-      shortDescription: 'Documented my journey of researching and purchasing a dream car.',
+      shortDescription:
+        'Documented my journey of researching and purchasing a dream car.',
       category: 'Personal project',
     },
     detail: {
@@ -115,14 +120,15 @@ const projectsData = [
       images: [],
       role: 'Creator',
       duration: '2021',
-      link: '#'
-    }
+      link: '#',
+    },
   },
   {
     id: 'figma-ai-plugin',
     summary: {
       title: 'AI & Dev Tools',
-      shortDescription: 'Created Figma plugins and AI experiments reaching 10K+ designers.',
+      shortDescription:
+        'Created Figma plugins and AI experiments reaching 10K+ designers.',
       category: 'Tools & plugins',
     },
     detail: {
@@ -138,14 +144,15 @@ const projectsData = [
       images: [],
       role: 'Creator',
       duration: 'Ongoing',
-      link: '#'
-    }
+      link: '#',
+    },
   },
   {
     id: 'energy-courses',
     summary: {
       title: 'Energy',
-      shortDescription: 'Teaching energy management and productivity through courses and content.',
+      shortDescription:
+        'Teaching energy management and productivity through courses and content.',
       category: 'Education',
     },
     detail: {
@@ -161,14 +168,15 @@ const projectsData = [
       images: [],
       role: 'Instructor',
       duration: '2022-Present',
-      link: '#'
-    }
+      link: '#',
+    },
   },
   {
     id: 'real-estate',
     summary: {
       title: 'Real Estate Investments',
-      shortDescription: 'Invested in and renovated properties in London, achieving strong returns.',
+      shortDescription:
+        'Invested in and renovated properties in London, achieving strong returns.',
       category: 'Investment',
     },
     detail: {
@@ -184,14 +192,15 @@ const projectsData = [
       images: [],
       role: 'Investor & Designer',
       duration: '2019-Present',
-      link: '#'
-    }
+      link: '#',
+    },
   },
   {
     id: 'angelfuturism',
     summary: {
       title: 'Angelfuturism',
-      shortDescription: 'Explored UK\'s unique position as a leader in science and social innovation.',
+      shortDescription:
+        "Explored UK's unique position as a leader in science and social innovation.",
       category: 'Research project',
     },
     detail: {
@@ -207,14 +216,15 @@ const projectsData = [
       images: [],
       role: 'Researcher',
       duration: '2023',
-      link: '#'
-    }
+      link: '#',
+    },
   },
   {
     id: 'meet-founders',
     summary: {
       title: 'Meet 3000 Founders',
-      shortDescription: 'Challenged myself to meet 3000 startup founders in one year.',
+      shortDescription:
+        'Challenged myself to meet 3000 startup founders in one year.',
       category: 'Networking experiment',
     },
     detail: {
@@ -230,14 +240,15 @@ const projectsData = [
       images: [],
       role: 'Experimenter',
       duration: '2022',
-      link: '#'
-    }
+      link: '#',
+    },
   },
   {
     id: 'exceptional-talent',
     summary: {
       title: 'Exceptional Talent Visa',
-      shortDescription: 'Successfully obtained UK exceptional talent visa for contributions to design.',
+      shortDescription:
+        'Successfully obtained UK exceptional talent visa for contributions to design.',
       category: 'Achievement',
     },
     detail: {
@@ -253,14 +264,15 @@ const projectsData = [
       images: [],
       role: 'Applicant',
       duration: '2021',
-      link: '#'
-    }
+      link: '#',
+    },
   },
   {
     id: 'media-features',
     summary: {
       title: 'Media & Recognition',
-      shortDescription: 'Featured in major publications and recognized for design innovation.',
+      shortDescription:
+        'Featured in major publications and recognized for design innovation.',
       category: 'Press & awards',
     },
     detail: {
@@ -276,16 +288,26 @@ const projectsData = [
       images: [],
       role: 'Subject',
       duration: 'Ongoing',
-      link: '#'
-    }
+      link: '#',
+    },
   },
-];
+]
 
 const DetailedProjectListings: React.FC = () => {
   return (
-    <section className="section">
-      <div className="container">
-        <h2 className="mb-5">Projects & Work</h2>
+    <section style={{ padding: '48px 0' }}>
+      <div style={{ maxWidth: '800px', margin: '0 auto', padding: '0 24px' }}>
+        <h2
+          style={{
+            fontFamily: "'JetBrains Mono', monospace",
+            fontSize: '24px',
+            fontWeight: '600',
+            color: 'rgb(31, 34, 32)',
+            marginBottom: '32px',
+          }}
+        >
+          Projects & Work
+        </h2>
         <div>
           {projectsData.map((project) => (
             <ExpandableProjectSection key={project.id} project={project} />

@@ -1,0 +1,58 @@
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&display=swap');
+
+.investingSection {
+  padding: 64px 0;
+  background-color: #fff;
+}
+
+.container {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 0 24px;
+}
+
+.title {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 16px;
+  font-weight: 600;
+  color: rgb(31, 34, 32);
+  margin-bottom: 24px;
+}
+
+.investmentsList {
+  margin-bottom: 32px;
+}
+
+.investmentItem {
+  margin-bottom: 20px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 14px;
+  line-height: 22px;
+  color: rgb(31, 34, 32);
+}
+
+.investmentTitle {
+  display: inline;
+  font-size: 14px;
+  font-weight: 600;
+  margin-right: 4px;
+}
+
+.investmentDescription {
+  display: inline;
+  font-weight: 400;
+}
+
+.aiComment {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 13px;
+  color: #666;
+  font-style: italic;
+  margin-top: 40px;
+}
+
+@media (max-width: 768px) {
+  .container {
+    padding: 0 16px;
+  }
+}

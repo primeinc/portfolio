@@ -3,6 +3,7 @@ import Home from './pages/Home'
 import Visuals from './pages/Visuals'
 import Networking from './pages/Networking'
 import LoomRoast from './pages/LoomRoast'
+import Navigation from './components/Navigation'
 import './index.css'
 
 const App: React.FC = () => {
@@ -23,10 +24,35 @@ const App: React.FC = () => {
     window.scrollTo(0, 0)
   }
 
+  const getCurrentPage = () => {
+    switch (currentPath) {
+      case '/visuals':
+        return 'visuals'
+      case '/networking':
+      case '/networking-2024':
+        return 'networking'
+      case '/loom-roast':
+        return 'loom-roast'
+      default:
+        return 'home'
+    }
+  }
+
+  const handleNavigate = (page: string) => {
+    const pathMap: Record<string, string> = {
+      home: '/',
+      visuals: '/visuals',
+      networking: '/networking',
+      'loom-roast': '/loom-roast',
+    }
+    navigate(pathMap[page] || '/')
+  }
+
   const renderPage = () => {
     switch (currentPath) {
       case '/visuals':
         return <Visuals />
+      case '/networking':
       case '/networking-2024':
         return <Networking />
       case '/loom-roast':
@@ -38,60 +64,7 @@ const App: React.FC = () => {
 
   return (
     <div className="app">
-      <nav>
-        <div className="container">
-          <ul>
-            <li>
-              <a
-                href="/"
-                onClick={(e) => {
-                  e.preventDefault()
-                  navigate('/')
-                }}
-                className={currentPath === '/' ? 'active' : ''}
-              >
-                Home
-              </a>
-            </li>
-            <li>
-              <a
-                href="/visuals"
-                onClick={(e) => {
-                  e.preventDefault()
-                  navigate('/visuals')
-                }}
-                className={currentPath === '/visuals' ? 'active' : ''}
-              >
-                Visuals
-              </a>
-            </li>
-            <li>
-              <a
-                href="/networking-2024"
-                onClick={(e) => {
-                  e.preventDefault()
-                  navigate('/networking-2024')
-                }}
-                className={currentPath === '/networking-2024' ? 'active' : ''}
-              >
-                Networking 2024
-              </a>
-            </li>
-            <li>
-              <a
-                href="/loom-roast"
-                onClick={(e) => {
-                  e.preventDefault()
-                  navigate('/loom-roast')
-                }}
-                className={currentPath === '/loom-roast' ? 'active' : ''}
-              >
-                Loom Roast
-              </a>
-            </li>
-          </ul>
-        </div>
-      </nav>
+      <Navigation currentPage={getCurrentPage()} onNavigate={handleNavigate} />
       <main>{renderPage()}</main>
     </div>
   )

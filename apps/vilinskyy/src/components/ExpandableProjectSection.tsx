@@ -1,7 +1,4 @@
-import { useState, useRef } from 'react'
-import { motion, AnimatePresence } from 'framer-motion'
-import ProjectSummary from './ProjectSummary'
-import ProjectDetail from './ProjectDetail'
+import { useState } from 'react'
 import styles from './ExpandableProjectSection.module.css'
 
 interface Project {
@@ -9,10 +6,14 @@ interface Project {
   summary: {
     title: string
     shortDescription: string
+    category?: string
   }
   detail: {
     longDescription: string
     images: string[]
+    role?: string
+    duration?: string
+    link?: string
   }
 }
 
@@ -22,46 +23,68 @@ export default function ExpandableProjectSection({
   project: Project
 }) {
   const [isExpanded, setIsExpanded] = useState(false)
-  const contentRef = useRef<HTMLDivElement>(null)
 
   const toggleExpand = () => {
-    console.log('Toggle clicked, current state:', isExpanded)
     setIsExpanded((v) => !v)
   }
 
   return (
-    <div className={styles.expandableSection}>
-      <ProjectSummary
-        title={project.summary.title}
-        shortDescription={project.summary.shortDescription}
-        isExpanded={isExpanded}
-        onToggle={toggleExpand}
-        ariaControls={`project-detail-${project.id}`}
-      />
-      <AnimatePresence initial={false}>
-        {isExpanded && (
-          <motion.section
-            key="content"
-            initial="collapsed"
-            animate="open"
-            exit="collapsed"
-            variants={{
-              open: { opacity: 1, height: 'auto' },
-              collapsed: { opacity: 0, height: 0 },
-            }}
-            transition={{ duration: 0.4 }}
-            id={`project-detail-${project.id}`}
-            aria-hidden={!isExpanded}
-            ref={contentRef}
-            className={styles.detailContainer}
-          >
-            <ProjectDetail
-              longDescription={project.detail.longDescription}
-              images={project.detail.images}
-            />
-          </motion.section>
-        )}
-      </AnimatePresence>
+    <div className={styles.expandableSection} onClick={toggleExpand}>
+      <div className={styles.projectSummary}>
+        <div className={styles.projectInfo}>
+          <h3 className={styles.projectTitle}>{project.summary.title}</h3>
+          <p className={styles.projectDescription}>
+            {project.summary.shortDescription}
+          </p>
+        </div>
+        <button
+          className={styles.toggleButton}
+          aria-expanded={isExpanded}
+          aria-controls={`project-detail-${project.id}`}
+        >
+          {isExpanded ? 'Close' : 'Read More'}
+        </button>
+      </div>
+
+      {isExpanded && (
+        <div
+          id={`project-detail-${project.id}`}
+          className={styles.detailContainer}
+        >
+          <div className={styles.detailContent}>
+            {project.detail.longDescription
+              .split('\n')
+              .map(
+                (paragraph, index) =>
+                  paragraph.trim() && <p key={index}>{paragraph}</p>
+              )}
+
+            {(project.detail.role ||
+              project.detail.duration ||
+              project.detail.link) && (
+              <div className={styles.projectMeta}>
+                {project.detail.role && (
+                  <span>Role: {project.detail.role}</span>
+                )}
+                {project.detail.duration && (
+                  <span>Duration: {project.detail.duration}</span>
+                )}
+                {project.detail.link && project.detail.link !== '#' && (
+                  <a
+                    href={project.detail.link}
+                    className={styles.projectLink}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    onClick={(e) => e.stopPropagation()}
+                  >
+                    Visit Project →
+                  </a>
+                )}
+              </div>
+            )}
+          </div>
+        </div>
+      )}
     </div>
   )
 }

@@ -1,67 +1,257 @@
-import React from 'react'
+import React, { useState } from 'react'
 import styles from './HeroSectionVideoIntro.module.css'
 import SocialMediaLinks from './SocialMediaLinks'
 import NewsletterForm from './NewsletterForm'
 
 const HeroSectionVideoIntro: React.FC = () => {
+  const [isVideoPlaying, setIsVideoPlaying] = useState(false)
+
+  const handlePlayVideo = () => {
+    setIsVideoPlaying(true)
+    // In a real implementation, this would play the video
+  }
+
   return (
     <section className={styles.heroSection}>
       <div className={styles.container}>
-        <div className={styles.heroContent}>
-          <h1 className={styles.heroTitle}>Alexander Vilinskyy</h1>
-          <p className={styles.heroTagline}>
-            Digital designer and founder of{' '}
-            <a href="https://superclear.xyz" target="_blank" rel="noopener noreferrer" className={styles.heroLink}>
-              Super Clear
-            </a>
-            {' '}— design studio for early stage startups. Based in London, often in NYC/SF.
-          </p>
-          <p className={styles.heroDescription}>
-            Bootstrapped profitable businesses, worked on consumer brands and led creative product teams. Worked with startups like{' '}
-            <span className={styles.companyHighlight}>Grammarly</span>,{' '}
-            <span className={styles.companyHighlight}>Spark</span>, and{' '}
-            <span className={styles.companyHighlight}>Decipad</span>, as well as hundreds of productivity and communication apps.
-          </p>
-          
-          <div className={styles.socialIcons}>
-            <SocialMediaLinks variant="compact" />
-          </div>
-        </div>
-        
-        <div className={styles.videoWrapper}>
-          <div className={styles.videoContainer}>
-            <iframe
-              src="https://www.loom.com/embed/YOUR_LOOM_VIDEO_ID"
-              frameBorder="0"
-              allowFullScreen
-              className={styles.video}
-              title="Alexander Vilinskyy Introduction"
-            ></iframe>
-            <div className={styles.videoPlaceholder}>
-              <svg className={styles.playIcon} viewBox="0 0 68 48" fill="none">
-                <path fillRule="evenodd" clipRule="evenodd" d="M66.52.00C63.90.00 61.79 2.11 61.79 4.73V43.27C61.79 45.89 63.90 48.00 66.52 48.00C69.14 48.00 71.25 45.89 71.25 43.27V4.73C71.25 2.11 69.14.00 66.52.00ZM1.48.00C4.10.00 6.21 2.11 6.21 4.73V43.27C6.21 45.89 4.10 48.00 1.48 48.00C-1.14 48.00-3.25 45.89-3.25 43.27V4.73C-3.25 2.11-1.14.00 1.48.00ZM26.52 7.91C28.55 6.62 31.15 6.62 33.18 7.91L48.20 17.18C50.23 18.47 51.23 20.73 51.23 23.00V25.00C51.23 27.27 50.23 29.53 48.20 30.82L33.18 40.09C31.15 41.38 28.55 41.38 26.52 40.09L11.50 30.82C9.47 29.53 8.47 27.27 8.47 25.00V23.00C8.47 20.73 9.47 18.47 11.50 17.18L26.52 7.91Z" fill="currentColor"/>
+        <h1 className={styles.heroTitle}>Alexander Vilinskyy</h1>
+
+        <p className={styles.heroDescription}>
+          Digital designer and founder of{' '}
+          <a href="https://superclear.xyz" className={styles.link}>
+            Super Clear
+          </a>{' '}
+          — design studio for early stage startups. Based in London, often in
+          NYC/SF.
+        </p>
+
+        <p className={styles.heroDescription}>
+          Bootstrapped profitable businesses, worked on consumer brands and led
+          creative product teams. Worked with startups like{' '}
+          <a
+            href="https://apps.apple.com/us/app/grammarly-grammar-keyboard/id1158877342"
+            className={styles.link}
+          >
+            Grammarly
+          </a>
+          ,{' '}
+          <a href="https://readdle.com/spark" className={styles.link}>
+            Spark
+          </a>
+          , and{' '}
+          <a href="https://readdle.com/documents" className={styles.link}>
+            Documents
+          </a>
+          , as well as hundreds of productivity and communication apps.
+        </p>
+
+        {/* Social Media Links */}
+        <SocialMediaLinks />
+
+        {/* Video Container */}
+        <div className={styles.videoContainer}>
+          <div className={styles.videoThumbnail}>
+            <div className={styles.videoInfo}>
+              <span className={styles.videoTitle}>
+                🎥 Alexander Vilinskyy Intro
+              </span>
+              <span className={styles.videoDuration}>57 sec</span>
+            </div>
+            <button
+              className={styles.playButton}
+              onClick={handlePlayVideo}
+              aria-label="Play video introduction"
+            >
+              <svg
+                viewBox="0 0 24 24"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path d="M8 5v14l11-7z" fill="currentColor" />
               </svg>
-              <p className={styles.videoDuration}>57 sec</p>
+            </button>
+            <div className={styles.videoIcons}>
+              <button
+                className={styles.iconButton}
+                aria-label="10 seconds back"
+              >
+                ⏪ 10
+              </button>
+              <button className={styles.iconButton} aria-label="Playback speed">
+                1x
+              </button>
+              <button
+                className={styles.iconButton}
+                aria-label="Closed captions"
+              >
+                CC
+              </button>
+              <button className={styles.iconButton} aria-label="Share">
+                🔗
+              </button>
+              <button className={styles.iconButton} aria-label="Fullscreen">
+                ⛶
+              </button>
             </div>
           </div>
-          <p className={styles.videoCaption}>
-            Twice a year I write an issue with updates from my life, projects, thoughts, links and some photos. Follow me on{' '}
-            <a href="https://twitter.com/alexandervilin" target="_blank" rel="noopener noreferrer">Twitter</a>,{' '}
-            <a href="https://linkedin.com/in/alexandervilinskyy" target="_blank" rel="noopener noreferrer">LinkedIn</a>,{' '}
-            <a href="https://instagram.com/alexandervilin" target="_blank" rel="noopener noreferrer">Instagram</a>,{' '}
-            <a href="https://youtube.com/@alexandervilinskyy" target="_blank" rel="noopener noreferrer">YouTube</a>,{' '}
-            <a href="https://dribbble.com/alexandervilin" target="_blank" rel="noopener noreferrer">Dribbble</a>.
-          </p>
+          {isVideoPlaying && (
+            <div className={styles.videoPlayer}>
+              {/* Video player would go here */}
+              <p>Video player placeholder</p>
+            </div>
+          )}
         </div>
-        
-        <div className={styles.newsletterSection}>
-          <NewsletterForm 
-            variant="inline" 
-            placeholder="mail@email.com"
-            buttonText="Subscribe"
-            successMessage="Thanks for subscribing! Check your email for confirmation."
-          />
+
+        {/* Logo grid */}
+        <div className={styles.logoGrid}>
+          <a
+            href="https://grammarly.com"
+            className={styles.logoLink}
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <img
+              src="https://upload.wikimedia.org/wikipedia/commons/thumb/b/b0/Grammarly_Logo.svg/320px-Grammarly_Logo.svg.png"
+              alt="Grammarly"
+              className={styles.logoImage}
+            />
+          </a>
+          <a
+            href="https://sparkmailapp.com/"
+            className={styles.logoLink}
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <div className={styles.logoPlaceholder}>Spark</div>
+          </a>
+          <a
+            href="https://pervasive.app"
+            className={styles.logoLink}
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <div className={styles.logoPlaceholder}>Pervasive</div>
+          </a>
+          <a
+            href="https://focalbrief.com"
+            className={styles.logoLink}
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <div className={styles.logoPlaceholder}>FocalBrief</div>
+          </a>
+          <a
+            href="https://wikihow.com"
+            className={styles.logoLink}
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <img
+              src="https://upload.wikimedia.org/wikipedia/commons/thumb/2/28/WikiHow_logo.svg/320px-WikiHow_logo.svg.png"
+              alt="wikiHow"
+              className={styles.logoImage}
+            />
+          </a>
+          <a
+            href="https://axis.xyz"
+            className={styles.logoLink}
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <div className={styles.logoPlaceholder}>Axis</div>
+          </a>
+          <a
+            href="https://tickets.ua"
+            className={styles.logoLink}
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <div className={styles.logoPlaceholder}>Tickets</div>
+          </a>
+          <a
+            href="https://readdle.com"
+            className={styles.logoLink}
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <img
+              src="https://readdle.com/assets/img/readdle-logo.svg"
+              alt="Readdle"
+              className={styles.logoImage}
+            />
+          </a>
+          <a
+            href="https://context.ai"
+            className={styles.logoLink}
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <div className={styles.logoPlaceholder}>Context</div>
+          </a>
+          <a
+            href="https://daylightcomputer.com/"
+            className={styles.logoLink}
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <div className={styles.logoPlaceholder}>Daylight</div>
+          </a>
+          <a
+            href="https://tessl.ai"
+            className={styles.logoLink}
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <div className={styles.logoPlaceholder}>Tessl</div>
+          </a>
+          <a
+            href="https://complexchaos.ai"
+            className={styles.logoLink}
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <div className={styles.logoPlaceholder}>ComplexChaos</div>
+          </a>
         </div>
+
+        {/* Newsletter Text and Form */}
+        <p className={styles.newsletterText}>
+          Twice a year I write an issue with updates from my life, projects,
+          thoughts, links and some photos. Follow me on{' '}
+          <a href="https://twitter.com/alexandervilin" className={styles.link}>
+            Twitter
+          </a>
+          ,{' '}
+          <a
+            href="https://linkedin.com/in/alexandervilinskyy"
+            className={styles.link}
+          >
+            LinkedIn
+          </a>
+          ,{' '}
+          <a
+            href="https://instagram.com/alexandervilin"
+            className={styles.link}
+          >
+            Instagram
+          </a>
+          ,{' '}
+          <a
+            href="https://youtube.com/@alexandervilinskyy"
+            className={styles.link}
+          >
+            YouTube
+          </a>
+          ,{' '}
+          <a
+            href="https://bsky.app/profile/alexandervilin.bsky.social"
+            className={styles.link}
+          >
+            Bluesky
+          </a>
+          .
+        </p>
+        <NewsletterForm placeholder="main@email.com" />
       </div>
     </section>
   )

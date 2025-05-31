@@ -68,24 +68,29 @@
 }
 
 /* Specific platform colors */
-.link[href*="twitter"]:hover .icon {
-  color: #1DA1F2;
+.link[href*='twitter']:hover .icon {
+  color: #1da1f2;
 }
 
-.link[href*="linkedin"]:hover .icon {
-  color: #0077B5;
+.link[href*='linkedin']:hover .icon {
+  color: #0077b5;
 }
 
-.link[href*="instagram"]:hover .icon {
-  color: #E1306C;
+.link[href*='instagram']:hover .icon {
+  color: #e1306c;
 }
 
-.link[href*="youtube"]:hover .icon {
-  color: #FF0000;
+.link[href*='youtube']:hover .icon {
+  color: #ff0000;
 }
 
-.link[href*="dribbble"]:hover .icon {
-  color: #EA4C89;
+.link[href*='dribbble']:hover .icon {
+  color: #ea4c89;
+}
+
+.link[href*='bsky']:hover .icon,
+.link[href*='bluesky']:hover .icon {
+  color: #00a8e8;
 }
 
 /* Responsive */
@@ -93,12 +98,12 @@
   .list {
     gap: var(--spacing-sm);
   }
-  
+
   .icon {
     width: 20px;
     height: 20px;
   }
-  
+
   .list.footer {
     flex-wrap: wrap;
     gap: var(--spacing-md);

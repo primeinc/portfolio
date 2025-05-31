@@ -18,3 +18,5 @@ playwright-report/
 .setup-backups/
 stop-dev-server.sh
 .dev-server-wrapper.sh
+
+docs/rylee

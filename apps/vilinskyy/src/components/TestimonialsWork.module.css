@@ -1,0 +1,57 @@
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&display=swap');
+
+.testimonialsSection {
+  padding: 64px 0;
+  background-color: #fff;
+}
+
+.container {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 0 24px;
+}
+
+.title {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 16px;
+  font-weight: 600;
+  color: rgb(31, 34, 32);
+  margin-bottom: 32px;
+}
+
+.testimonialsList {
+  display: grid;
+  gap: 32px;
+}
+
+.testimonialItem {
+  border-bottom: 1px solid #e0e0e0;
+  padding-bottom: 24px;
+}
+
+.testimonialItem:last-child {
+  border-bottom: none;
+}
+
+.quote {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 15px;
+  font-weight: 400;
+  color: rgb(31, 34, 32);
+  line-height: 24px;
+  margin: 0 0 12px 0;
+  font-style: normal;
+}
+
+.author {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 14px;
+  color: #666;
+  font-style: normal;
+}
+
+@media (max-width: 768px) {
+  .container {
+    padding: 0 16px;
+  }
+}
