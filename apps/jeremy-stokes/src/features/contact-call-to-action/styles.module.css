@@ -1,0 +1,21 @@
+.cta {
+  padding: 4rem 1rem;
+  text-align: center;
+  background: #f5f5f5;
+}
+
+.title {
+  font-size: 2rem;
+  margin-bottom: 1rem;
+  color: #333;
+}
+
+.link {
+  font-size: 1.2rem;
+  color: #007bff;
+  text-decoration: none;
+}
+
+.link:hover {
+  text-decoration: underline;
+}

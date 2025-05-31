@@ -1,5 +1,5 @@
 {
-  "name": "robin-noguier",
+  "name": "jeremy-stokes",
   "version": "1.0.0",
   "type": "module",
   "private": true,
@@ -7,7 +7,8 @@
     "dev": "vite",
     "build": "vite build",
     "preview": "vite preview",
-    "test": "APP=robin-noguier playwright test",
+    "test": "APP=jeremy-stokes playwright test",
+    "test:e2e": "APP=jeremy-stokes playwright test",
     "lint": "eslint src",
     "typecheck": "tsc --noEmit"
   }

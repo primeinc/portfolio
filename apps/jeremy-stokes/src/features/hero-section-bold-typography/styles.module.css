@@ -1,0 +1,26 @@
+.hero {
+  padding: 6rem 1rem 4rem;
+  text-align: center;
+}
+
+.title {
+  font-size: 3rem;
+  font-weight: 900;
+  letter-spacing: -1px;
+  color: #222;
+}
+
+.subtitle {
+  font-size: 1.25rem;
+  margin-top: 0.5rem;
+  color: #555;
+}
+
+@media (min-width: 768px) {
+  .title {
+    font-size: 4rem;
+  }
+  .subtitle {
+    font-size: 1.5rem;
+  }
+}
