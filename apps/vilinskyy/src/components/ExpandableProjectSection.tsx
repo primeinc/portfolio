@@ -24,7 +24,10 @@ export default function ExpandableProjectSection({
   const [isExpanded, setIsExpanded] = useState(false)
   const contentRef = useRef<HTMLDivElement>(null)
 
-  const toggleExpand = () => setIsExpanded((v) => !v)
+  const toggleExpand = () => {
+    console.log('Toggle clicked, current state:', isExpanded)
+    setIsExpanded((v) => !v)
+  }
 
   return (
     <div className={styles.expandableSection}>

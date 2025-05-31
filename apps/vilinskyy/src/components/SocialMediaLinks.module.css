@@ -1,12 +1,106 @@
 .list {
   display: flex;
-  gap: 1rem;
-  list-style: none;
+  gap: var(--spacing-md);
+  margin: 0;
   padding: 0;
+  list-style: none;
+  align-items: center;
+}
+
+/* Default variant */
+.list.default {
+  gap: var(--spacing-lg);
+}
+
+/* Footer variant */
+.list.footer {
+  gap: var(--spacing-xl);
   justify-content: center;
 }
 
-.list a {
+/* Compact variant */
+.list.compact {
+  gap: var(--spacing-sm);
+}
+
+.link {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  color: var(--color-text-secondary);
   text-decoration: none;
-  color: #007bff;
+  transition: all var(--transition-fast);
+  padding: var(--spacing-xs);
+  border-radius: var(--border-radius);
+}
+
+.link:hover {
+  color: var(--color-brand-blue);
+  transform: translateY(-2px);
+}
+
+.link:active {
+  transform: translateY(0);
+}
+
+.icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  transition: transform var(--transition-fast);
+}
+
+.link:hover .icon {
+  transform: scale(1.1);
+}
+
+.label {
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  white-space: nowrap;
+}
+
+/* Social platform colors on hover */
+.link:hover:has(svg) {
+  color: var(--color-text-primary);
+}
+
+/* Specific platform colors */
+.link[href*="twitter"]:hover .icon {
+  color: #1DA1F2;
+}
+
+.link[href*="linkedin"]:hover .icon {
+  color: #0077B5;
+}
+
+.link[href*="instagram"]:hover .icon {
+  color: #E1306C;
+}
+
+.link[href*="youtube"]:hover .icon {
+  color: #FF0000;
+}
+
+.link[href*="dribbble"]:hover .icon {
+  color: #EA4C89;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .list {
+    gap: var(--spacing-sm);
+  }
+  
+  .icon {
+    width: 20px;
+    height: 20px;
+  }
+  
+  .list.footer {
+    flex-wrap: wrap;
+    gap: var(--spacing-md);
+  }
 }

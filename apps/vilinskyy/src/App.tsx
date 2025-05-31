@@ -1,58 +1,100 @@
-import { useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import Home from './pages/Home'
 import Visuals from './pages/Visuals'
 import Networking from './pages/Networking'
 import LoomRoast from './pages/LoomRoast'
+import './index.css'
 
-const routes: Record<string, () => JSX.Element> = {
-  '/': Home,
-  '/visuals': Visuals,
-  '/networking-2024': Networking,
-  '/loom-roast': LoomRoast,
-}
-
-// Navigation items configuration
-const navItems = [
-  { path: '/', label: 'Home' },
-  { path: '/visuals', label: 'Visuals' },
-  { path: '/networking-2024', label: 'Networking 2024' },
-  { path: '/loom-roast', label: 'Loom Roast' },
-]
-
-// Minimal router using history API. React Router not used to keep dependencies small.
-export default function App() {
-  const [path, setPath] = useState(window.location.pathname)
+const App: React.FC = () => {
+  const [currentPath, setCurrentPath] = useState(window.location.pathname)
 
   useEffect(() => {
-    const onPop = () => setPath(window.location.pathname)
-    window.addEventListener('popstate', onPop)
-    return () => window.removeEventListener('popstate', onPop)
+    const handlePopState = () => {
+      setCurrentPath(window.location.pathname)
+    }
+
+    window.addEventListener('popstate', handlePopState)
+    return () => window.removeEventListener('popstate', handlePopState)
   }, [])
 
-  const navigate = (to: string) => {
-    window.history.pushState({}, '', to)
-    setPath(to)
+  const navigate = (path: string) => {
+    window.history.pushState({}, '', path)
+    setCurrentPath(path)
+    window.scrollTo(0, 0)
   }
 
-  const Component = routes[path] || Home
+  const renderPage = () => {
+    switch (currentPath) {
+      case '/visuals':
+        return <Visuals />
+      case '/networking-2024':
+        return <Networking />
+      case '/loom-roast':
+        return <LoomRoast />
+      default:
+        return <Home />
+    }
+  }
 
   return (
-    <div>
+    <div className="app">
       <nav>
-        {navItems.map((item) => (
-          <a
-            key={item.path}
-            href="#"
-            onClick={(e) => {
-              e.preventDefault()
-              navigate(item.path)
-            }}
-          >
-            {item.label}
-          </a>
-        ))}
+        <div className="container">
+          <ul>
+            <li>
+              <a
+                href="/"
+                onClick={(e) => {
+                  e.preventDefault()
+                  navigate('/')
+                }}
+                className={currentPath === '/' ? 'active' : ''}
+              >
+                Home
+              </a>
+            </li>
+            <li>
+              <a
+                href="/visuals"
+                onClick={(e) => {
+                  e.preventDefault()
+                  navigate('/visuals')
+                }}
+                className={currentPath === '/visuals' ? 'active' : ''}
+              >
+                Visuals
+              </a>
+            </li>
+            <li>
+              <a
+                href="/networking-2024"
+                onClick={(e) => {
+                  e.preventDefault()
+                  navigate('/networking-2024')
+                }}
+                className={currentPath === '/networking-2024' ? 'active' : ''}
+              >
+                Networking 2024
+              </a>
+            </li>
+            <li>
+              <a
+                href="/loom-roast"
+                onClick={(e) => {
+                  e.preventDefault()
+                  navigate('/loom-roast')
+                }}
+                className={currentPath === '/loom-roast' ? 'active' : ''}
+              >
+                Loom Roast
+              </a>
+            </li>
+          </ul>
+        </div>
       </nav>
-      <Component />
+      <main>{renderPage()}</main>
     </div>
   )
 }
+
+export default App

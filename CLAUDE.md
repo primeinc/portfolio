@@ -141,3 +141,7 @@ If setup fails:
 2. **Check setup health**: Review `.setup-health.json` to verify environment state
 3. **Use exact versions**: Volta enforces exact Node.js and pnpm versions for reproducibility
 4. **Commit generated files carefully**: Don't commit `.setup-logs/`, `.setup-health.json`, or `.dev-server.pid`
+
+## Claude Memories
+
+- read files before writing to them
