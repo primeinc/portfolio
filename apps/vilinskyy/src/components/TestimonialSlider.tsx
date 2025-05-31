@@ -19,7 +19,7 @@ export default function TestimonialSlider() {
 
   return (
     <section className={styles.slider}>
-      <div className={styles.slide}>{testimonials[index].text}</div>
+      <div className={styles.slide}>{testimonials[index]?.text || ''}</div>
       <button onClick={() => setIndex((index + 1) % testimonials.length)}>
         Next
       </button>

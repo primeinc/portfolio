@@ -11,6 +11,14 @@ const routes: Record<string, () => JSX.Element> = {
   '/loom-roast': LoomRoast,
 }
 
+// Navigation items configuration
+const navItems = [
+  { path: '/', label: 'Home' },
+  { path: '/visuals', label: 'Visuals' },
+  { path: '/networking-2024', label: 'Networking 2024' },
+  { path: '/loom-roast', label: 'Loom Roast' },
+]
+
 // Minimal router using history API. React Router not used to keep dependencies small.
 export default function App() {
   const [path, setPath] = useState(window.location.pathname)
@@ -31,42 +39,18 @@ export default function App() {
   return (
     <div>
       <nav>
-        <a
-          href="#"
-          onClick={(e) => {
-            e.preventDefault()
-            navigate('/')
-          }}
-        >
-          Home
-        </a>
-        <a
-          href="#"
-          onClick={(e) => {
-            e.preventDefault()
-            navigate('/visuals')
-          }}
-        >
-          Visuals
-        </a>
-        <a
-          href="#"
-          onClick={(e) => {
-            e.preventDefault()
-            navigate('/networking-2024')
-          }}
-        >
-          Networking 2024
-        </a>
-        <a
-          href="#"
-          onClick={(e) => {
-            e.preventDefault()
-            navigate('/loom-roast')
-          }}
-        >
-          Loom Roast
-        </a>
+        {navItems.map((item) => (
+          <a
+            key={item.path}
+            href="#"
+            onClick={(e) => {
+              e.preventDefault()
+              navigate(item.path)
+            }}
+          >
+            {item.label}
+          </a>
+        ))}
       </nav>
       <Component />
     </div>

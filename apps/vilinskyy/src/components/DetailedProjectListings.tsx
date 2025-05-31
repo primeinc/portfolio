@@ -1,4 +1,8 @@
 import ExpandableProjectSection from './ExpandableProjectSection'
+import {
+  DECIPAD_PROJECT_VISUAL,
+  GRAMMARLY_PROJECT_VISUAL,
+} from '../assets/svgData'
 
 const projects = [
   {
@@ -6,10 +10,7 @@ const projects = [
     summary: { title: 'Decipad', shortDescription: 'Data storytelling app.' },
     detail: {
       longDescription: 'Detailed description of Decipad project.',
-      // Reuse gallery image data URIs for project visuals
-      images: [
-        'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIzMDAiIGhlaWdodD0iMzAwIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSJyZWQiLz48L3N2Zz4K',
-      ],
+      images: [DECIPAD_PROJECT_VISUAL],
     },
   },
   {
@@ -17,9 +18,7 @@ const projects = [
     summary: { title: 'Grammarly', shortDescription: 'Writing assistant.' },
     detail: {
       longDescription: 'Long details about Grammarly work.',
-      images: [
-        'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIzMDAiIGhlaWdodD0iMzAwIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSJncmVlbiIvPjwvc3ZnPgo=',
-      ],
+      images: [GRAMMARLY_PROJECT_VISUAL],
     },
   },
 ]

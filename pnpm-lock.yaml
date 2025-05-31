@@ -120,6 +120,8 @@ importers:
 
   apps/robin-noguier: {}
 
+  apps/vilinskyy: {}
+
 packages:
 
   '@ampproject/remapping@2.3.0':

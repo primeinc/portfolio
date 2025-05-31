@@ -14,7 +14,7 @@ export default function ProjectDetail({
         <div className={styles.detailImages}>
           {images.map((src, i) => (
             <img
-              key={i}
+              key={src}
               src={src}
               alt={`detail ${i}`}
               className={styles.detailImage}
