@@ -1,57 +1,124 @@
-@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&display=swap');
-
-.testimonialsSection {
-  padding: 64px 0;
-  background-color: #fff;
+/* Layout containers */
+.wLayoutBlockcontainer {
+  width: 100%;
 }
 
-.container {
+.reviewsBlock {
+  margin: 60px auto;
+}
+
+.wContainer {
   max-width: 800px;
-  margin: 0 auto;
+  margin-left: auto;
+  margin-right: auto;
   padding: 0 24px;
 }
 
-.title {
-  font-family: 'JetBrains Mono', monospace;
+.reviewsRow {
+  width: 100%;
+}
+
+.reviewRowTight {
+  width: 100%;
+}
+
+/* Typography */
+.h3 {
   font-size: 16px;
-  font-weight: 600;
+  font-weight: 400;
+  line-height: 21px;
   color: rgb(31, 34, 32);
+  margin: 0 0 24px 0;
+  font-family: 'JetBrains Mono', monospace;
+  letter-spacing: 0.1px;
+}
+
+.bodyText {
+  font-size: 15px;
+  line-height: 24px;
+  color: rgb(31, 34, 32);
+  font-family: 'JetBrains Mono', monospace;
+}
+
+.listDescription {
   margin-bottom: 32px;
 }
 
-.testimonialsList {
-  display: grid;
-  gap: 32px;
+/* Review stack */
+.reviewStack {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
 }
 
-.testimonialItem {
-  border-bottom: 1px solid #e0e0e0;
-  padding-bottom: 24px;
+/* Individual review */
+.reviewDesigner {
+  width: 100%;
 }
 
-.testimonialItem:last-child {
-  border-bottom: none;
-}
-
-.quote {
-  font-family: 'JetBrains Mono', monospace;
+.reviewBody {
   font-size: 15px;
+  line-height: 24px;
+  color: rgb(31, 34, 32);
+  margin: 0 0 16px 0;
+  font-family: 'JetBrains Mono', monospace;
+}
+
+/* Bold highlights */
+.bold {
+  font-weight: 400;
+  background-color: #ffff00;
+  padding: 0 2px;
+}
+
+/* Review bio */
+.reviewBio {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.reviewPicture {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.reviewName {
+  font-size: 14px;
+  line-height: 20px;
+  color: rgb(31, 34, 32);
+  margin: 0;
+  font-family: 'JetBrains Mono', monospace;
+}
+
+.boldText7 {
   font-weight: 400;
   color: rgb(31, 34, 32);
-  line-height: 24px;
-  margin: 0 0 12px 0;
-  font-style: normal;
 }
 
-.author {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 14px;
-  color: #666;
-  font-style: normal;
-}
-
+/* Responsive */
 @media (max-width: 768px) {
-  .container {
+  .wContainer {
     padding: 0 16px;
+  }
+
+  .reviewsBlock {
+    margin: 40px auto;
+  }
+
+  .reviewStack {
+    gap: 16px;
+  }
+
+  .bodyText,
+  .reviewBody {
+    font-size: 14px;
+    line-height: 22px;
+  }
+
+  .reviewName {
+    font-size: 13px;
   }
 }

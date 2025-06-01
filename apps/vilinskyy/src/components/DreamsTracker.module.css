@@ -1,64 +1,81 @@
-@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&display=swap');
-
-.dreamsSection {
-  padding: 64px 0;
-  background-color: #fafafa;
-}
-
-.container {
+/* Dreams Tracker container */
+.divBlock37 {
   max-width: 800px;
-  margin: 0 auto;
+  margin: 60px auto;
   padding: 0 24px;
 }
 
-.title {
-  font-family: 'JetBrains Mono', monospace;
+/* Title */
+.h3 {
   font-size: 16px;
-  font-weight: 600;
+  font-weight: 400;
+  line-height: 21px;
   color: rgb(31, 34, 32);
-  margin-bottom: 32px;
+  margin: 0 0 24px 0;
+  font-family: 'JetBrains Mono', monospace;
+  letter-spacing: 0.1px;
 }
 
-.dreamsList {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-  gap: 16px;
+/* Todo list container */
+.todoList {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
 }
 
-.dreamItem {
+/* Todo item */
+.todoItem {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 10px;
+  font-size: 15px;
+  line-height: 24px;
+  color: rgb(31, 34, 32);
+  font-family: 'JetBrains Mono', monospace;
 }
 
-.checkbox {
+/* Done state */
+.todoItem.done {
+  color: rgb(31, 34, 32);
+}
+
+/* Undone state */
+.todoItem.undone {
+  color: rgb(31, 34, 32);
+}
+
+/* Image styling */
+.todoItem img {
   width: 20px;
   height: 20px;
-  border: 2px solid rgb(31, 34, 32);
-  border-radius: 4px;
-  cursor: not-allowed;
-  accent-color: #00ff00;
+  flex-shrink: 0;
 }
 
-.checkbox:checked {
-  background-color: #00ff00;
+/* Hidden link styling */
+.hiddenLink {
+  color: inherit;
+  text-decoration: none;
+  transition: opacity 0.2s ease;
 }
 
-.dreamLabel {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 14px;
-  color: rgb(31, 34, 32);
-  cursor: default;
-  user-select: none;
+.hiddenLink:hover {
+  text-decoration: underline;
 }
 
-.completed {
-  text-decoration: line-through;
-  color: #666;
-}
-
+/* Responsive */
 @media (max-width: 768px) {
-  .dreamsList {
-    grid-template-columns: 1fr;
+  .divBlock37 {
+    margin: 40px auto;
+    padding: 0 16px;
+  }
+
+  .todoItem {
+    font-size: 14px;
+    line-height: 22px;
+  }
+
+  .todoItem img {
+    width: 18px;
+    height: 18px;
   }
 }

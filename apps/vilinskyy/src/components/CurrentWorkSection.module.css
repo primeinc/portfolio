@@ -1,8 +1,6 @@
-@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&display=swap');
-
 .currentWorkSection {
-  padding: 64px 0;
-  background-color: #fafafa;
+  padding: 60px 0;
+  background-color: #ffffff;
 }
 
 .container {
@@ -14,49 +12,59 @@
 .title {
   font-family: 'JetBrains Mono', monospace;
   font-size: 16px;
-  font-weight: 600;
+  font-weight: 400;
   color: rgb(31, 34, 32);
   margin-bottom: 24px;
+  line-height: 21px;
+  letter-spacing: 0.1px;
 }
 
 .description {
   font-family: 'JetBrains Mono', monospace;
-  font-size: 14px;
+  font-size: 15px;
   font-weight: 400;
   color: rgb(31, 34, 32);
-  line-height: 22px;
+  line-height: 24px;
   margin-bottom: 16px;
 }
 
 .email {
   font-family: 'JetBrains Mono', monospace;
-  font-size: 14px;
+  font-size: 15px;
   margin-bottom: 16px;
+  line-height: 24px;
 }
 
 .emailLink {
   color: #ff0000;
   text-decoration: none;
-  padding: 2px 4px;
-  background-color: transparent;
   transition: all 0.2s ease;
 }
 
 .emailLink:hover {
-  background-color: #ff0000;
-  color: white;
-  border-radius: 2px;
+  text-decoration: underline;
 }
 
 .geniusMode {
   font-family: 'JetBrains Mono', monospace;
-  font-size: 14px;
+  font-size: 15px;
   color: rgb(31, 34, 32);
-  line-height: 22px;
+  line-height: 24px;
 }
 
 @media (max-width: 768px) {
+  .currentWorkSection {
+    padding: 40px 0;
+  }
+
   .container {
     padding: 0 16px;
+  }
+
+  .description,
+  .email,
+  .geniusMode {
+    font-size: 14px;
+    line-height: 22px;
   }
 }

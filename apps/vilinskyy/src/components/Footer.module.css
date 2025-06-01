@@ -1,51 +1,293 @@
-@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&display=swap');
-
-.footer {
+/* Footer section */
+.sectionFooter {
   background-color: #fff;
-  padding: 64px 0 32px;
-  margin-top: 96px;
-  font-family: 'JetBrains Mono', monospace;
-  text-align: center;
+  position: relative;
+  padding: 60px 0 32px;
+  margin-top: 60px;
+}
+
+/* Layout containers */
+.wLayoutBlockcontainer {
+  width: 100%;
 }
 
 .container {
   max-width: 800px;
   margin: 0 auto;
+}
+
+.wContainer {
   padding: 0 24px;
 }
 
-.location {
-  font-size: 14px;
+/* Footer content */
+.footerMegaGroup {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 48px;
+  margin-bottom: 48px;
+}
+
+.footerGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+/* Typography */
+.h3 {
+  font-size: 16px;
+  font-weight: 400;
+  line-height: 21px;
   color: rgb(31, 34, 32);
-  margin-bottom: 8px;
+  margin: 0 0 12px 0;
+  font-family: 'JetBrains Mono', monospace;
+  letter-spacing: 0.1px;
 }
 
-.website {
-  font-size: 14px;
+.caption {
+  font-size: 15px;
+  line-height: 24px;
+  color: rgb(31, 34, 32);
   margin: 0;
+  font-family: 'JetBrains Mono', monospace;
 }
 
-.websiteLink {
-  color: #ff0000;
+/* Form */
+.wForm {
+  width: 100%;
+}
+
+.form {
+  display: flex;
+  gap: 12px;
+}
+
+.textField {
+  flex: 1;
+  padding: 10px 12px;
+  font-size: 14px;
+  line-height: 20px;
+  color: rgb(31, 34, 32);
+  background-color: #fff;
+  border: 1px solid #e4e4e4;
+  border-radius: 4px;
+  font-family: 'JetBrains Mono', monospace;
+  transition: border-color 0.2s ease;
+}
+
+.textField:focus {
+  border-color: rgb(31, 34, 32);
+  outline: none;
+}
+
+.wInput {
+  display: block;
+  width: 100%;
+}
+
+.buttonClassic {
+  padding: 10px 20px;
+  font-size: 14px;
+  font-weight: 400;
+  color: #fff;
+  background-color: rgb(31, 34, 32);
+  border: none;
+  border-radius: 4px;
+  font-family: 'JetBrains Mono', monospace;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.buttonClassic:hover {
+  background-color: #000;
+}
+
+.fullwidth {
+  width: 100%;
+}
+
+.wButton {
+  display: inline-block;
   text-decoration: none;
+}
+
+/* Success/Error messages */
+.successMessage,
+.errorMessage {
+  display: none;
+  padding: 16px;
+  border-radius: 4px;
+  margin-top: 16px;
+}
+
+.wFormDone {
+  background-color: #d4edda;
+  color: #155724;
+}
+
+.wFormFail {
+  background-color: #f8d7da;
+  color: #721c24;
+}
+
+.textBlock4 {
+  font-size: 14px;
+  line-height: 20px;
+  font-family: 'JetBrains Mono', monospace;
+}
+
+.link2 {
+  color: inherit;
+  text-decoration: underline;
+}
+
+/* Email link */
+.emailText {
+  color: #ff0000;
+  background-color: transparent;
   transition: all 0.2s ease;
 }
 
-.websiteLink:hover {
+a:hover .emailText {
+  text-decoration: underline;
+}
+
+/* Divider */
+.divider1px {
+  height: 1px;
+  background-color: #e4e4e4;
+  margin: 40px 0 24px;
+}
+
+.footer {
+  /* Additional footer divider styles */
+}
+
+/* Sub footer */
+.subFooter {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 15px;
+  color: rgb(31, 34, 32);
+  margin-bottom: 48px;
+  font-family: 'JetBrains Mono', monospace;
+}
+
+.subFooter p {
+  margin: 0;
+}
+
+.wCurrent {
+  color: inherit;
+  text-decoration: none;
+}
+
+/* Signature GIF */
+.illustration {
+  display: block;
+  max-width: 100%;
+  height: auto;
+}
+
+.signature {
+  margin: 0 auto;
+}
+
+/* Parked Porsche */
+.parkedPorsche {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  max-width: 400px;
+  height: auto;
+  opacity: 0.8;
+  transition: opacity 0.3s ease;
+}
+
+.parkedPorsche:hover {
+  opacity: 1;
+}
+
+/* Brain Load Meter */
+.metricExperiment {
+  padding: 32px 0;
+  background-color: #ffffff;
+}
+
+.appName {
+  font-size: 14px;
+  text-transform: none;
+  letter-spacing: 0;
+  color: rgb(31, 34, 32);
+  text-align: center;
+  margin-bottom: 16px;
+  font-family: 'JetBrains Mono', monospace;
+}
+
+.metric {
+  display: grid;
+  grid-template-columns: repeat(60, 1fr);
+  gap: 2px;
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.metricRed {
+  width: 100%;
+  height: 8px;
   background-color: #ff0000;
-  color: white;
-  padding: 2px 4px;
-  border-radius: 2px;
+  border-radius: 1px;
+}
+
+.divBlock19 {
+  width: 100%;
+  height: 8px;
+  background-color: #e4e4e4;
+  border-radius: 1px;
 }
 
 /* Responsive */
 @media (max-width: 768px) {
-  .footer {
-    padding: 48px 0 24px;
-    margin-top: 64px;
+  .footerMegaGroup {
+    grid-template-columns: 1fr;
+    gap: 32px;
   }
 
-  .container {
+  .form {
+    flex-direction: column;
+  }
+
+  .buttonClassic {
+    width: 100%;
+  }
+
+  .subFooter {
+    flex-direction: column;
+    gap: 16px;
+    text-align: center;
+  }
+
+  .parkedPorsche {
+    max-width: 200px;
+  }
+
+  .metric {
+    grid-template-columns: repeat(30, 1fr);
+  }
+
+  .wContainer {
     padding: 0 16px;
+  }
+}
+
+@media (max-width: 480px) {
+  .metric {
+    grid-template-columns: repeat(20, 1fr);
+  }
+
+  .parkedPorsche {
+    display: none;
   }
 }

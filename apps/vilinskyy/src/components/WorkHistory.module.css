@@ -1,0 +1,73 @@
+/* Timeline container */
+.timelineContainer {
+  max-width: 800px;
+  margin: 48px auto;
+  padding: 0 24px;
+}
+
+.timelineList {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+/* Individual timeline item */
+.timestamp {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+  font-size: 15px;
+  line-height: 24px;
+  color: #1f2220;
+}
+
+/* Year */
+.time {
+  font-weight: 600;
+  min-width: 48px;
+  flex-shrink: 0;
+}
+
+/* Project name */
+.timeName {
+  flex: 1;
+}
+
+/* Additional info */
+.timeAccessory {
+  color: #666;
+  font-size: 14px;
+}
+
+/* Section title */
+.h3 {
+  font-size: 16px;
+  font-weight: 600;
+  line-height: 1.5;
+  color: #1f2220;
+  margin: 32px 0 24px 0;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .timelineContainer {
+    margin: 32px auto;
+    padding: 0 16px;
+  }
+
+  .timestamp {
+    font-size: 14px;
+    line-height: 22px;
+    flex-wrap: wrap;
+  }
+
+  .time {
+    min-width: 40px;
+  }
+
+  .timeAccessory {
+    font-size: 13px;
+    width: 100%;
+    margin-left: 52px;
+  }
+}
