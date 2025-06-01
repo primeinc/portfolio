@@ -1,66 +1,79 @@
 import React from 'react'
 import styles from './HeroSectionVideoIntro.module.css'
+import {
+  TRACK_RECORD_800M_BADGE,
+  TRACK_RECORD_1600M_BADGE,
+  TRACK_RECORD_3200M_BADGE,
+  AP_SCHOLAR_BADGE,
+  SCHOLARSHIP_BADGE,
+  CHOREOGRAPHER_BADGE,
+  ALL_LEAGUE_BADGE,
+  TEAM_CHAMPION_BADGE,
+  MSU_JMC_BADGE,
+  DISTANCE_RUNNER_BADGE,
+  LEADER_FUND_BADGE,
+} from '../assets/svgData'
 
 const HeroSectionVideoIntro: React.FC = () => {
-  // Real site logo data
+  // Rylee's achievement badges
   const firstLogoGrid = [
     {
-      href: 'https://grammarly.com',
-      src: 'https://cdn.prod.website-files.com/626afc293bf3f633eda3488b/673fa57e2032a8b009277c22_logo_grammarly.svg',
-      alt: 'Grammarly',
+      href: '#track-records',
+      src: TRACK_RECORD_800M_BADGE,
+      alt: '800m Record: 2:27.62',
     },
     {
-      href: 'https://tickets.ua',
-      src: 'https://cdn.prod.website-files.com/626afc293bf3f633eda3488b/673fa57e2032a8b009277c24_logo_tickets.svg',
-      alt: 'Tickets UA',
+      href: '#track-records',
+      src: TRACK_RECORD_1600M_BADGE,
+      alt: '1600m Record: 5:30.15',
     },
     {
-      href: 'https://decipad.com',
-      src: 'https://cdn.prod.website-files.com/626afc293bf3f633eda3488b/673fa57e2032a8b009277c1a_logo_decipad.svg',
-      alt: 'Decipad',
+      href: '#track-records',
+      src: TRACK_RECORD_3200M_BADGE,
+      alt: '3200m Record: 11:46.47',
     },
     {
-      href: 'https://axis.xyz',
-      src: 'https://cdn.prod.website-files.com/626afc293bf3f633eda3488b/673fa57e2032a8b009277c1c_logo_axis.svg',
-      alt: 'Axis',
+      href: '#ap-scholar',
+      src: AP_SCHOLAR_BADGE,
+      alt: 'AP Scholar 2023',
     },
     {
-      href: 'https://wikihow.com',
-      src: 'https://cdn.prod.website-files.com/626afc293bf3f633eda3488b/673fa57e2032a8b009277c25_logo_wikihow.svg',
-      alt: 'WikiHow',
+      href: '#scholarships',
+      src: SCHOLARSHIP_BADGE,
+      alt: '$2,000 in Scholarships',
     },
     {
-      href: 'https://readdle.com',
-      src: 'https://cdn.prod.website-files.com/626afc293bf3f633eda3488b/673fa57e2032a8b009277c21_logo_readdle.svg',
-      alt: 'Readdle',
+      href: '#mamma-mia',
+      src: CHOREOGRAPHER_BADGE,
+      alt: 'Student Choreographer - Mamma Mia!',
     },
   ]
 
   const secondLogoGrid = [
     {
-      href: 'https://grammarly.com',
-      src: 'https://cdn.prod.website-files.com/626afc293bf3f633eda3488b/673fa57e2032a8b009277c22_logo_grammarly.svg',
-      alt: 'Grammarly',
+      href: '#cross-country',
+      src: ALL_LEAGUE_BADGE,
+      alt: 'All-League Cross Country',
     },
     {
-      href: 'https://sparkmailapp.com/',
-      src: 'https://cdn.prod.website-files.com/626afc293bf3f633eda3488b/674c414422e8e2b771b37fd8_logo_spark.svg',
-      alt: 'Spark',
+      href: '#team-success',
+      src: TEAM_CHAMPION_BADGE,
+      alt: 'Lapeer Lightning Champions',
     },
     {
-      href: 'https://pervasive.app',
-      src: 'https://cdn.prod.website-files.com/626afc293bf3f633eda3488b/674c42b546b67e093eb3583f_logo_pervasive.svg',
-      alt: 'Pervasive',
+      href: 'https://jmc.msu.edu',
+      src: MSU_JMC_BADGE,
+      alt: 'MSU James Madison College',
     },
     {
-      href: 'https://focalbrief.com',
-      src: 'https://cdn.prod.website-files.com/626afc293bf3f633eda3488b/6777aab1764b43566dce1b2a_logo_focalbrief.svg',
-      alt: 'Focalbrief',
+      href: '#distance-running',
+      src: DISTANCE_RUNNER_BADGE,
+      alt: 'Distance Runner',
     },
     {
-      href: 'https://wikihow.com',
-      src: 'https://cdn.prod.website-files.com/626afc293bf3f633eda3488b/673fa57e2032a8b009277c25_logo_wikihow.svg',
-      alt: 'WikiHow',
+      href: '#leader-fund',
+      src: LEADER_FUND_BADGE,
+      alt: 'LEADER Fund Recipient',
     },
   ]
 
@@ -70,10 +83,10 @@ const HeroSectionVideoIntro: React.FC = () => {
         {/* Video Intro Title with Link - MUST BE FIRST IN DOM */}
         <h1 className={`${styles.h3} ${styles.loomTitle}`}>
           <a
-            href="https://www.loom.com/share/294297d4ba0949be8eb98f1d4f56851f?sid=4a486978-af75-4dc7-9645-2edac6a0ad0b"
+            href="https://www.loom.com/share/placeholder-rylee-journey-to-msu"
             className={styles.paragraphlink}
           >
-            Video Intro
+            My Journey to MSU
           </a>
           <br />
         </h1>
@@ -81,55 +94,41 @@ const HeroSectionVideoIntro: React.FC = () => {
         {/* Header Section */}
         <div className={styles.header}>
           <h1 className={styles.h3}>
-            Alexander Vilinskyy
+            Rylee Brasseur
             <br />
           </h1>
 
           <div className={styles.horizontalFlex}>
             <div className={`${styles.bodyText} ${styles.smallText}`}>
-              Digital designer and founder of{' '}
-              <a
-                href="https://www.superclear.uk"
-                className={styles.paragraphlink}
-              >
-                Super Clear
+              International Relations scholar and record-setting distance runner
+              at Michigan State University's James Madison College
+              <br />
+              <br />
+              International Relations student at{' '}
+              <a href="https://jmc.msu.edu" className={styles.paragraphlink}>
+                James Madison College
+              </a>
+              , Michigan State University's residential college for public
+              affairs.
+              <br />
+              <br />
+              High school achievements include{' '}
+              <a href="#ap-scholar" className={styles.paragraphlink}>
+                AP Scholar
               </a>{' '}
-              — design agency for tech startups.
+              recognition, choreographing{' '}
+              <a href="#mamma-mia" className={styles.paragraphlink}>
+                Mamma Mia!
+              </a>{' '}
+              for 45 cast members, and setting three{' '}
+              <a href="#track-records" className={styles.paragraphlink}>
+                school track records
+              </a>
+              .
               <br />
               <br />
-              Contributed to products used by{' '}
-              <a
-                href="https://apps.apple.com/us/app/grammarly-grammar-keyboard/id1158877342"
-                className={styles.paragraphlink}
-              >
-                Grammarly
-              </a>
-              ,{' '}
-              <a
-                href="https://readdle.com/spark"
-                className={styles.paragraphlink}
-              >
-                Spark
-              </a>
-              ,{' '}
-              <a
-                href="https://readdle.com/documents"
-                className={styles.paragraphlink}
-              >
-                Documents
-              </a>
-              , <br />
-              <a href="https://decipad.com" className={styles.paragraphlink}>
-                Decipad
-              </a>
-              ,{' '}
-              <a href="https://pervasive.app" className={styles.paragraphlink}>
-                Pervasive
-              </a>
-              , and more.
-              <br />
-              <br />
-              Live in the countryside with a wife and a daughter.
+              Currently training with MSU's distance running community while
+              pursuing diplomatic career preparation.
             </div>
           </div>
         </div>
@@ -177,7 +176,7 @@ const HeroSectionVideoIntro: React.FC = () => {
           >
             <iframe
               className={styles.loomVideoEmb}
-              src="https://www.loom.com/embed/294297d4ba0949be8eb98f1d4f56851f?sid=35aa5ed9-bfc0-4476-9b37-2f2cc1a69d96"
+              src="https://www.loom.com/embed/placeholder-rylee-journey-to-msu"
               frameBorder="0"
               allowFullScreen
             />
@@ -187,38 +186,16 @@ const HeroSectionVideoIntro: React.FC = () => {
         {/* Newsletter and Social Links section */}
         <div className={styles.reviewRowTight}>
           <div className={`${styles.bodyText} ${styles.smallText}`}>
-            Twice a year I write an issue with updates from my life, projects,
-            thoughts, links and some photos. Follow me on{' '}
-            <a
-              href="https://twitter.com/vilinskyy"
-              className={styles.paragraphlink}
-            >
-              Twitter
-            </a>
-            ,{' '}
-            <a
-              href="https://linkedin.com/in/vilinskyy"
-              className={styles.paragraphlink}
-            >
+            Follow my academic and athletic journey. Connect with me on{' '}
+            <a href="#linkedin-placeholder" className={styles.paragraphlink}>
               LinkedIn
             </a>
             ,{' '}
-            <a
-              href="https://instagram.com/vilinskyy"
-              className={styles.paragraphlink}
-            >
+            <a href="#instagram-placeholder" className={styles.paragraphlink}>
               Instagram
             </a>
-            ,{' '}
-            <a
-              href="https://www.youtube.com/channel/UCZpuBPAdMSYJFzPzkdiFkdA"
-              className={styles.paragraphlink}
-            >
-              YouTube
-            </a>
-            ,{' '}
-            <a href="https://bsky.app/profile/vilinskyy.bsky.social">Bluesky</a>
-            .
+            , or reach out about International Relations, distance running, or
+            student life at MSU.
             <br />
           </div>
 
@@ -237,7 +214,7 @@ const HeroSectionVideoIntro: React.FC = () => {
                 maxLength={256}
                 name="Email-2"
                 data-name="Email 2"
-                placeholder="main@email.com"
+                placeholder="mailto:your.email@msu.edu"
                 type="email"
                 id="Email-2"
                 required
@@ -256,9 +233,7 @@ const HeroSectionVideoIntro: React.FC = () => {
               aria-label="Email success"
             >
               <div className={styles.textBlock4}>
-                Phew, it worked!
-                <br />
-                Your email is in safe hands.
+                Thanks for subscribing! I'll keep you updated on my journey.
               </div>
             </div>
             <div
@@ -268,17 +243,8 @@ const HeroSectionVideoIntro: React.FC = () => {
               aria-label="Email failure"
             >
               <div>
-                Fuck. I broke something...
-                <br />
-                Message me on{' '}
-                <a
-                  href="http://twitter.com/vilinskyy"
-                  target="_blank"
-                  className={styles.link2}
-                >
-                  Twitter
-                </a>{' '}
-                about it.
+                Oops! Something went wrong. Please try again or email me
+                directly.
               </div>
             </div>
           </div>

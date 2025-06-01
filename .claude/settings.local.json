@@ -41,7 +41,8 @@
       "Bash(pnpm dev:*)",
       "Bash(cp:*)",
       "Bash(git commit:*)",
-      "Bash(npx playwright test:*)"
+      "Bash(npx playwright test:*)",
+      "Bash(git rm:*)"
     ],
     "deny": []
   }
