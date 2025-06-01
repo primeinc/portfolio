@@ -1,9 +1,10 @@
 /* Footer section */
 .sectionFooter {
-  background-color: #fff;
+  background-color: rgba(255, 255, 255, 0.3); /* 30% opacity white */
   position: relative;
   padding: 60px 0 32px;
   margin-top: 60px;
+  border-left: 10px solid #FF0000; /* RED sidebar for Footer */
 }
 
 /* Layout containers */

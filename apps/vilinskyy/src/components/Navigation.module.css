@@ -3,14 +3,15 @@
 .navigation {
   position: sticky;
   top: 0;
-  background-color: rgba(255, 255, 255, 0.95);
+  background-color: rgba(255, 255, 255, 0.3); /* 30% opacity white */
   backdrop-filter: blur(10px);
   z-index: 1000;
   border-bottom: 1px solid #f0f0f0;
+  border-left: 10px solid #FFFF00; /* YELLOW sidebar for Navigation */
 }
 
 .container {
-  max-width: 1200px;
+  max-width: 900px; /* Match content width */
   margin: 0 auto;
   padding: 0 24px;
 }

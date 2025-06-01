@@ -1,6 +1,8 @@
 /* Layout containers */
 .wLayoutBlockcontainer {
   width: 100%;
+  border-left: 10px solid #0000FF; /* BLUE sidebar for Testimonials */
+  background-color: rgba(255, 255, 255, 0.3); /* 30% opacity white */
 }
 
 .reviewsBlock {

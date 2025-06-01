@@ -1,0 +1,69 @@
+.heroLogos {
+  border-left: 10px solid #00BFFF; /* LIGHT BLUE for logos */
+  background-color: rgba(255, 255, 255, 0.3);
+  padding: 0;
+  margin-bottom: 0;
+  max-width: 540px;
+  margin-left: 0;
+  margin-right: auto;
+}
+
+.logosGrid {
+  display: grid;
+  grid-template-columns: repeat(5, 100px);
+  gap: 4px 8px;
+  width: fit-content;
+}
+
+.wInlineBlock {
+  display: inline-block;
+  text-decoration: none;
+}
+
+.logoImage {
+  width: 100px;
+  height: 33px;
+  object-fit: contain;
+  filter: grayscale(100%);
+  opacity: 0.7;
+  transition: all 0.2s ease;
+}
+
+.wInlineBlock:hover .logoImage {
+  filter: grayscale(0%);
+  opacity: 1;
+  transform: translateY(-2px);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .heroLogos {
+    padding: 20px 20px;
+  }
+  
+  .logosGrid {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+  }
+  
+  .logoImage {
+    width: 80px;
+    height: 40px;
+  }
+}
+
+@media (max-width: 480px) {
+  .heroLogos {
+    padding: 16px 16px;
+  }
+  
+  .logosGrid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+  }
+  
+  .logoImage {
+    width: 60px;
+    height: 30px;
+  }
+}

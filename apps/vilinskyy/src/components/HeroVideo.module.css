@@ -1,0 +1,72 @@
+.heroVideo {
+  border-left: 10px solid #9400D3; /* VIOLET for video */
+  background-color: rgba(255, 255, 255, 0.3);
+  padding: 40px 24px; /* Reduced padding */
+  margin-bottom: 20px;
+  max-width: 900px; /* Match real site width */
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.loomHolder {
+  max-width: 100%;
+  margin: 0 auto;
+}
+
+.loomVideoEmb {
+  position: relative;
+  padding-bottom: 56.25%; /* 16:9 aspect ratio */
+  height: 0;
+  overflow: hidden;
+  border-radius: 16px;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+}
+
+.wEmbed {
+  width: 100%;
+}
+
+.wIframe {
+  height: auto;
+}
+
+.loomVideoEmb iframe,
+iframe.loomVideoEmb {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  border: none;
+  border-radius: 16px;
+}
+
+@media (max-width: 768px) {
+  .heroVideo {
+    padding: 40px 20px;
+  }
+  
+  .loomVideoEmb {
+    border-radius: 12px;
+  }
+  
+  .loomVideoEmb iframe,
+  iframe.loomVideoEmb {
+    border-radius: 12px;
+  }
+}
+
+@media (max-width: 480px) {
+  .heroVideo {
+    padding: 32px 16px;
+  }
+  
+  .loomVideoEmb {
+    border-radius: 8px;
+  }
+  
+  .loomVideoEmb iframe,
+  iframe.loomVideoEmb {
+    border-radius: 8px;
+  }
+}
