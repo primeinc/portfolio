@@ -15,8 +15,32 @@ const Home: React.FC = () => {
       <HeroLogos />
       <HeroVideo />
       <HeroNewsletter />
+      <div
+        style={{
+          height: '1px',
+          backgroundColor: '#e4e4e4',
+          maxWidth: '800px',
+          margin: '0 auto',
+        }}
+      />
       <TestimonialsWork />
+      <div
+        style={{
+          height: '1px',
+          backgroundColor: '#e4e4e4',
+          maxWidth: '800px',
+          margin: '0 auto',
+        }}
+      />
       <DreamsTracker />
+      <div
+        style={{
+          height: '1px',
+          backgroundColor: '#e4e4e4',
+          maxWidth: '800px',
+          margin: '0 auto',
+        }}
+      />
       <WorkProjectsSection />
       <Footer />
     </div>

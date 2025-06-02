@@ -10,54 +10,115 @@ interface Dream {
 }
 
 const dreams: Dream[] = [
-  { id: '1', text: 'Win "Exceptional Talent"', completed: true },
-  { id: '2', text: 'Move to the UK', completed: true },
-  { id: '3', text: 'Buy a Porsche 911', completed: true },
-  { id: '4', text: 'Work at unicorn', completed: true },
-  { id: '5', text: 'Overcome depression', completed: true },
-  { id: '6', text: 'Speak at a big conference', completed: true },
-  { id: '7', text: 'Start a design studio', completed: true },
-  { id: '8', text: "Donate £35'000", completed: true },
-  { id: '9', text: 'Meet 3000 founders', completed: true },
-  { id: '10', text: 'Invest in 10 startups', completed: true },
-  { id: '11', text: 'Design a better OS', completed: true },
-  { id: '12', text: 'Design a custom font', completed: true },
-  { id: '13', text: 'Design a physical object', completed: true },
-  { id: '14', text: 'Build a £100M business', completed: false },
-  { id: '15', text: 'Make 20 friends rich', completed: false },
-  { id: '16', text: 'Design a physical tool', completed: false },
-  { id: '17', text: 'Renovate a castle', completed: false },
+  // Foundation built (ages 16-18)
+  { id: '1', text: 'Master the art of impossible timelines', completed: true },
   {
-    id: '18',
-    text: 'Meet you',
+    id: '2',
+    text: 'Turn 22:22 into 21:40 through systematic obsession',
+    completed: true,
+  },
+  {
+    id: '3',
+    text: 'Lead 45 people while excelling in AP courses',
+    completed: true,
+  },
+  {
+    id: '4',
+    text: 'Earn merit recognition in competitive talent pools',
+    completed: true,
+  },
+  {
+    id: '5',
+    text: 'Break three school records that stood for years',
+    completed: true,
+  },
+  {
+    id: '6',
+    text: 'Navigate complex creative projects under pressure',
+    completed: true,
+  },
+  {
+    id: '7',
+    text: 'Access elite academic programs (James Madison College)',
+    completed: true,
+  },
+  {
+    id: '8',
+    text: 'Validate that excellence is a skill, not luck',
+    completed: true,
+  },
+
+  // Strategic expansion (college years)
+  {
+    id: '9',
+    text: 'Achieve sub-20:00 5K while mastering international law',
+    completed: false,
+  },
+  {
+    id: '10',
+    text: 'Lead Model UN delegations to victory at nationals',
+    completed: false,
+  },
+  {
+    id: '11',
+    text: 'Secure Geneva summer program (Graduate Institute)',
+    completed: false,
+  },
+  {
+    id: '12',
+    text: 'Fluent Mandarin conversations by sophomore spring',
+    completed: false,
+  },
+  {
+    id: '13',
+    text: 'State Department internship before junior year',
+    completed: false,
+  },
+  {
+    id: '14',
+    text: 'Present research at international policy conferences',
+    completed: false,
+  },
+  {
+    id: '15',
+    text: 'Build relationships with future diplomatic leaders',
+    completed: false,
+  },
+  {
+    id: '16',
+    text: 'Develop specialized expertise in conflict resolution',
+    completed: false,
+  },
+  {
+    id: '17',
+    text: 'Partner with someone who thinks in decades, not semesters',
     completed: false,
     isLink: true,
-    linkUrl: 'https://calendar.notion.so/meet/vilinskyy/3n69c4l3c',
+    linkUrl: 'mailto:brasse25@msu.edu',
   },
 ]
 
-// Real site uses these exact SVG URLs
-const DONE_EMOJI_URL =
-  'https://cdn.prod.website-files.com/626afc293bf3f633eda3488b/659c375e44aa66f46b025916_%F4%80%87%BA.svg'
-const UNDONE_EMOJI_URL =
-  'https://cdn.prod.website-files.com/626afc293bf3f633eda3488b/659c38d234df1a7dc8eaedc8_%F4%80%9F%86.svg'
+// Using simple checkmark and circle symbols instead of external SVGs
+const DONE_SYMBOL = '✓'
+const UNDONE_SYMBOL = '○'
 
 const DreamsTracker: React.FC = () => {
   return (
     <div className={styles.divBlock37}>
-      <h3 className={styles.h3}>Dreams Tracker</h3>
+      <h3 className={styles.h3}>
+        Strategic Roadmap: From High School to High Stakes
+      </h3>
       <div className={styles.todoList}>
         {dreams.map((dream) => (
           <div
             key={dream.id}
             className={`${styles.todoItem} ${dream.completed ? styles.done : styles.undone}`}
           >
-            <img
-              src={dream.completed ? DONE_EMOJI_URL : UNDONE_EMOJI_URL}
-              loading="lazy"
-              alt=""
-              className={dream.completed ? '' : styles.undone}
-            />
+            <span
+              className={`${styles.symbol} ${dream.completed ? styles.doneSymbol : styles.undoneSymbol}`}
+            >
+              {dream.completed ? DONE_SYMBOL : UNDONE_SYMBOL}
+            </span>
             <div>
               {dream.isLink ? (
                 <a href={dream.linkUrl} className={styles.hiddenLink}>

@@ -1,10 +1,9 @@
 /* Dreams Tracker container */
 .divBlock37 {
   max-width: 800px;
-  margin: 60px auto;
-  padding: 0 24px;
-  border-left: 10px solid #FF00FF; /* MAGENTA sidebar for Dreams */
-  background-color: rgba(255, 255, 255, 0.3); /* 30% opacity white */
+  margin: 60px auto 20px auto;
+  padding: 60px 24px;
+  background-color: #fafafa;
 }
 
 /* Title */
@@ -80,4 +79,25 @@
     width: 18px;
     height: 18px;
   }
+}
+
+/* Symbol styling */
+.symbol {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  font-size: 14px;
+  font-weight: 600;
+  font-family: 'JetBrains Mono', monospace;
+}
+
+.doneSymbol {
+  color: #0e7c3a;
+}
+
+.undoneSymbol {
+  color: #999;
+  font-weight: 400;
 }

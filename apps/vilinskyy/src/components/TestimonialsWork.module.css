@@ -1,8 +1,7 @@
 /* Layout containers */
 .wLayoutBlockcontainer {
   width: 100%;
-  border-left: 10px solid #0000FF; /* BLUE sidebar for Testimonials */
-  background-color: rgba(255, 255, 255, 0.3); /* 30% opacity white */
+  background-color: #ffffff;
 }
 
 .reviewsBlock {
@@ -123,4 +122,24 @@
   .reviewName {
     font-size: 13px;
   }
+}
+/* Initials circle for testimonials */
+.initialsCircle {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background-color: #f5f5f5;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  border: 1px solid #e5e5e5;
+}
+
+.initialsCircle span {
+  font-size: 10px;
+  font-weight: 600;
+  color: #666;
+  font-family: 'JetBrains Mono', monospace;
+  text-transform: uppercase;
 }

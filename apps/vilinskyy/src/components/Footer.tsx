@@ -14,11 +14,12 @@ const Footer: React.FC = () => {
         >
           <div className={styles.footerMegaGroup}>
             <div className={styles.footerGroup}>
-              <p className={styles.h3}>What I'm up to currently?</p>
+              <p className={styles.h3}>Want to follow the journey?</p>
               <p className={styles.caption}>
-                Helping venture groups and early stage founders with product
-                roadmap, design, hiring creatives and developers to launch
-                projects and grow.
+                Real talk: this is the messy, exhilarating process of turning
+                big dreams into reality. Updates on diplomatic training, running
+                breakthroughs, and the occasional existential crisis that comes
+                with trying to change the world at 18.
               </p>
               <div className={styles.wForm}>
                 <form
@@ -34,7 +35,7 @@ const Footer: React.FC = () => {
                     maxLength={256}
                     name="Email-2"
                     data-name="Email 2"
-                    placeholder="main@email.com"
+                    placeholder="your.email@msu.edu"
                     type="email"
                     id="Email-2"
                     required
@@ -42,7 +43,7 @@ const Footer: React.FC = () => {
                   <input
                     type="submit"
                     data-wait="Please wait..."
-                    className={`${styles.buttonClassic} ${styles.fullwidth} ${styles.wButton}`}
+                    className={`${styles.buttonClassic} ${styles.wButton}`}
                     value="Subscribe"
                   />
                 </form>
@@ -53,9 +54,10 @@ const Footer: React.FC = () => {
                   aria-label="Email success"
                 >
                   <div className={styles.textBlock4}>
-                    Phew, it worked!
+                    You're now tracking someone who turns impossible into
+                    inevitable.
                     <br />
-                    Your email is in safe hands.
+                    Updates coming your way before they hit the headlines.
                   </div>
                 </div>
                 <div
@@ -65,62 +67,56 @@ const Footer: React.FC = () => {
                   aria-label="Email failure"
                 >
                   <div>
-                    Fuck. I broke something...
+                    Oops! Something went wrong.
                     <br />
-                    Message me on{' '}
-                    <a
-                      href="http://twitter.com/vilinskyy"
-                      target="_blank"
-                      className={styles.link2}
-                    >
-                      Twitter
-                    </a>{' '}
-                    about it.
+                    Please try again or email me directly.
                   </div>
                 </div>
               </div>
             </div>
             <div className={styles.footerGroup}>
               <p className={styles.caption}>
-                I'm in "genius mode" 4 hours a day and you can book me to spend
-                them on your project. Contact me by{' '}
-                <a href="mailto:avilinskyy@gmail.com">
-                  <span className={styles.emailText}>avilinskyy@gmail.com</span>
+                Got advice about diplomatic careers? Questions about balancing
+                elite athletics with academics? Or just want to share your own
+                impossible goal? Let's connect:{' '}
+                <a href="mailto:brasse25@msu.edu">
+                  <span className={styles.emailText}>brasse25@msu.edu</span>
+                </a>
+                <br />
+                <br />
+                Want to see how this site was built?{' '}
+                <a
+                  href="https://github.com/ryleebrasseur/portfolio"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  <span className={styles.emailText}>Check out the code →</span>
                 </a>
               </p>
             </div>
           </div>
           <div className={`${styles.divider1px} ${styles.footer}`}></div>
           <div className={styles.subFooter}>
-            <p>London, UK. 2008 - infinity.</p>
+            <p>East Lansing, MI. 2024 - infinity.</p>
             <p>
               <a href="/" aria-current="page" className={styles.wCurrent}>
-                vilinskyy.com
+                ryleebrasseur.com
               </a>
             </p>
           </div>
           <img
-            src="https://cdn.prod.website-files.com/626afc293bf3f633eda3488b/66a61b52aeb29192b7b401db_ScreenRecording_07-28-2024%2011-05-01_1%202.gif"
+            src="/src/assets/sig.png"
             loading="lazy"
-            width="836"
-            alt=""
+            width="400"
+            alt="Rylee Brasseur signature"
             className={`${styles.illustration} ${styles.signature}`}
           />
         </div>
-        <img
-          className={styles.parkedPorsche}
-          src="https://cdn.prod.website-files.com/626afc293bf3f633eda3488b/6813970699c1fddff2b4bf2b_996_p15_l.png"
-          width="858"
-          alt=""
-          loading="lazy"
-          sizes="(max-width: 991px) 100vw, 858px"
-          srcSet="https://cdn.prod.website-files.com/626afc293bf3f633eda3488b/6813970699c1fddff2b4bf2b_996_p15_l-p-500.png 500w, https://cdn.prod.website-files.com/626afc293bf3f633eda3488b/6813970699c1fddff2b4bf2b_996_p15_l-p-800.png 800w, https://cdn.prod.website-files.com/626afc293bf3f633eda3488b/6813970699c1fddff2b4bf2b_996_p15_l-p-1080.png 1080w, https://cdn.prod.website-files.com/626afc293bf3f633eda3488b/6813970699c1fddff2b4bf2b_996_p15_l-p-1600.png 1600w, https://cdn.prod.website-files.com/626afc293bf3f633eda3488b/6813970699c1fddff2b4bf2b_996_p15_l.png 1716w"
-        />
       </section>
 
-      {/* Brain Load Meter */}
+      {/* Brain Load Meter - keeping it for the quirky student vibe */}
       <div className={styles.metricExperiment}>
-        <div className={styles.appName}>Current brain load:</div>
+        <div className={styles.appName}>Cognitive bandwidth utilization:</div>
         <div
           className={`${styles.wLayoutBlockcontainer} ${styles.metric} ${styles.wContainer}`}
         >

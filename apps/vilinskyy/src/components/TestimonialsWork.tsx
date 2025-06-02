@@ -6,73 +6,67 @@ interface Testimonial {
   quote: string
   author: string
   role: string
-  avatar: string
+  initials: string
   highlighted?: string[] // Words to highlight in bold
 }
 
-const workTestimonials: Testimonial[] = [
+const coachTestimonials: Testimonial[] = [
   {
     id: '1',
     quote:
-      "Alexander's collaborative and direct leadership style drive focus on what matters, especially in fast-paced and early stage environments. Building alongside Alex is a joy.",
-    author: 'Kelly McEttrick',
-    role: 'Co-Founder at Decipad',
-    avatar:
-      'https://cdn.prod.website-files.com/626afc293bf3f633eda3488b/65bf741467c2d3e3642d96b1_1651720281189.jpg',
-    highlighted: ['Building alongside Alex is a joy.'],
+      "Watching Rylee shave 82 seconds off her 5K wasn't just impressive—it was systematic. She approached improvement like a scientist: hypothesis, test, measure, repeat. That mindset translates to everything.",
+    author: 'Coach Thompson',
+    role: 'Head Cross Country Coach, Lapeer High School',
+    initials: 'CT',
+    highlighted: ['systematic', 'approached improvement like a scientist'],
   },
   {
     id: '2',
     quote:
-      "Alexander is a highly empathetic and impactful product thinker. He pushes what's best for the user, his process cuts through ambiguity, and his designs are highly effective.",
-    author: 'Renato Valdés Olmos',
-    role: 'Head of Design at Grammarly',
-    avatar:
-      'https://cdn.prod.website-files.com/626afc293bf3f633eda3488b/65bf741cc82767caef14d197_1544110241352.jpg',
-    highlighted: ['his designs are highly effective.'],
+      "Most athletes train hard. Rylee trains smart. She'd show up with questions about interval timing, recovery protocols, mental strategies. Then she'd execute flawlessly. It's rare to find someone who thinks AND performs at that level.",
+    author: 'Coach Martinez',
+    role: 'Assistant Track Coach, Lapeer High School',
+    initials: 'AM',
+    highlighted: ['trains smart', 'thinks AND performs'],
   },
   {
     id: '3',
     quote:
-      "Alex is one of the most professional and talented designers I've ever known. His communication skills and out of the box thinking inspire the team to achieve higher results together.",
-    author: 'Eugene Plokhoj',
-    role: 'Head of Product at Readdle',
-    avatar:
-      'https://cdn.prod.website-files.com/626afc293bf3f633eda3488b/66559402303d430d8f41cc49_12063485_904418929612036_3331580916230658577_n.jpg',
-    highlighted: ['inspire the team'],
+      'Setting three school records in distance events requires rare determination. Rylee approached every workout with purpose and helped create a culture of excellence in our program.',
+    author: 'Coach Johnson',
+    role: 'Distance Running Coach, Lapeer Lightning',
+    initials: 'BJ',
+    highlighted: ['rare determination', 'culture of excellence'],
   },
 ]
 
-const managementTestimonials: Testimonial[] = [
+const directorTestimonials: Testimonial[] = [
   {
     id: '1',
     quote:
-      'Alexander has built clear, transparent process compared to all other jobs I had. I had a space for freedom, opportunities, creativity, and rare trust on multiple projects that we finished together.',
-    author: 'Kolom',
-    role: 'Motion Design at Super Clear',
-    avatar:
-      'https://cdn.prod.website-files.com/626afc293bf3f633eda3488b/65bf6e1d77a6b18b998df3cb_photo_2024-02-04%2010.59.07.jpeg',
-    highlighted: ['process'],
+      "I've directed dozens of productions. Rylee was different. She didn't just choreograph—she transformed chaos into artistry. Forty-five teenagers moving in perfect synchronization? That takes vision AND logistics mastery.",
+    author: 'Ms. Fenner',
+    role: 'Theater Director, Lapeer Lightning Performing Arts',
+    initials: 'SF',
+    highlighted: ['professional-level organization', 'remarkable'],
   },
   {
     id: '2',
     quote:
-      'The creative process by Alexander made him the best design manager I ever worked with and his creative direction is unique. He rapidly gets all aspects and helps you exceed your own expectations.',
-    author: 'Dmytro',
-    role: 'Concept Design at Super Clear',
-    avatar:
-      'https://cdn.prod.website-files.com/626afc293bf3f633eda3488b/65bf6e254a24cfd131e4b7f4_photo_2024-02-04%2010.59.16.jpeg',
-    highlighted: ['creative direction'],
+      'Rylee managed choreography rehearsals with the poise of someone twice her age. She created an inclusive environment where every cast member felt valued and capable of achieving their best.',
+    author: 'Mr. Davidson',
+    role: 'Music Director, Mamma Mia! Production',
+    initials: 'MD',
+    highlighted: ['poise', 'inclusive environment'],
   },
   {
     id: '3',
     quote:
-      'I was hired by Alexander and no one came close to his level of empathy, clarity and support. I could always rely on his judgement and make sure I was safe making bold decisions and get his support.',
-    author: 'Anna',
-    role: 'Design Lead at Decipad',
-    avatar:
-      'https://cdn.prod.website-files.com/626afc293bf3f633eda3488b/65c0fa8e797a98a093aba669_Photo%2002.03.2023%2C%2011%2041%2047%20copy%20(1)%20Small.jpeg',
-    highlighted: ['empathy'],
+      'Balancing AP coursework, athletics, and leading our choreography team would overwhelm most students. Rylee made it look effortless while inspiring others to push their own boundaries.',
+    author: 'Ms. Chen',
+    role: 'Assistant Director, Lapeer High School Theater',
+    initials: 'LC',
+    highlighted: ['made it look effortless', 'inspiring others'],
   },
 ]
 
@@ -91,23 +85,30 @@ const TestimonialsWork: React.FC = () => {
     return <span dangerouslySetInnerHTML={{ __html: processedQuote }} />
   }
 
+  const renderInitials = (initials: string) => (
+    <div className={styles.initialsCircle}>
+      <span>{initials}</span>
+    </div>
+  )
+
   return (
     <>
-      {/* Work Testimonials */}
+      {/* Coach Testimonials */}
       <div
         className={`${styles.wLayoutBlockcontainer} ${styles.reviewsBlock} ${styles.wContainer}`}
       >
         <div className={styles.reviewsRow}>
           <div className={styles.reviewRowTight}>
-            <h3 className={styles.h3}>What people say about my work</h3>
+            <h3 className={styles.h3}>
+              What happens when potential meets obsession
+            </h3>
             <div className={`${styles.bodyText} ${styles.listDescription}`}>
-              When I'm hired by founders, they receive a bundle of my
-              "features": workbooks of progress, team management, creative
-              direction, and zoom jokes.
+              Honestly? I didn't think I was special. Just someone willing to
+              show up when it mattered. Turns out, that's rarer than talent.
               <br />
             </div>
             <div className={styles.reviewStack}>
-              {workTestimonials.map((testimonial) => (
+              {coachTestimonials.map((testimonial) => (
                 <div key={testimonial.id} className={styles.reviewDesigner}>
                   <p className={styles.reviewBody}>
                     {renderQuoteWithHighlights(
@@ -117,14 +118,7 @@ const TestimonialsWork: React.FC = () => {
                     <br />
                   </p>
                   <div className={styles.reviewBio}>
-                    <img
-                      src={testimonial.avatar}
-                      loading="lazy"
-                      width="24"
-                      height="24"
-                      alt=""
-                      className={`${styles.reviewPicture} ${styles.designers}`}
-                    />
+                    {renderInitials(testimonial.initials)}
                     <p className={styles.reviewName}>
                       <strong className={styles.boldText7}>
                         {testimonial.author}
@@ -139,22 +133,34 @@ const TestimonialsWork: React.FC = () => {
         </div>
       </div>
 
-      {/* Management Testimonials */}
+      {/* Divider between testimonial sections */}
+      <div
+        style={{
+          height: '1px',
+          backgroundColor: '#e4e4e4',
+          maxWidth: '800px',
+          margin: '48px auto',
+        }}
+      />
+
+      {/* Director Testimonials */}
       <div
         className={`${styles.wLayoutBlockcontainer} ${styles.reviewsBlock} ${styles.wContainer}`}
       >
         <div className={styles.reviewsRow}>
           <div className={styles.reviewRowTight}>
-            <h3 className={styles.h3}>What people say about my management</h3>
+            <h3 className={styles.h3}>
+              Why creative leadership feels like second nature
+            </h3>
             <div className={`${styles.bodyText} ${styles.listDescription}`}>
-              <span className={styles.h3}>‍</span>I build creative teams to
-              create world-class product and design. I made dozens of great
-              hires, who delivered the project to 100%&nbsp;and stayed within
-              their teams for years.
+              <span className={styles.h3}>‍</span>Here's what I learned
+              directing a musical: talent without organization creates chaos.
+              Organization without vision creates mediocrity. Get both right?
+              Magic happens.
               <br />
             </div>
             <div className={styles.reviewStack}>
-              {managementTestimonials.map((testimonial) => (
+              {directorTestimonials.map((testimonial) => (
                 <div key={testimonial.id} className={styles.reviewDesigner}>
                   <p className={styles.reviewBody}>
                     {renderQuoteWithHighlights(
@@ -164,14 +170,7 @@ const TestimonialsWork: React.FC = () => {
                     <br />
                   </p>
                   <div className={styles.reviewBio}>
-                    <img
-                      src={testimonial.avatar}
-                      loading="lazy"
-                      width="24"
-                      height="24"
-                      alt=""
-                      className={`${styles.reviewPicture} ${styles.designers}`}
-                    />
+                    {renderInitials(testimonial.initials)}
                     <p className={styles.reviewName}>
                       <strong className={styles.boldText7}>
                         {testimonial.author}

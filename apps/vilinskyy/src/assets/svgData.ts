@@ -21,127 +21,154 @@ export const GALLERY_IMAGES = [
   GALLERY_BLUE_SQUARE,
 ]
 
+// Helper function to create achievement badges with gradients and icons
+let badgeIdCounter = 0
+const createAchievementBadge = (
+  icon: string,
+  title: string,
+  subtitle: string,
+  detail: string,
+  gradientStart: string,
+  gradientEnd: string,
+  textColor: string = 'white'
+): string => {
+  const uniqueId = `badge${badgeIdCounter++}`
+  const svg = `
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120">
+  <defs>
+    <linearGradient id="grad${uniqueId}" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:${gradientStart};stop-opacity:1" />
+      <stop offset="100%" style="stop-color:${gradientEnd};stop-opacity:1" />
+    </linearGradient>
+    <filter id="shadow${uniqueId}" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur in="SourceAlpha" stdDeviation="3"/>
+      <feOffset dx="0" dy="3" result="offsetblur"/>
+      <feFlood flood-color="#000000" flood-opacity="0.15"/>
+      <feComposite in2="offsetblur" operator="in"/>
+      <feMerge>
+        <feMergeNode/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+  <rect width="120" height="120" rx="16" fill="url(#grad${uniqueId})" filter="url(#shadow${uniqueId})"/>
+  <text x="60" y="30" text-anchor="middle" fill="${textColor}" font-size="28" opacity="0.9">${icon}</text>
+  <text x="60" y="55" text-anchor="middle" fill="${textColor}" font-family="Arial, sans-serif" font-size="14" font-weight="600">${title}</text>
+  <text x="60" y="76" text-anchor="middle" fill="${textColor}" font-family="Arial, sans-serif" font-size="18" font-weight="700">${subtitle}</text>
+  <text x="60" y="96" text-anchor="middle" fill="${textColor}" font-family="Arial, sans-serif" font-size="11" opacity="0.8">${detail}</text>
+</svg>
+`
+  // Use encodeURIComponent instead of btoa for Unicode support
+  return 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(svg.trim())
+}
+
 // Rylee Brasseur Achievement Badges
-export const TRACK_RECORD_800M_BADGE =
-  'data:image/svg+xml;base64,' +
-  btoa(`
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
-  <rect width="100" height="100" rx="10" fill="#1a5f1a"/>
-  <text x="50" y="35" text-anchor="middle" fill="white" font-family="Arial" font-size="12" font-weight="bold">800m</text>
-  <text x="50" y="55" text-anchor="middle" fill="white" font-family="Arial" font-size="16" font-weight="bold">2:27.62</text>
-  <text x="50" y="75" text-anchor="middle" fill="white" font-family="Arial" font-size="10">RECORD</text>
-</svg>
-`)
+export const TRACK_RECORD_800M_BADGE = createAchievementBadge(
+  '🏃',
+  '800m',
+  '2:27.62',
+  'SCHOOL RECORD',
+  '#0d4f0d',
+  '#1a5f1a',
+  'white'
+)
 
-export const TRACK_RECORD_1600M_BADGE =
-  'data:image/svg+xml;base64,' +
-  btoa(`
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
-  <rect width="100" height="100" rx="10" fill="#1a5f1a"/>
-  <text x="50" y="35" text-anchor="middle" fill="white" font-family="Arial" font-size="12" font-weight="bold">1600m</text>
-  <text x="50" y="55" text-anchor="middle" fill="white" font-family="Arial" font-size="16" font-weight="bold">5:30.15</text>
-  <text x="50" y="75" text-anchor="middle" fill="white" font-family="Arial" font-size="10">RECORD</text>
-</svg>
-`)
+export const TRACK_RECORD_1600M_BADGE = createAchievementBadge(
+  '🏃',
+  '1600m',
+  '5:30.15',
+  'SCHOOL RECORD',
+  '#0d4f0d',
+  '#1a5f1a',
+  'white'
+)
 
-export const TRACK_RECORD_3200M_BADGE =
-  'data:image/svg+xml;base64,' +
-  btoa(`
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
-  <rect width="100" height="100" rx="10" fill="#1a5f1a"/>
-  <text x="50" y="35" text-anchor="middle" fill="white" font-family="Arial" font-size="12" font-weight="bold">3200m</text>
-  <text x="50" y="55" text-anchor="middle" fill="white" font-family="Arial" font-size="14" font-weight="bold">11:46.47</text>
-  <text x="50" y="75" text-anchor="middle" fill="white" font-family="Arial" font-size="10">RECORD</text>
-</svg>
-`)
+export const TRACK_RECORD_3200M_BADGE = createAchievementBadge(
+  '🏃',
+  '3200m',
+  '11:46.47',
+  'SCHOOL RECORD',
+  '#0d4f0d',
+  '#1a5f1a',
+  'white'
+)
 
-export const AP_SCHOLAR_BADGE =
-  'data:image/svg+xml;base64,' +
-  btoa(`
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
-  <rect width="100" height="100" rx="10" fill="#4B0082"/>
-  <text x="50" y="35" text-anchor="middle" fill="white" font-family="Arial" font-size="14" font-weight="bold">AP</text>
-  <text x="50" y="55" text-anchor="middle" fill="white" font-family="Arial" font-size="12" font-weight="bold">Scholar</text>
-  <text x="50" y="75" text-anchor="middle" fill="white" font-family="Arial" font-size="10">2023</text>
-</svg>
-`)
+export const AP_SCHOLAR_BADGE = createAchievementBadge(
+  '🎓',
+  'AP',
+  'Scholar',
+  '2023',
+  '#2d0052',
+  '#4B0082',
+  'white'
+)
 
-export const SCHOLARSHIP_BADGE =
-  'data:image/svg+xml;base64,' +
-  btoa(`
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
-  <rect width="100" height="100" rx="10" fill="#FFD700"/>
-  <text x="50" y="35" text-anchor="middle" fill="#333" font-family="Arial" font-size="14" font-weight="bold">$2,000</text>
-  <text x="50" y="55" text-anchor="middle" fill="#333" font-family="Arial" font-size="10" font-weight="bold">Scholarship</text>
-  <text x="50" y="75" text-anchor="middle" fill="#333" font-family="Arial" font-size="10">Awards</text>
-</svg>
-`)
+export const SCHOLARSHIP_BADGE = createAchievementBadge(
+  '💰',
+  '$2,000',
+  'Scholarship',
+  'Awards',
+  '#FFD700',
+  '#FFA500',
+  '#333333'
+)
 
-export const CHOREOGRAPHER_BADGE =
-  'data:image/svg+xml;base64,' +
-  btoa(`
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
-  <rect width="100" height="100" rx="10" fill="#FF1493"/>
-  <text x="50" y="35" text-anchor="middle" fill="white" font-family="Arial" font-size="12" font-weight="bold">Student</text>
-  <text x="50" y="50" text-anchor="middle" fill="white" font-family="Arial" font-size="10" font-weight="bold">Choreographer</text>
-  <text x="50" y="65" text-anchor="middle" fill="white" font-family="Arial" font-size="9">Mamma Mia!</text>
-  <text x="50" y="80" text-anchor="middle" fill="white" font-family="Arial" font-size="8">45 Cast Members</text>
-</svg>
-`)
+export const CHOREOGRAPHER_BADGE = createAchievementBadge(
+  '🎭',
+  'Student',
+  'Choreographer',
+  'Mamma Mia!',
+  '#8B1538',
+  '#DC143C',
+  'white'
+)
 
-export const ALL_LEAGUE_BADGE =
-  'data:image/svg+xml;base64,' +
-  btoa(`
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
-  <rect width="100" height="100" rx="10" fill="#CD853F"/>
-  <text x="50" y="35" text-anchor="middle" fill="white" font-family="Arial" font-size="12" font-weight="bold">All-League</text>
-  <text x="50" y="55" text-anchor="middle" fill="white" font-family="Arial" font-size="12" font-weight="bold">Cross Country</text>
-  <text x="50" y="75" text-anchor="middle" fill="white" font-family="Arial" font-size="10">Honorable Mention</text>
-</svg>
-`)
+export const ALL_LEAGUE_BADGE = createAchievementBadge(
+  '🎯',
+  'All-League',
+  'Cross Country',
+  'Honorable Mention',
+  '#8B6508',
+  '#CD853F',
+  'white'
+)
 
-export const TEAM_CHAMPION_BADGE =
-  'data:image/svg+xml;base64,' +
-  btoa(`
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
-  <rect width="100" height="100" rx="10" fill="#FF4500"/>
-  <text x="50" y="35" text-anchor="middle" fill="white" font-family="Arial" font-size="12" font-weight="bold">Lapeer</text>
-  <text x="50" y="50" text-anchor="middle" fill="white" font-family="Arial" font-size="12" font-weight="bold">Lightning</text>
-  <text x="50" y="65" text-anchor="middle" fill="white" font-family="Arial" font-size="10">Cross Country</text>
-  <text x="50" y="80" text-anchor="middle" fill="white" font-family="Arial" font-size="10">Champions</text>
-</svg>
-`)
+export const TEAM_CHAMPION_BADGE = createAchievementBadge(
+  '🏆',
+  'Lapeer',
+  'Lightning',
+  'Champions',
+  '#FF4500',
+  '#FF6347',
+  'white'
+)
 
-export const MSU_JMC_BADGE =
-  'data:image/svg+xml;base64,' +
-  btoa(`
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
-  <rect width="100" height="100" rx="10" fill="#18453B"/>
-  <text x="50" y="30" text-anchor="middle" fill="white" font-family="Arial" font-size="16" font-weight="bold">MSU</text>
-  <text x="50" y="50" text-anchor="middle" fill="white" font-family="Arial" font-size="10">James Madison</text>
-  <text x="50" y="65" text-anchor="middle" fill="white" font-family="Arial" font-size="10">College</text>
-  <text x="50" y="80" text-anchor="middle" fill="white" font-family="Arial" font-size="8">Int'l Relations</text>
-</svg>
-`)
+export const MSU_JMC_BADGE = createAchievementBadge(
+  '🎓',
+  'MSU',
+  'James Madison',
+  "Int'l Relations",
+  '#18453B',
+  '#0d2818',
+  'white'
+)
 
-export const DISTANCE_RUNNER_BADGE =
-  'data:image/svg+xml;base64,' +
-  btoa(`
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
-  <rect width="100" height="100" rx="10" fill="#4169E1"/>
-  <text x="50" y="35" text-anchor="middle" fill="white" font-family="Arial" font-size="12" font-weight="bold">Distance</text>
-  <text x="50" y="55" text-anchor="middle" fill="white" font-family="Arial" font-size="12" font-weight="bold">Runner</text>
-  <text x="50" y="75" text-anchor="middle" fill="white" font-family="Arial" font-size="10">21:40 5K PR</text>
-</svg>
-`)
+export const DISTANCE_RUNNER_BADGE = createAchievementBadge(
+  '🏃',
+  'Distance',
+  'Runner',
+  '21:40 5K PR',
+  '#4169E1',
+  '#1E90FF',
+  'white'
+)
 
-export const LEADER_FUND_BADGE =
-  'data:image/svg+xml;base64,' +
-  btoa(`
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
-  <rect width="100" height="100" rx="10" fill="#8B4513"/>
-  <text x="50" y="35" text-anchor="middle" fill="white" font-family="Arial" font-size="12" font-weight="bold">LEADER</text>
-  <text x="50" y="55" text-anchor="middle" fill="white" font-family="Arial" font-size="12" font-weight="bold">Fund</text>
-  <text x="50" y="75" text-anchor="middle" fill="white" font-family="Arial" font-size="10">Recipient</text>
-</svg>
-`)
+export const LEADER_FUND_BADGE = createAchievementBadge(
+  '⭐',
+  'LEADER',
+  'Fund',
+  'Recipient',
+  '#8B4513',
+  '#A0522D',
+  'white'
+)

@@ -6,61 +6,66 @@ const HeroNewsletter: React.FC = () => {
     <div className={styles.heroNewsletter}>
       <div className={styles.reviewRowTight}>
         <div className={`${styles.bodyText} ${styles.smallText}`}>
-          Twice a year I write an issue with updates from my life, projects, thoughts, links and some photos. Follow me on{' '}
-          <a href="https://twitter.com/vilinskyy">
-            <span className={styles.paragraphlink}>Twitter</span>
-          </a>
-          ,{' '}
-          <a href="https://linkedin.com/in/vilinskyy">
+          Follow my academic and athletic journey. Connect with me on{' '}
+          <a href="#linkedin-placeholder">
             <span className={styles.paragraphlink}>LinkedIn</span>
           </a>
           ,{' '}
-          <a href="https://instagram.com/vilinskyy">
+          <a href="#instagram-placeholder">
             <span className={styles.paragraphlink}>Instagram</span>
           </a>
           ,{' '}
-          <a href="https://www.youtube.com/channel/UCZpuBPAdMSYJFzPzkdiFkdA">
-            <span className={styles.paragraphlink}>YouTube</span>
+          <a href="https://github.com/ryleebrasseur">
+            <span className={styles.paragraphlink}>GitHub</span>
           </a>
-          ,{' '}
-          <a href="https://bsky.app/profile/vilinskyy.bsky.social">Bluesky</a>.
+          , or reach out if you need someone who delivers results ahead of
+          schedule.
           <br />
         </div>
         <div className={`${styles.formBlock} ${styles.wForm}`}>
-          <form 
-            id="Newsletter-Email" 
-            name="wf-form-Email" 
-            data-name="Email" 
-            method="get" 
+          <form
+            id="Newsletter-Email"
+            name="wf-form-Email"
+            data-name="Email"
+            method="get"
             className={styles.form}
             aria-label="Email"
           >
-            <input 
+            <input
               className={`${styles.textField} ${styles.wInput}`}
               maxLength={256}
-              name="Email-2" 
-              data-name="Email 2" 
-              placeholder="main@email.com" 
-              type="email" 
-              id="Email-2" 
+              name="Email-2"
+              data-name="Email 2"
+              placeholder="your.email@msu.edu"
+              type="email"
+              id="Email-2"
               required
             />
-            <input 
-              type="submit" 
-              data-wait="Please wait..." 
-              className={`${styles.buttonClassic} ${styles.fullwidth} ${styles.wButton}`}
+            <input
+              type="submit"
+              data-wait="Please wait..."
+              className={`${styles.buttonClassic} ${styles.wButton}`}
               value="Subscribe"
             />
           </form>
-          <div className={`${styles.successMessage} ${styles.wFormDone}`} tabIndex={-1} role="region" aria-label="Email success">
+          <div
+            className={`${styles.successMessage} ${styles.wFormDone}`}
+            tabIndex={-1}
+            role="region"
+            aria-label="Email success"
+          >
             <div className={styles.textBlock4}>
-              Phew, it worked!<br />Your email is in safe hands.
+              Thanks for subscribing! I'll keep you updated on my journey.
             </div>
           </div>
-          <div className={`${styles.errorMessage} ${styles.wFormFail}`} tabIndex={-1} role="region" aria-label="Email failure">
+          <div
+            className={`${styles.errorMessage} ${styles.wFormFail}`}
+            tabIndex={-1}
+            role="region"
+            aria-label="Email failure"
+          >
             <div>
-              Fuck. I broke something...<br />
-              Message me on <a href="http://twitter.com/vilinskyy" target="_blank" className={styles.link2}>Twitter</a> about it.
+              Oops! Something went wrong. Please try again or email me directly.
             </div>
           </div>
         </div>
