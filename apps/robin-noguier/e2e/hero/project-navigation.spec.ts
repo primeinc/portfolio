@@ -53,7 +53,7 @@ test.describe('Project Navigation Buttons', () => {
     await page.evaluate(() => {
       const button = document.querySelector('[class*="projectButton"]')
       button?.addEventListener('click', () => {
-        ;(window as any).buttonClicked()
+        ;(window as unknown as { buttonClicked: () => void }).buttonClicked()
       })
     })
 

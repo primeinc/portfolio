@@ -1,0 +1,145 @@
+/* Layout containers */
+.wLayoutBlockcontainer {
+  width: 100%;
+  background-color: #ffffff;
+}
+
+.reviewsBlock {
+  margin: 60px auto;
+}
+
+.wContainer {
+  max-width: 800px;
+  margin-left: auto;
+  margin-right: auto;
+  padding: 0 24px;
+}
+
+.reviewsRow {
+  width: 100%;
+}
+
+.reviewRowTight {
+  width: 100%;
+}
+
+/* Typography */
+.h3 {
+  font-size: 16px;
+  font-weight: 400;
+  line-height: 21px;
+  color: rgb(31, 34, 32);
+  margin: 0 0 24px 0;
+  font-family: 'JetBrains Mono', monospace;
+  letter-spacing: 0.1px;
+}
+
+.bodyText {
+  font-size: 15px;
+  line-height: 24px;
+  color: rgb(31, 34, 32);
+  font-family: 'JetBrains Mono', monospace;
+}
+
+.listDescription {
+  margin-bottom: 32px;
+}
+
+/* Review stack */
+.reviewStack {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+/* Individual review */
+.reviewDesigner {
+  width: 100%;
+}
+
+.reviewBody {
+  font-size: 15px;
+  line-height: 24px;
+  color: rgb(31, 34, 32);
+  margin: 0 0 16px 0;
+  font-family: 'JetBrains Mono', monospace;
+}
+
+/* Bold highlights */
+.bold {
+  font-weight: 400;
+  background-color: #ffff00;
+  padding: 0 2px;
+}
+
+/* Review bio */
+.reviewBio {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.reviewPicture {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.reviewName {
+  font-size: 14px;
+  line-height: 20px;
+  color: rgb(31, 34, 32);
+  margin: 0;
+  font-family: 'JetBrains Mono', monospace;
+}
+
+.boldText7 {
+  font-weight: 400;
+  color: rgb(31, 34, 32);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .wContainer {
+    padding: 0 16px;
+  }
+
+  .reviewsBlock {
+    margin: 40px auto;
+  }
+
+  .reviewStack {
+    gap: 16px;
+  }
+
+  .bodyText,
+  .reviewBody {
+    font-size: 14px;
+    line-height: 22px;
+  }
+
+  .reviewName {
+    font-size: 13px;
+  }
+}
+/* Initials circle for testimonials */
+.initialsCircle {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background-color: #f5f5f5;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  border: 1px solid #e5e5e5;
+}
+
+.initialsCircle span {
+  font-size: 10px;
+  font-weight: 600;
+  color: #666;
+  font-family: 'JetBrains Mono', monospace;
+  text-transform: uppercase;
+}

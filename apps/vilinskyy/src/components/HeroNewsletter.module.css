@@ -1,0 +1,171 @@
+.heroNewsletter {
+  background-color: #f5f5f5;
+  padding: 60px 24px;
+  margin-bottom: 0;
+  width: 100%;
+  border-top: 1px solid #e0e0e0;
+}
+
+.reviewRowTight {
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.bodyText {
+  font-size: 18px;
+  line-height: 1.6;
+  color: #333333;
+  font-family: 'JetBrains Mono', monospace;
+  margin-bottom: 24px;
+}
+
+.smallText {
+  font-size: 18px;
+}
+
+.paragraphlink {
+  color: #0e7c3a; /* Brighter MSU-inspired green */
+  font-weight: 500;
+  text-decoration: none;
+  transition: all 0.2s ease;
+}
+
+.paragraphlink:hover {
+  color: #0a5c2d;
+  text-decoration: underline;
+}
+
+.formBlock {
+  margin-top: 24px;
+}
+
+.wForm {
+  display: block;
+}
+
+.form {
+  display: flex;
+  gap: 12px;
+  margin: 0 auto 16px auto;
+  max-width: 500px;
+}
+
+.textField {
+  flex: 1;
+  padding: 12px 16px;
+  font-size: 14px;
+  line-height: 20px;
+  color: rgb(31, 34, 32);
+  background-color: #fff;
+  border: 1px solid #e4e4e4;
+  border-radius: 4px;
+  transition: border-color 0.2s ease;
+  font-family: 'JetBrains Mono', monospace;
+}
+
+.textField:focus {
+  border-color: rgb(31, 34, 32);
+  outline: none;
+}
+
+.wInput {
+  display: block;
+  width: 100%;
+}
+
+.buttonClassic {
+  padding: 12px 32px;
+  font-size: 14px;
+  font-weight: 500;
+  color: #fff;
+  background-color: #0e7c3a; /* Brighter MSU-inspired green */
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+  font-family: 'JetBrains Mono', monospace;
+  flex: 0 0 auto;
+  white-space: nowrap;
+}
+
+.buttonClassic:hover {
+  background-color: #0a5c2d;
+}
+
+/* .fullwidth class removed - was causing button to expand */
+
+.wButton {
+  display: inline-block;
+  text-decoration: none;
+  width: auto !important;
+}
+
+.successMessage,
+.errorMessage {
+  display: none;
+  padding: 16px;
+  border-radius: 4px;
+  margin-top: 16px;
+  font-size: 14px;
+  line-height: 20px;
+}
+
+.wFormDone {
+  background-color: #d4edda;
+  color: #155724;
+}
+
+.wFormFail {
+  background-color: #f8d7da;
+  color: #721c24;
+}
+
+.textBlock4 {
+  font-size: 14px;
+  line-height: 20px;
+  font-family: 'JetBrains Mono', monospace;
+}
+
+.link2 {
+  color: inherit;
+  text-decoration: underline;
+}
+
+@media (max-width: 768px) {
+  .heroNewsletter {
+    padding: 40px 20px;
+  }
+
+  .bodyText {
+    font-size: 16px;
+  }
+
+  .form {
+    flex-direction: column;
+  }
+
+  .buttonClassic {
+    width: 100%;
+  }
+}
+
+@media (max-width: 480px) {
+  .heroNewsletter {
+    padding: 32px 16px;
+  }
+
+  .bodyText {
+    font-size: 14px;
+    line-height: 1.5;
+  }
+
+  .textField {
+    font-size: 14px;
+    padding: 10px 12px;
+  }
+
+  .buttonClassic {
+    font-size: 14px;
+    padding: 10px 16px;
+  }
+}

@@ -30,7 +30,7 @@ test.describe('Hero Section with WebGL', () => {
     // Wait for overlay content to be ready
     const overlayContent = await page.locator('.overlayContent')
     await expect(overlayContent).toBeVisible()
-    const initialBox = await overlayContent.boundingBox()
+    // Bounding box check removed as it's not used
 
     // Scroll down
     await page.mouse.wheel(0, 500)
@@ -58,7 +58,7 @@ test.describe('Hero Section with WebGL', () => {
     // Desktop
     await page.setViewportSize({ width: 1920, height: 1080 })
     await page.waitForTimeout(500) // Wait for viewport change
-    let title = await page.locator('h1')
+    const title = await page.locator('h1')
     await expect(title).toBeVisible()
     let titleFontSize = await title.evaluate(
       (el) => window.getComputedStyle(el).fontSize

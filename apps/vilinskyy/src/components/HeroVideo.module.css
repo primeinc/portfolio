@@ -1,0 +1,140 @@
+.heroVideo {
+  background-color: #ffffff;
+  padding: 60px 24px;
+  margin-bottom: 0;
+  max-width: 900px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.loomHolder {
+  max-width: 100%;
+  margin: 0 auto;
+}
+
+.loomVideoEmb {
+  position: relative;
+  padding-bottom: 56.25%; /* 16:9 aspect ratio */
+  height: 0;
+  overflow: hidden;
+  border-radius: 16px;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+}
+
+.wEmbed {
+  width: 100%;
+}
+
+.wIframe {
+  height: auto;
+}
+
+.loomVideoEmb iframe,
+iframe.loomVideoEmb {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  border: none;
+  border-radius: 16px;
+}
+
+/* Video placeholder styles */
+.videoPlaceholder {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: #000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 16px;
+  overflow: hidden;
+  cursor: pointer;
+}
+
+.videoContent {
+  text-align: center;
+  color: white;
+}
+
+.playButton {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  margin-bottom: 24px;
+  transition: transform 0.3s ease;
+}
+
+.playButton:hover {
+  transform: scale(1.05);
+}
+
+.playButton:hover svg circle {
+  fill: rgba(255, 255, 255, 0.2);
+  stroke: rgba(255, 255, 255, 0.6);
+}
+
+.placeholderTitle {
+  font-size: 24px;
+  font-weight: 600;
+  color: white;
+  margin: 0 0 8px 0;
+  font-family: 'JetBrains Mono', monospace;
+  letter-spacing: -0.02em;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+}
+
+.placeholderSubtitle {
+  font-size: 14px;
+  color: rgba(255, 255, 255, 0.8);
+  font-family: 'JetBrains Mono', monospace;
+  margin: 0 0 16px 0;
+  letter-spacing: 0.05em;
+}
+
+.duration {
+  position: absolute;
+  bottom: 16px;
+  right: 16px;
+  background: rgba(0, 0, 0, 0.7);
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 12px;
+  font-family: 'JetBrains Mono', monospace;
+  color: rgba(255, 255, 255, 0.9);
+}
+
+@media (max-width: 768px) {
+  .heroVideo {
+    padding: 40px 20px;
+  }
+
+  .loomVideoEmb {
+    border-radius: 12px;
+  }
+
+  .loomVideoEmb iframe,
+  iframe.loomVideoEmb {
+    border-radius: 12px;
+  }
+}
+
+@media (max-width: 480px) {
+  .heroVideo {
+    padding: 32px 16px;
+  }
+
+  .loomVideoEmb {
+    border-radius: 8px;
+  }
+
+  .loomVideoEmb iframe,
+  iframe.loomVideoEmb {
+    border-radius: 8px;
+  }
+}

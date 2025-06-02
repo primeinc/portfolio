@@ -129,9 +129,14 @@ importers:
       '@testing-library/user-event':
         specifier: ^14.6.1
         version: 14.6.1(@testing-library/dom@10.4.0)
+      cssstyle:
+        specifier: ^4.3.1
+        version: 4.3.1
       jsdom:
         specifier: ^26.1.0
         version: 26.1.0
+
+  apps/vilinskyy: {}
 
 packages:
 

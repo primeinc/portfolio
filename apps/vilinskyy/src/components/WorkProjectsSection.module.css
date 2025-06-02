@@ -1,0 +1,335 @@
+/* Container */
+.workProjectsContainer {
+  max-width: 800px;
+  margin: 48px auto;
+  padding: 0 24px;
+  background-color: #fafafa;
+}
+
+/* Work History Block */
+.workHistoryBlock {
+  padding: 20px 20px 80px 20px;
+}
+
+.workHistoryBox {
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+/* Timeline blocks */
+.divBlock26 {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin-bottom: 48px;
+}
+
+.textBlock3 {
+  font-size: 15px;
+  line-height: 24px;
+  color: #1f2220;
+}
+
+.textBlock2 {
+  font-weight: 600;
+  min-width: 60px;
+  display: inline-block;
+}
+
+.gray {
+  color: #666;
+  font-size: 14px;
+}
+
+/* Divider */
+.divider {
+  height: 1px;
+  background-color: #e4e4e4;
+  margin: 48px 0;
+}
+
+/* Force Multipliers section */
+.divBlock27 {
+  margin-bottom: 24px;
+}
+
+.divBlock28 {
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  font-size: 12px;
+  color: #666;
+  margin-bottom: 8px;
+}
+
+.divBlock29 {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  margin-bottom: 48px;
+}
+
+.divBlock30 {
+  padding: 16px 0;
+  border-bottom: 1px solid #eee;
+}
+
+.divBlock30:last-child {
+  border-bottom: none;
+}
+
+/* Learning section */
+.divBlock31 {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.investmentItem {
+  font-size: 15px;
+  line-height: 24px;
+  padding: 8px 0;
+}
+
+/* AI Comment */
+.aiComment {
+  background-color: #f5f5f5;
+  padding: 24px;
+  border-radius: 8px;
+  margin-top: 48px;
+  text-align: center;
+}
+
+/* Links */
+.link {
+  color: #0066cc;
+  text-decoration: none;
+}
+
+.link:hover {
+  text-decoration: underline;
+}
+
+/* Color classes */
+.green {
+  color: #228b22;
+}
+
+.purple {
+  color: #7c4dff;
+}
+
+.navy {
+  color: #000080;
+}
+
+.red {
+  color: #ff4438;
+}
+
+/* Timeline styles */
+.timelineList {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: 48px;
+}
+
+.timestamp {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+  font-size: 15px;
+  line-height: 24px;
+  color: #1f2220;
+}
+
+.time {
+  font-weight: 600;
+  min-width: 48px;
+  flex-shrink: 0;
+}
+
+.timeName {
+  flex: 1;
+}
+
+.timeAccessory {
+  color: #666;
+  font-size: 14px;
+}
+
+.h3 {
+  font-size: 16px;
+  font-weight: 600;
+  line-height: 1.5;
+  color: #1f2220;
+  margin: 32px 0 24px 0;
+}
+
+/* Divider */
+.divider1px {
+  height: 1px;
+  background-color: #e4e4e4;
+  margin: 48px 0;
+}
+
+/* Project list */
+.projectList {
+  display: flex;
+  flex-direction: column;
+  gap: 48px;
+  position: relative;
+  margin-bottom: 48px;
+}
+
+.project {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+/* Project logos */
+.logo {
+  height: 40px;
+  width: auto;
+  object-fit: contain;
+}
+
+/* Project-specific colors */
+.focalbrief {
+  color: #ff4438;
+}
+
+.focalbrief.link {
+  color: #ff4438;
+  text-decoration: none;
+}
+
+.focalbrief.link:hover {
+  text-decoration: underline;
+}
+
+.go-sip {
+  color: #4285f4;
+}
+
+.go-sip.link {
+  color: #4285f4;
+  text-decoration: none;
+}
+
+.go-sip.link:hover {
+  text-decoration: underline;
+}
+
+.bingo {
+  color: #ff6b6b;
+}
+
+.bingo.link {
+  color: #ff6b6b;
+  text-decoration: none;
+}
+
+.bingo.link:hover {
+  text-decoration: underline;
+}
+
+.founderclass {
+  color: #7c4dff;
+}
+
+.founderclass.link {
+  color: #7c4dff;
+  text-decoration: none;
+}
+
+.founderclass.link:hover {
+  text-decoration: underline;
+}
+
+/* Typography */
+.paragraph {
+  font-size: 15px;
+  line-height: 24px;
+}
+
+.bodyText {
+  font-size: 15px;
+  line-height: 24px;
+  color: #1f2220;
+}
+
+.smallText {
+  font-size: 14px;
+  line-height: 22px;
+}
+
+/* My Projects label */
+.uppercase {
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  font-size: 12px;
+  color: #666;
+}
+
+._90deg {
+  position: absolute;
+  right: -60px;
+  top: 50%;
+  transform: rotate(-90deg) translateX(-50%);
+  transform-origin: center;
+  white-space: nowrap;
+}
+
+/* Investing section */
+.investing {
+  margin: 48px 0;
+}
+
+.investing .link {
+  color: inherit;
+  text-decoration: underline;
+}
+
+.investing .link:hover {
+  text-decoration: none;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .workProjectsContainer {
+    margin: 32px auto;
+    padding: 0 16px;
+  }
+
+  .timestamp {
+    font-size: 14px;
+    line-height: 22px;
+    flex-wrap: wrap;
+  }
+
+  .time {
+    min-width: 40px;
+  }
+
+  .timeAccessory {
+    font-size: 13px;
+    width: 100%;
+    margin-left: 52px;
+  }
+
+  ._90deg {
+    position: static;
+    transform: none;
+    margin-top: 24px;
+  }
+
+  .divider1px {
+    margin: 32px 0;
+  }
+
+  .projectList {
+    gap: 32px;
+  }
+}

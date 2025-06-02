@@ -1,0 +1,154 @@
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&display=swap');
+
+.testimonialSection {
+  padding: 48px 0;
+  background: white;
+  position: relative;
+}
+
+.container {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 0 24px;
+}
+
+.sectionTitle {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 24px;
+  font-weight: 600;
+  color: rgb(31, 34, 32);
+  margin-bottom: 32px;
+}
+
+.sliderContainer {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  margin: 0 auto;
+}
+
+.navButton {
+  flex-shrink: 0;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: none;
+  border: 1px solid #e0e0e0;
+  border-radius: 4px;
+  color: rgb(31, 34, 32);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 18px;
+}
+
+.navButton:hover {
+  background: #f5f5f5;
+}
+
+.navButton:active {
+  transform: scale(0.95);
+}
+
+.testimonialWrapper {
+  flex: 1;
+  min-height: 120px;
+  display: flex;
+  align-items: center;
+}
+
+.testimonialContent {
+  width: 100%;
+}
+
+.quote {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 15px;
+  line-height: 24px;
+  font-weight: 400;
+  color: rgb(31, 34, 32);
+  margin-bottom: 16px;
+  font-style: normal;
+}
+
+.authorInfo {
+  margin-top: 12px;
+}
+
+.authorDetails {
+  text-align: left;
+}
+
+.authorName {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 14px;
+  font-weight: 600;
+  color: rgb(31, 34, 32);
+  font-style: normal;
+  display: inline;
+}
+
+.authorRole {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 14px;
+  font-weight: 400;
+  color: #666;
+  margin: 0;
+  display: inline;
+}
+
+.company {
+  font-weight: 400;
+}
+
+.dots {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 24px;
+}
+
+.dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  border: none;
+  background: #e0e0e0;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  padding: 0;
+}
+
+.dot:hover {
+  background: #ccc;
+}
+
+.dotActive {
+  background: rgb(31, 34, 32);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .container {
+    padding: 0 16px;
+  }
+
+  .sectionTitle {
+    font-size: 20px;
+  }
+
+  .navButton {
+    display: none;
+  }
+
+  .quote {
+    font-size: 14px;
+  }
+
+  .authorName,
+  .authorRole {
+    font-size: 13px;
+  }
+}

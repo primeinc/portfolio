@@ -1,0 +1,46 @@
+# Dependencies
+node_modules/
+**/node_modules/**
+
+# Build outputs
+dist/
+**/dist/**
+.turbo/
+**/.turbo/**
+
+# Test coverage
+coverage/
+**/coverage/**
+
+# Playwright
+test-results/
+**/test-results/**
+playwright-report/
+**/playwright-report/**
+
+# Logs
+*.log
+.setup-logs/
+
+# Environment files
+.env
+.env.local
+.env.*.local
+
+# IDE
+.vscode/
+.idea/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Temporary files
+*.tmp
+*.temp
+.cache/
+
+# Lock files (should not be formatted)
+pnpm-lock.yaml
+package-lock.json
+yarn.lock

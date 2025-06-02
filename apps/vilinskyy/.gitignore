@@ -1,0 +1,19 @@
+# Test results
+test-results/
+playwright-report/
+
+# Build output
+dist/
+
+# Logs
+*.log
+
+# ESLint cache
+.eslintcache
+
+# Screenshots and debug files
+*.png
+*.json
+debug-page.mjs
+spacing-measurements*.json
+logo-grid-measurements.json

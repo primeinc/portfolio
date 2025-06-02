@@ -115,7 +115,10 @@ test.describe('Custom Cursor', () => {
     expect(releasedClasses).not.toMatch(/clicking/)
   })
 
-  test('should be hidden on mobile devices', async ({ page, context }) => {
+  test('should be hidden on mobile devices', async ({
+    page: _page,
+    context,
+  }) => {
     // Create a new context with mobile viewport to ensure media queries apply correctly
     const mobileContext = await context.browser()?.newContext({
       viewport: { width: 375, height: 667 },
@@ -141,7 +144,7 @@ test.describe('Custom Cursor', () => {
   })
 
   test('should respect reduced motion preference', async ({
-    page,
+    page: _page,
     context,
   }) => {
     // Create new context with reduced motion
@@ -166,10 +169,6 @@ test.describe('Custom Cursor', () => {
   }) => {
     // Wait for page to be fully loaded
     await page.waitForLoadState('networkidle')
-
-    const cursor = await page.locator(
-      '[class*="cursor"]:not([class*="cursorDot"])'
-    )
 
     // Set up error monitoring BEFORE any interactions
     const errors: string[] = []

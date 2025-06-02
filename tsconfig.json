@@ -11,5 +11,8 @@
     "esModuleInterop": true,
     "resolveJsonModule": true
   },
-  "references": [{ "path": "./apps/robin-noguier" }]
+  "references": [
+    { "path": "./apps/robin-noguier" },
+    { "path": "./apps/vilinskyy" }
+  ]
 }
