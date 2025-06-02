@@ -11,44 +11,47 @@ interface Testimonial {
 
 const testimonials: Testimonial[] = [
   {
-    quote: "Alexander's Loom roast was brutal but brilliant. He spotted UX issues I'd been blind to for months.",
-    author: "Michael Chen",
-    company: "TechFlow",
-    improvement: "+47% conversion rate"
+    quote:
+      "Alexander's Loom roast was brutal but brilliant. He spotted UX issues I'd been blind to for months.",
+    author: 'Michael Chen',
+    company: 'TechFlow',
+    improvement: '+47% conversion rate',
   },
   {
-    quote: "20 minutes of feedback that saved us from a failed launch. Worth every penny.",
-    author: "Jessica Park",
-    company: "Streamline AI",
-    improvement: "3x faster onboarding"
+    quote:
+      '20 minutes of feedback that saved us from a failed launch. Worth every penny.',
+    author: 'Jessica Park',
+    company: 'Streamline AI',
+    improvement: '3x faster onboarding',
   },
   {
-    quote: "The most valuable design feedback I've ever received. Completely transformed our product.",
-    author: "Tom Williams",
-    company: "DataSync",
-    improvement: "-68% support tickets"
-  }
+    quote:
+      "The most valuable design feedback I've ever received. Completely transformed our product.",
+    author: 'Tom Williams',
+    company: 'DataSync',
+    improvement: '-68% support tickets',
+  },
 ]
 
 const examples = [
   {
-    title: "SaaS Dashboard Redesign",
-    before: "Cluttered interface, 42% task completion",
-    after: "Clean design, 89% task completion",
-    category: "B2B SaaS"
+    title: 'SaaS Dashboard Redesign',
+    before: 'Cluttered interface, 42% task completion',
+    after: 'Clean design, 89% task completion',
+    category: 'B2B SaaS',
   },
   {
-    title: "E-commerce Checkout Flow",
-    before: "5-step process, 31% cart abandonment",
-    after: "2-step process, 12% cart abandonment",
-    category: "E-commerce"
+    title: 'E-commerce Checkout Flow',
+    before: '5-step process, 31% cart abandonment',
+    after: '2-step process, 12% cart abandonment',
+    category: 'E-commerce',
   },
   {
-    title: "Mobile App Onboarding",
-    before: "7 screens, 58% drop-off",
-    after: "3 screens, 18% drop-off",
-    category: "Mobile"
-  }
+    title: 'Mobile App Onboarding',
+    before: '7 screens, 58% drop-off',
+    after: '3 screens, 18% drop-off',
+    category: 'Mobile',
+  },
 ]
 
 const LoomRoastPage: React.FC = () => {
@@ -56,7 +59,7 @@ const LoomRoastPage: React.FC = () => {
     projectUrl: '',
     email: '',
     projectType: '',
-    specificQuestions: ''
+    specificQuestions: '',
   })
   const [isSubmitted, setIsSubmitted] = useState(false)
 
@@ -69,41 +72,46 @@ const LoomRoastPage: React.FC = () => {
         projectUrl: '',
         email: '',
         projectType: '',
-        specificQuestions: ''
+        specificQuestions: '',
       })
       setIsSubmitted(false)
     }, 3000)
   }
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
+  const handleChange = (
+    e: React.ChangeEvent<
+      HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
+    >
+  ) => {
     setFormData({
       ...formData,
-      [e.target.name]: e.target.value
+      [e.target.name]: e.target.value,
     })
   }
 
   return (
     <div className={styles.roastPage}>
-      <motion.div 
+      <motion.div
         className={styles.hero}
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ duration: 0.8 }}
       >
         <div className={styles.container}>
-          <button 
-            onClick={() => window.history.back()} 
+          <button
+            onClick={() => window.history.back()}
             className={styles.backButton}
             aria-label="Go back"
           >
             ← Back
           </button>
-          
+
           <h1 className={styles.title}>Get Your Design Roasted</h1>
           <p className={styles.subtitle}>
-            Honest, actionable feedback on your product design delivered via personalized Loom video
+            Honest, actionable feedback on your product design delivered via
+            personalized Loom video
           </p>
-          
+
           <div className={styles.valueProps}>
             <div className={styles.valueProp}>
               <span className={styles.valueIcon}>🔥</span>
@@ -125,7 +133,7 @@ const LoomRoastPage: React.FC = () => {
         <div className={styles.container}>
           <h2 className={styles.sectionTitle}>How It Works</h2>
           <div className={styles.steps}>
-            <motion.div 
+            <motion.div
               className={styles.step}
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
@@ -133,9 +141,12 @@ const LoomRoastPage: React.FC = () => {
             >
               <div className={styles.stepNumber}>1</div>
               <h3>Submit Your Project</h3>
-              <p>Share your URL and tell me what specific areas you want feedback on</p>
+              <p>
+                Share your URL and tell me what specific areas you want feedback
+                on
+              </p>
             </motion.div>
-            <motion.div 
+            <motion.div
               className={styles.step}
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
@@ -143,9 +154,12 @@ const LoomRoastPage: React.FC = () => {
             >
               <div className={styles.stepNumber}>2</div>
               <h3>I Record Your Roast</h3>
-              <p>15-20 minute Loom video with detailed UX/UI analysis and recommendations</p>
+              <p>
+                15-20 minute Loom video with detailed UX/UI analysis and
+                recommendations
+              </p>
             </motion.div>
-            <motion.div 
+            <motion.div
               className={styles.step}
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
@@ -153,7 +167,10 @@ const LoomRoastPage: React.FC = () => {
             >
               <div className={styles.stepNumber}>3</div>
               <h3>Implement & Improve</h3>
-              <p>Get your video within 48 hours with timestamps and priority action items</p>
+              <p>
+                Get your video within 48 hours with timestamps and priority
+                action items
+              </p>
             </motion.div>
           </div>
         </div>
@@ -164,14 +181,16 @@ const LoomRoastPage: React.FC = () => {
           <h2 className={styles.sectionTitle}>Recent Roasts</h2>
           <div className={styles.exampleGrid}>
             {examples.map((example, index) => (
-              <motion.div 
+              <motion.div
                 key={index}
                 className={styles.exampleCard}
                 initial={{ opacity: 0, scale: 0.9 }}
                 animate={{ opacity: 1, scale: 1 }}
                 transition={{ delay: index * 0.1 }}
               >
-                <span className={styles.exampleCategory}>{example.category}</span>
+                <span className={styles.exampleCategory}>
+                  {example.category}
+                </span>
                 <h3>{example.title}</h3>
                 <div className={styles.beforeAfter}>
                   <div>
@@ -194,7 +213,7 @@ const LoomRoastPage: React.FC = () => {
           <h2 className={styles.sectionTitle}>What Founders Say</h2>
           <div className={styles.testimonialGrid}>
             {testimonials.map((testimonial, index) => (
-              <motion.div 
+              <motion.div
                 key={index}
                 className={styles.testimonialCard}
                 initial={{ opacity: 0, y: 20 }}
@@ -206,7 +225,9 @@ const LoomRoastPage: React.FC = () => {
                   <strong>{testimonial.author}</strong>
                   <span>{testimonial.company}</span>
                 </cite>
-                <div className={styles.improvement}>{testimonial.improvement}</div>
+                <div className={styles.improvement}>
+                  {testimonial.improvement}
+                </div>
               </motion.div>
             ))}
           </div>
@@ -215,7 +236,7 @@ const LoomRoastPage: React.FC = () => {
 
       <section className={styles.form}>
         <div className={styles.container}>
-          <motion.div 
+          <motion.div
             className={styles.formCard}
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
@@ -224,7 +245,7 @@ const LoomRoastPage: React.FC = () => {
             <p className={styles.formSubtitle}>
               One-time fee: <strong>$299</strong> • Delivered within 48 hours
             </p>
-            
+
             <form onSubmit={handleSubmit} className={styles.roastForm}>
               <div className={styles.formGroup}>
                 <label htmlFor="projectUrl">Project URL *</label>
@@ -238,7 +259,7 @@ const LoomRoastPage: React.FC = () => {
                   required
                 />
               </div>
-              
+
               <div className={styles.formGroup}>
                 <label htmlFor="email">Email Address *</label>
                 <input
@@ -251,7 +272,7 @@ const LoomRoastPage: React.FC = () => {
                   required
                 />
               </div>
-              
+
               <div className={styles.formGroup}>
                 <label htmlFor="projectType">Project Type *</label>
                 <select
@@ -270,9 +291,11 @@ const LoomRoastPage: React.FC = () => {
                   <option value="other">Other</option>
                 </select>
               </div>
-              
+
               <div className={styles.formGroup}>
-                <label htmlFor="specificQuestions">Specific Areas for Feedback (Optional)</label>
+                <label htmlFor="specificQuestions">
+                  Specific Areas for Feedback (Optional)
+                </label>
                 <textarea
                   id="specificQuestions"
                   name="specificQuestions"
@@ -282,9 +305,9 @@ const LoomRoastPage: React.FC = () => {
                   rows={4}
                 />
               </div>
-              
-              <button 
-                type="submit" 
+
+              <button
+                type="submit"
                 className={styles.submitButton}
                 disabled={isSubmitted}
               >
@@ -294,9 +317,9 @@ const LoomRoastPage: React.FC = () => {
                   <>Get Roasted for $299</>
                 )}
               </button>
-              
+
               {isSubmitted && (
-                <motion.p 
+                <motion.p
                   className={styles.successMessage}
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
@@ -305,9 +328,10 @@ const LoomRoastPage: React.FC = () => {
                 </motion.p>
               )}
             </form>
-            
+
             <p className={styles.formNote}>
-              💡 <strong>Pro tip:</strong> The more context you provide, the more valuable your roast will be!
+              💡 <strong>Pro tip:</strong> The more context you provide, the
+              more valuable your roast will be!
             </p>
           </motion.div>
         </div>

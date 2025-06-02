@@ -12,17 +12,19 @@ interface MultiColumnLayoutProps {
   variant?: 'default' | 'compact'
 }
 
-const MultiColumnLayout: React.FC<MultiColumnLayoutProps> = ({ 
-  title, 
-  columns, 
-  variant = 'default' 
+const MultiColumnLayout: React.FC<MultiColumnLayoutProps> = ({
+  title,
+  columns,
+  variant = 'default',
 }) => {
   return (
     <section className={`${styles.multiColumnSection} ${styles[variant]}`}>
       <div className={styles.container}>
         {title && <h2 className={styles.sectionTitle}>{title}</h2>}
-        
-        <div className={`${styles.columnsGrid} ${styles[`cols-${columns.length}`]}`}>
+
+        <div
+          className={`${styles.columnsGrid} ${styles[`cols-${columns.length}`]}`}
+        >
           {columns.map((column, index) => (
             <div key={index} className={styles.column}>
               <h3 className={styles.columnTitle}>{column.title}</h3>

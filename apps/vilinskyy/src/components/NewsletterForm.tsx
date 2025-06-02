@@ -9,19 +9,21 @@ interface NewsletterFormProps {
   successMessage?: string
 }
 
-export default function NewsletterForm({ 
+export default function NewsletterForm({
   variant = 'default',
   placeholder = 'Enter your email',
   buttonText = 'Subscribe',
-  successMessage = 'Thank you! Check your email to confirm your subscription.'
+  successMessage = 'Thank you! Check your email to confirm your subscription.',
 }: NewsletterFormProps) {
   const [email, setEmail] = useState('')
-  const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle')
+  const [status, setStatus] = useState<
+    'idle' | 'loading' | 'success' | 'error'
+  >('idle')
   const [message, setMessage] = useState('')
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    
+
     // Basic email validation
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
     if (!emailRegex.test(email)) {
@@ -31,29 +33,32 @@ export default function NewsletterForm({
     }
 
     setStatus('loading')
-    
+
     // Simulate API call
     try {
-      await new Promise(resolve => setTimeout(resolve, 1500))
-      
+      await new Promise((resolve) => setTimeout(resolve, 1500))
+
       // Simulate success
       setStatus('success')
       setMessage(successMessage)
       setEmail('')
-      
+
       // Reset after 5 seconds
       setTimeout(() => {
         setStatus('idle')
         setMessage('')
       }, 5000)
-    } catch (error) {
+    } catch {
       setStatus('error')
       setMessage('Something went wrong. Please try again.')
     }
   }
 
   return (
-    <form className={`${styles.form} ${styles[variant]}`} onSubmit={handleSubmit}>
+    <form
+      className={`${styles.form} ${styles[variant]}`}
+      onSubmit={handleSubmit}
+    >
       <div className={styles.formContent}>
         <div className={styles.inputWrapper}>
           <input
@@ -68,8 +73,8 @@ export default function NewsletterForm({
             aria-describedby={message ? 'newsletter-message' : undefined}
           />
           {variant === 'inline' && (
-            <button 
-              type="submit" 
+            <button
+              type="submit"
               className={styles.submitButton}
               disabled={status === 'loading' || status === 'success'}
               aria-busy={status === 'loading'}
@@ -77,9 +82,14 @@ export default function NewsletterForm({
               {status === 'loading' ? (
                 <span className={styles.spinner} aria-label="Loading" />
               ) : status === 'success' ? (
-                <svg className={styles.checkIcon} viewBox="0 0 24 24" width="20" height="20">
-                  <path 
-                    d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z" 
+                <svg
+                  className={styles.checkIcon}
+                  viewBox="0 0 24 24"
+                  width="20"
+                  height="20"
+                >
+                  <path
+                    d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"
                     fill="currentColor"
                   />
                 </svg>
@@ -89,10 +99,10 @@ export default function NewsletterForm({
             </button>
           )}
         </div>
-        
+
         {variant !== 'inline' && (
-          <motion.button 
-            type="submit" 
+          <motion.button
+            type="submit"
             className={styles.submitButton}
             disabled={status === 'loading' || status === 'success'}
             whileHover={{ scale: 1.02 }}
@@ -103,9 +113,14 @@ export default function NewsletterForm({
               <span className={styles.spinner} aria-label="Loading" />
             ) : status === 'success' ? (
               <>
-                <svg className={styles.checkIcon} viewBox="0 0 24 24" width="20" height="20">
-                  <path 
-                    d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z" 
+                <svg
+                  className={styles.checkIcon}
+                  viewBox="0 0 24 24"
+                  width="20"
+                  height="20"
+                >
+                  <path
+                    d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"
                     fill="currentColor"
                   />
                 </svg>
@@ -117,10 +132,10 @@ export default function NewsletterForm({
           </motion.button>
         )}
       </div>
-      
+
       <AnimatePresence mode="wait">
         {message && (
-          <motion.p 
+          <motion.p
             id="newsletter-message"
             className={`${styles.message} ${styles[status]}`}
             initial={{ opacity: 0, y: -10 }}
