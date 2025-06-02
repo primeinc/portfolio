@@ -5,7 +5,7 @@
 
 /* Hero Section */
 .hero {
-  background: linear-gradient(135deg, #FF6B6B 0%, #F06595 100%);
+  background: linear-gradient(135deg, #ff6b6b 0%, #f06595 100%);
   color: white;
   padding: var(--spacing-4xl) 0;
   position: relative;
@@ -19,7 +19,8 @@
   left: 0;
   right: 0;
   bottom: 0;
-  background: url("data:image/svg+xml,%3Csvg width='40' height='40' viewBox='0 0 40 40' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23ffffff' fill-opacity='0.08'%3E%3Cpath d='M0 40L40 0H20L0 20M40 40V20L20 40'/%3E%3C/g%3E%3C/svg%3E") repeat;
+  background: url("data:image/svg+xml,%3Csvg width='40' height='40' viewBox='0 0 40 40' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23ffffff' fill-opacity='0.08'%3E%3Cpath d='M0 40L40 0H20L0 20M40 40V20L20 40'/%3E%3C/g%3E%3C/svg%3E")
+    repeat;
   pointer-events: none;
 }
 
@@ -118,7 +119,7 @@
   justify-content: center;
   width: 60px;
   height: 60px;
-  background: linear-gradient(135deg, #FF6B6B 0%, #F06595 100%);
+  background: linear-gradient(135deg, #ff6b6b 0%, #f06595 100%);
   color: white;
   font-size: var(--font-size-2xl);
   font-weight: var(--font-weight-bold);
@@ -166,7 +167,7 @@
 .exampleCategory {
   display: inline-block;
   padding: var(--spacing-xs) var(--spacing-sm);
-  background: linear-gradient(135deg, #FF6B6B 0%, #F06595 100%);
+  background: linear-gradient(135deg, #ff6b6b 0%, #f06595 100%);
   color: white;
   font-size: var(--font-size-xs);
   font-weight: var(--font-weight-semibold);
@@ -339,7 +340,7 @@
 .formGroup select:focus,
 .formGroup textarea:focus {
   outline: none;
-  border-color: #FF6B6B;
+  border-color: #ff6b6b;
   box-shadow: 0 0 0 3px rgba(255, 107, 107, 0.1);
 }
 
@@ -350,7 +351,7 @@
 .submitButton {
   width: 100%;
   padding: var(--spacing-lg);
-  background: linear-gradient(135deg, #FF6B6B 0%, #F06595 100%);
+  background: linear-gradient(135deg, #ff6b6b 0%, #f06595 100%);
   color: white;
   border: none;
   border-radius: var(--border-radius);
@@ -394,28 +395,28 @@
   .title {
     font-size: var(--font-size-3xl);
   }
-  
+
   .subtitle {
     font-size: var(--font-size-lg);
   }
-  
+
   .valueProps {
     gap: var(--spacing-xl);
   }
-  
+
   .steps {
     grid-template-columns: 1fr;
   }
-  
+
   .exampleGrid,
   .testimonialGrid {
     grid-template-columns: 1fr;
   }
-  
+
   .formCard {
     padding: var(--spacing-xl);
   }
-  
+
   .backButton {
     position: static;
     margin-bottom: var(--spacing-xl);

@@ -74,7 +74,7 @@
   cursor: not-allowed;
 }
 
-.input[aria-invalid="true"] {
+.input[aria-invalid='true'] {
   border-color: var(--color-error);
 }
 
@@ -172,13 +172,13 @@
   .form.inline .formContent {
     flex-direction: column;
   }
-  
+
   .form.inline .submitButton {
     position: static;
     transform: none;
     width: 100%;
   }
-  
+
   .submitButton {
     width: 100%;
   }

@@ -105,7 +105,11 @@
 .imagePlaceholder {
   width: 100%;
   height: 100%;
-  background: linear-gradient(135deg, var(--color-brand-blue) 0%, var(--color-brand-purple) 100%);
+  background: linear-gradient(
+    135deg,
+    var(--color-brand-blue) 0%,
+    var(--color-brand-purple) 100%
+  );
   display: flex;
   align-items: center;
   justify-content: center;
@@ -132,7 +136,7 @@
   left: 0;
   right: 0;
   padding: var(--spacing-lg);
-  background: linear-gradient(to top, rgba(0,0,0,0.8) 0%, transparent 100%);
+  background: linear-gradient(to top, rgba(0, 0, 0, 0.8) 0%, transparent 100%);
   transform: translateY(100%);
   transition: transform var(--transition-fast);
 }
@@ -215,7 +219,11 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background: linear-gradient(135deg, var(--color-brand-blue) 0%, var(--color-brand-purple) 100%);
+  background: linear-gradient(
+    135deg,
+    var(--color-brand-blue) 0%,
+    var(--color-brand-purple) 100%
+  );
   color: white;
   font-size: var(--font-size-2xl);
   font-weight: var(--font-weight-bold);
@@ -261,42 +269,42 @@
   .container {
     padding: 0 var(--spacing-md);
   }
-  
+
   .title {
     font-size: var(--font-size-3xl);
   }
-  
+
   .subtitle {
     font-size: var(--font-size-base);
   }
-  
+
   .grid {
     grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
     gap: var(--spacing-lg);
   }
-  
+
   .filters {
     gap: var(--spacing-xs);
   }
-  
+
   .filterButton {
     padding: var(--spacing-xs) var(--spacing-md);
     font-size: var(--font-size-xs);
   }
-  
+
   .backButton {
     position: static;
     margin-bottom: var(--spacing-xl);
   }
-  
+
   .lightboxContent {
     margin: var(--spacing-md);
   }
-  
+
   .lightboxInfo {
     padding: var(--spacing-lg);
   }
-  
+
   .lightboxMeta {
     flex-direction: column;
     gap: var(--spacing-sm);

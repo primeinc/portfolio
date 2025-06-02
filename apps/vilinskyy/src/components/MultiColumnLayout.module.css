@@ -43,7 +43,9 @@
   background-color: var(--color-background-light);
   padding: var(--spacing-xl);
   border-radius: var(--border-radius-lg);
-  transition: transform var(--transition-fast), box-shadow var(--transition-fast);
+  transition:
+    transform var(--transition-fast),
+    box-shadow var(--transition-fast);
 }
 
 .column:hover {
@@ -117,26 +119,26 @@
   .container {
     padding: 0 var(--spacing-md);
   }
-  
+
   .sectionTitle {
     font-size: var(--font-size-2xl);
     margin-bottom: var(--spacing-xl);
   }
-  
+
   .columnsGrid {
     gap: var(--spacing-lg);
   }
-  
+
   .columnsGrid.cols-2,
   .columnsGrid.cols-3,
   .columnsGrid.cols-4 {
     grid-template-columns: 1fr;
   }
-  
+
   .column {
     padding: var(--spacing-lg);
   }
-  
+
   .columnTitle {
     font-size: var(--font-size-lg);
   }
