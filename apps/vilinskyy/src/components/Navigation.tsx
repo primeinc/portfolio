@@ -35,7 +35,7 @@ const Navigation: React.FC<NavigationProps> = ({ currentPage, onNavigate }) => {
             className={styles.logo}
             onClick={(e) => handleNavClick(e, 'home')}
           >
-            Alexander Vilinskyy
+            Rylee Brasseur
           </a>
 
           <button

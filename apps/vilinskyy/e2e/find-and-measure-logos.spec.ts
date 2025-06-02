@@ -17,7 +17,7 @@ test.describe('Find and Measure Logo Grid', () => {
 
     // Explore the page structure to find logo sections
     const pageStructure = await page.evaluate(() => {
-      const sections: any[] = []
+      const sections: unknown[] = []
 
       // Get all sections
       document.querySelectorAll('section').forEach((section, index) => {
@@ -69,7 +69,7 @@ test.describe('Find and Measure Logo Grid', () => {
 
       // Take screenshot of the section
       await page.screenshot({
-        path: '/home/will/local_dev/portfolio/apps/vilinskyy/screenshot-logo-section.png',
+        path: '../screenshot-logo-section.png',
         clip: {
           x: 0,
           y: logoSection.top - 100,
@@ -205,7 +205,7 @@ test.describe('Find and Measure Logo Grid', () => {
 
       // Save measurements
       writeFileSync(
-        '/home/will/local_dev/portfolio/apps/vilinskyy/spacing-measurements.json',
+        '../spacing-measurements.json',
         JSON.stringify(
           {
             logoSection: {

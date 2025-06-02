@@ -15,42 +15,42 @@ const testimonials: Testimonial[] = [
   {
     id: '1',
     quote:
-      "Alexander's work on our design system was transformative. He brought clarity to complex problems and delivered solutions that scaled beautifully.",
-    author: 'Sarah Chen',
-    role: 'VP of Product',
-    company: 'Grammarly',
+      "Rylee's dedication and competitive spirit transformed our entire team dynamic. She doesn't just meet expectations—she obliterates them.",
+    author: 'Coach Michael Thompson',
+    role: 'Head Swimming Coach',
+    company: 'Michigan State University',
   },
   {
     id: '2',
     quote:
-      'Working with Alexander was a game-changer for our startup. His ability to balance user needs with business goals is exceptional.',
-    author: 'Marcus Williams',
-    role: 'Founder & CEO',
-    company: 'Decipad',
+      "In 20 years of coaching, I've never seen someone combine raw talent with such relentless work ethic. Rylee is a force of nature.",
+    author: 'Sarah Martinez',
+    role: 'Assistant Coach',
+    company: 'MSU Swimming',
   },
   {
     id: '3',
     quote:
-      "Alexander doesn't just design interfaces, he designs experiences. His work on Spark helped us reimagine what email could be.",
-    author: 'Elena Rodriguez',
-    role: 'Head of Design',
-    company: 'Readdle',
+      'When Rylee joined Model UN, she brought the same intensity she shows in the pool. Her geopolitical insights are as sharp as her butterfly stroke.',
+    author: 'Dr. James Chen',
+    role: 'Model UN Director',
+    company: 'Michigan State University',
   },
   {
     id: '4',
     quote:
-      "I've worked with many designers, but Alexander's strategic thinking sets him apart. He sees the bigger picture while nailing the details.",
-    author: 'James Park',
-    role: 'Product Manager',
-    company: 'Unicorn Platform',
+      "Watching Rylee break three school records in one season was like watching history being written. She's just getting started.",
+    author: 'Lisa Johnson',
+    role: 'Athletic Director',
+    company: 'MSU Athletics',
   },
   {
     id: '5',
     quote:
-      "Alexander's energy management course changed how I work. I'm more productive and creative than ever before.",
-    author: 'Lisa Thompson',
-    role: 'Creative Director',
-    company: 'Freelance',
+      "Rylee's analytical approach to swimming is what sets her apart. She treats every practice like a science experiment—and the results speak for themselves.",
+    author: 'Mark Stevens',
+    role: 'Performance Coach',
+    company: 'Elite Performance Lab',
   },
 ]
 
