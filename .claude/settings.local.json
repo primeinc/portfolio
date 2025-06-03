@@ -43,7 +43,9 @@
       "Bash(git commit:*)",
       "Bash(npx playwright test:*)",
       "Bash(git rm:*)",
-      "Bash(chmod:*)"
+      "Bash(chmod:*)",
+      "Bash(./scripts/build-for-gh-pages.sh:*)",
+      "Bash(tree:*)"
     ],
     "deny": []
   }

@@ -1,8 +1,11 @@
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 
+// Get base path from environment or use default
+const base = process.env.VITE_BASE_PATH || '/portfolio/robin-noguier/'
+
 export default defineConfig({
-  base: '/portfolio/',
+  base,
   plugins: [react()],
   server: {
     port: 5173,

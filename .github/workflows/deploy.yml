@@ -35,13 +35,20 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
-      - name: Build
-        run: pnpm build --filter=robin-noguier
+      - name: Build all apps
+        run: ./scripts/build-for-gh-pages.sh
+
+      - name: Prepare deployment directory
+        run: |
+          mkdir -p dist
+          cp index-temp.html dist/index.html
+          cp -r apps/robin-noguier/dist dist/robin-noguier
+          cp -r apps/vilinskyy/dist dist/vilinskyy
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: ./apps/robin-noguier/dist
+          path: ./dist
 
   deploy:
     environment:
