@@ -1,5 +1,6 @@
 import React from 'react'
 import styles from './Footer.module.css'
+import signatureImg from '../assets/sig.png'
 
 const Footer: React.FC = () => {
   // Generate brain load meter blocks
@@ -105,7 +106,7 @@ const Footer: React.FC = () => {
             </p>
           </div>
           <img
-            src="/src/assets/sig.png"
+            src={signatureImg}
             loading="lazy"
             width="400"
             alt="Rylee Brasseur signature"
