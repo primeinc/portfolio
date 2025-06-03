@@ -4,17 +4,18 @@ set -e
 # Get repository name from GitHub environment or git remote
 if [ -n "$GITHUB_REPOSITORY" ]; then
     # Running in GitHub Actions
-    REPO_NAME=$(echo $GITHUB_REPOSITORY | cut -d'/' -f2)
+    REPO_NAME=$(echo "$GITHUB_REPOSITORY" | cut -d'/' -f2)
     echo "Detected repo from GitHub: $REPO_NAME"
 else
-    # Running locally - try multiple methods
+    # Running locally - try to get remote URL
     if git remote get-url origin >/dev/null 2>&1; then
-        # Try HTTPS format first
-        REPO_NAME=$(git remote get-url origin | grep -oE '[^/]+\.git$' | sed 's/\.git$//')
+        REMOTE_URL=$(git remote get-url origin)
+        # Extracts 'repo' from 'proto://host/path/to/repo.git' or 'user@host:path/to/repo.git'
+        # Also handles cases without .git suffix and various protocol/user@host combinations.
+        REPO_NAME=$(echo "$REMOTE_URL" | sed -E 's#^(.*/|.*:)##; s#\.git$##')
         
-        # If that failed, try SSH format
-        if [ -z "$REPO_NAME" ]; then
-            REPO_NAME=$(git remote get-url origin | grep -oE '[^:]+\.git$' | sed 's/\.git$//')
+        if [ -n "$REPO_NAME" ]; then
+            echo "Detected repo from git remote '$REMOTE_URL': $REPO_NAME"
         fi
     fi
 fi

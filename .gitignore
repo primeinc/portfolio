@@ -21,3 +21,6 @@ stop-dev-server.sh
 .dev-server-wrapper.sh
 
 docs/rylee
+
+# Generated files
+index-temp.html
