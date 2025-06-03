@@ -35,6 +35,9 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
+      - name: Make build script executable
+        run: chmod +x ./scripts/build-for-gh-pages.sh
+
       - name: Build all apps
         run: ./scripts/build-for-gh-pages.sh
 
