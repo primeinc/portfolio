@@ -51,8 +51,15 @@ If you prefer manual setup:
 # Start all apps
 pnpm dev
 
+# Start specific app
+pnpm dev:robin
+pnpm dev:vilinskyy
+
 # Build all apps
 pnpm build
+
+# Test deployment configuration
+pnpm run test:deployment
 
 # Run tests
 pnpm test
@@ -60,6 +67,22 @@ pnpm test
 # Lint and format
 pnpm lint
 pnpm format
+```
+
+## Deployment
+
+This repository supports flexible deployment configurations:
+
+- **Automatic domain detection** for `ryleebrasseur/portfolio` → `ryleeworks.com`
+- **Custom domain support** via repository variables
+- **Multi-app deployment** for Prime Inc's portfolio repository
+- **GitHub Pages subdirectory** as fallback
+
+See [DEPLOYMENT.md](docs/DEPLOYMENT.md) for detailed configuration guide.
+
+### Quick Deploy Test
+```bash
+./test-deployment.sh
 ```
 
 ## CI/CD

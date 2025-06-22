@@ -14,6 +14,10 @@ concurrency:
   group: "pages"
   cancel-in-progress: false
 
+env:
+  # Skip Git hooks in CI environment
+  HUSKY: 0
+
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -35,11 +39,34 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
+      - name: Set deployment environment variables
+        run: |
+          # Automatically detect custom domain for ryleebrasseur/portfolio
+          if [ "${{ github.repository }}" = "ryleebrasseur/portfolio" ]; then
+            echo "CUSTOM_DOMAIN=ryleeworks.com" >> $GITHUB_ENV
+            echo "VITE_BASE_PATH=/" >> $GITHUB_ENV
+            echo "Auto-detected repository: ryleebrasseur/portfolio"
+            echo "Using custom domain: ryleeworks.com"
+            echo "Setting base path to root (/)"
+          elif [ -n "${{ vars.CUSTOM_DOMAIN }}" ]; then
+            echo "CUSTOM_DOMAIN=${{ vars.CUSTOM_DOMAIN }}" >> $GITHUB_ENV
+            echo "VITE_BASE_PATH=/" >> $GITHUB_ENV
+            echo "Using configured custom domain: ${{ vars.CUSTOM_DOMAIN }}"
+            echo "Setting base path to root (/)"
+          else
+            echo "CUSTOM_DOMAIN=" >> $GITHUB_ENV
+            echo "VITE_BASE_PATH=/portfolio/" >> $GITHUB_ENV
+            echo "Using GitHub Pages subdirectory"
+            echo "Setting base path to /portfolio/"
+          fi
+
       - name: Make build script executable
         run: chmod +x ./scripts/build-for-gh-pages.sh
 
       - name: Build all apps
         run: ./scripts/build-for-gh-pages.sh
+        env:
+          NODE_ENV: production
 
       - name: Prepare deployment directory
         run: |
@@ -47,6 +74,12 @@ jobs:
           cp index-temp.html dist/index.html
           cp -r apps/robin-noguier/dist dist/robin-noguier
           cp -r apps/vilinskyy/dist dist/vilinskyy
+
+      - name: Create CNAME file for custom domain
+        if: env.CUSTOM_DOMAIN != ''
+        run: |
+          echo "${{ env.CUSTOM_DOMAIN }}" > ./dist/CNAME
+          echo "Created CNAME file with domain: ${{ env.CUSTOM_DOMAIN }}"
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
