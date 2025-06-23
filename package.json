@@ -30,6 +30,7 @@
     "format:check": "prettier --check \"**/*.{ts,tsx,js,jsx,json,css,md}\"",
     "clean": "turbo run clean && rm -rf node_modules",
     "typecheck": "turbo run typecheck",
+    "test:deployment": "./test-deployment.sh",
     "prepare": "husky",
     "preinstall": "npx only-allow pnpm",
     "postinstall": "playwright install"
