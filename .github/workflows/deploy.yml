@@ -76,10 +76,10 @@ jobs:
           cp -r apps/vilinskyy/dist dist/vilinskyy
 
       - name: Create CNAME file for custom domain
-        if: env.CUSTOM_DOMAIN != ''
+        if: ${{ env.CUSTOM_DOMAIN && env.CUSTOM_DOMAIN.trim() != '' }}
         run: |
-          echo "${{ env.CUSTOM_DOMAIN }}" > ./dist/CNAME
-          echo "Created CNAME file with domain: ${{ env.CUSTOM_DOMAIN }}"
+          echo "${{ env.CUSTOM_DOMAIN.trim() }}" > ./dist/CNAME
+          echo "Created CNAME file with domain: ${{ env.CUSTOM_DOMAIN.trim() }}"
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
